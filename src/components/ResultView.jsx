@@ -1,4 +1,7 @@
+import { useNavigate } from 'react-router-dom';
+
 export default function ResultView({ result, onRestart }) {
+  const navigate = useNavigate();
 
   if (!result) {
     return (
@@ -77,7 +80,20 @@ export default function ResultView({ result, onRestart }) {
         </div>
       </div>
       
-      <div className="flex justify-center pt-4">
+      <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+        <button 
+          className="btn px-8 py-3 text-base font-bold" 
+          onClick={() => {
+            // Redirect to dashboard with soulmate tab active
+            navigate('/dashboard?tab=insight&showSoulmate=true');
+          }}
+          style={{
+            backgroundColor: '#D4A34B',
+            color: '#1A2336',
+          }}
+        >
+          View in Dashboard & Generate Horoscopes
+        </button>
         <button className="btn px-8 py-3 text-base" onClick={onRestart}>Start Over</button>
       </div>
     </div>

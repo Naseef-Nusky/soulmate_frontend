@@ -39,7 +39,7 @@ export default function HomePage() {
               The #1 app educating people by simplifying astrology for a greater awareness
             </p>
             <button
-              onClick={() => navigate('/quiz')}
+              onClick={() => navigate('/register')}
               className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base md:text-lg font-bold rounded-lg transition-all shadow-lg"
               style={{ backgroundColor: '#1A2336', color: '#F5F5F5' }}
               onMouseEnter={(e) => {
@@ -187,7 +187,7 @@ export default function HomePage() {
             It is time to transform your life with astrology
           </h2>
           <button
-            onClick={() => navigate('/quiz')}
+            onClick={() => navigate('/register')}
             className="px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base md:text-lg font-bold rounded-lg transition-all shadow-lg"
             style={{ backgroundColor: '#D4A34B', color: '#1A2336' }}
             onMouseEnter={(e) => {

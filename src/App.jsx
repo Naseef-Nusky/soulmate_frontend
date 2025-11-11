@@ -91,8 +91,8 @@ export default function QuizApp() {
         relationshipFear: '',
         lifeGoals: [],
         warningAcknowledged: false,
-        email: '',
-      });
+          email: '',
+        });
     }
   }, [step]);
 
@@ -110,7 +110,7 @@ export default function QuizApp() {
           time: form.birthTime || null,
           city: form.birthCity || null,
         },
-        email: form.email || null,
+          email: form.email || null,
       };
       const res = await submitQuiz(payload);
       setResult(res);

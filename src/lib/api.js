@@ -155,6 +155,23 @@ export async function getUserSoulmateSketch() {
   return res.json();
 }
 
+export async function updateSoulmateSketchSpeedOption(speedOption) {
+  const token = localStorage.getItem('token');
+  const res = await fetch(withBase('/api/astrology/soulmate-sketch/speed-option'), {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ speedOption }),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Failed to update speed option' }));
+    throw new Error(error.error || 'Failed to update speed option');
+  }
+  return res.json();
+}
+
 // Profile APIs
 export async function getProfile() {
   const token = localStorage.getItem('token');
@@ -184,6 +201,7 @@ export async function updateProfile(profileData) {
   }
   return res.json();
 }
+
 
 
 

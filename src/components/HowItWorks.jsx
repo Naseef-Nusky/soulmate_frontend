@@ -32,7 +32,7 @@ export default function HowItWorks() {
         </div>
         <div className="text-center">
           <button
-            onClick={() => navigate('/quiz')}
+            onClick={() => navigate('/register')}
             className="px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base md:text-lg font-bold rounded-lg transition-all shadow-lg"
             style={{ backgroundColor: '#1A2336', color: '#F5F5F5' }}
             onMouseEnter={(e) => {
@@ -51,5 +51,6 @@ export default function HowItWorks() {
     </section>
   );
 }
+
 
 

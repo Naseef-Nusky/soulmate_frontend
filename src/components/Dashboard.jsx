@@ -1,11 +1,21 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Calendar, Sparkles, Home, Briefcase, Activity, Smile, Plane, Clover, ChevronDown, ChevronUp, Lightbulb, Heart, User, Settings, CreditCard, HelpCircle, FileText, Shield, LogOut } from 'lucide-react';
-import { getNatalChart, getDailyHoroscope, getTomorrowHoroscope, getMonthlyHoroscope, getUserSoulmateSketch } from '../lib/api.js';
+import { getNatalChart, getDailyHoroscope, getTomorrowHoroscope, getMonthlyHoroscope, getUserSoulmateSketch, updateSoulmateSketchSpeedOption } from '../lib/api.js';
 import { getUser } from '../lib/auth.js';
+
+const HOROSCOPE_SECTIONS_CONFIG = [
+  { title: 'Personal Life', icon: Home, color: '#1D8BFF', badgeBg: 'rgba(29, 139, 255, 0.18)' },
+  { title: 'Profession', icon: Briefcase, color: '#1A4AB5', badgeBg: 'rgba(26, 74, 181, 0.18)' },
+  { title: 'Health', icon: Activity, color: '#E84552', badgeBg: 'rgba(232, 69, 82, 0.16)' },
+  { title: 'Emotions', icon: Smile, color: '#6B3FC6', badgeBg: 'rgba(107, 63, 198, 0.16)' },
+  { title: 'Travel', icon: Plane, color: '#1E9AAA', badgeBg: 'rgba(30, 154, 170, 0.16)' },
+  { title: 'Luck', icon: Clover, color: '#2EB872', badgeBg: 'rgba(46, 184, 114, 0.16)' },
+];
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState('horoscope');
   const [horoscopeType, setHoroscopeType] = useState('today'); // today, tomorrow, monthly
@@ -19,6 +29,41 @@ export default function Dashboard() {
   const [showSoulmateSketch, setShowSoulmateSketch] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
+  const hasCompletedQuiz = Boolean(data.soulmateSketch?.hasSketch);
+
+  // Pre-generate all horoscopes in the background
+  const preGenerateAllHoroscopes = async () => {
+    try {
+      // Generate all horoscopes in parallel (they will be cached in database)
+      await Promise.all([
+        getDailyHoroscope().catch(err => console.error('Failed to pre-generate daily horoscope:', err)),
+        getTomorrowHoroscope().catch(err => console.error('Failed to pre-generate tomorrow horoscope:', err)),
+        getMonthlyHoroscope().catch(err => console.error('Failed to pre-generate monthly horoscope:', err)),
+        getNatalChart().catch(err => console.error('Failed to pre-generate natal chart:', err)),
+      ]);
+      console.log('[Dashboard] All horoscopes pre-generated successfully');
+    } catch (error) {
+      console.error('[Dashboard] Error pre-generating horoscopes:', error);
+    }
+  };
+
+  const loadSoulmateSketch = async ({ force = false, silent = false } = {}) => {
+    if (!force && data.soulmateSketch !== null) return; // Already loaded (null means no sketch)
+    if (!silent) setLoading(true);
+    let sketch = null;
+    try {
+      sketch = await getUserSoulmateSketch();
+      setData(prev => ({ ...prev, soulmateSketch: sketch }));
+      return sketch;
+    } catch (error) {
+      console.error('Failed to load soulmate sketch:', error);
+      setData(prev => ({ ...prev, soulmateSketch: { hasSketch: false } }));
+      return null;
+    } finally {
+      if (!silent) setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const currentUser = getUser();
     if (!currentUser) {
@@ -26,6 +71,27 @@ export default function Dashboard() {
       return;
     }
     setUser(currentUser);
+    
+    // Check URL params for tab and soulmate display
+    const tabParam = searchParams.get('tab');
+    const showSoulmateParam = searchParams.get('showSoulmate');
+    
+    if (tabParam === 'insight') {
+      setActiveTab('insight');
+    }
+    
+    if (showSoulmateParam === 'true') {
+      setShowSoulmateSketch(true);
+      // Load soulmate sketch with spinner
+      loadSoulmateSketch({ force: true });
+      // Pre-generate all horoscopes
+      preGenerateAllHoroscopes();
+      // Clear URL params after using them
+      setSearchParams({});
+    } else {
+      // Silently check if soulmate sketch exists (used for gating content)
+      loadSoulmateSketch({ silent: true });
+    }
     
     // Check if there's an initial horoscope from registration/login
     const initialHoroscope = localStorage.getItem('initialHoroscope');
@@ -37,14 +103,33 @@ export default function Dashboard() {
         localStorage.removeItem('initialHoroscope');
       } catch (e) {
         console.error('Failed to parse initial horoscope:', e);
-        loadHoroscope('today');
       }
-    } else {
-      loadHoroscope('today'); // Load today's horoscope on initial mount
     }
-  }, [navigate]);
+  }, [navigate, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    if (data.soulmateSketch === null) return;
+    if (!hasCompletedQuiz) {
+      setData(prev => ({ ...prev, horoscope: null }));
+      return;
+    }
+    if (!data.horoscope) {
+      loadHoroscope('today');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.soulmateSketch]);
+
+  useEffect(() => {
+    if (data.soulmateSketch === null) return;
+    if (!hasCompletedQuiz) {
+      navigate('/quiz');
+    }
+  }, [data.soulmateSketch, hasCompletedQuiz, navigate]);
 
   const loadHoroscope = async (type = 'today') => {
+    if (!hasCompletedQuiz) {
+      return;
+    }
     setLoading(true);
     try {
       let horoscope;
@@ -64,6 +149,15 @@ export default function Dashboard() {
   };
 
   const handleHoroscopeTypeChange = (type) => {
+    if (!hasCompletedQuiz) {
+      if (data.soulmateSketch === null) {
+        alert('We are still loading your soulmate information. Please try again in a moment.');
+      } else {
+        alert('Complete the soulmate quiz to unlock your personalized horoscope.');
+        navigate('/quiz');
+      }
+      return;
+    }
     setHoroscopeType(type);
     setData(prev => ({ ...prev, horoscope: null })); // Clear previous horoscope
     loadHoroscope(type);
@@ -125,6 +219,11 @@ export default function Dashboard() {
   };
 
   const loadNatalChart = async () => {
+    if (!hasCompletedQuiz) {
+      alert('Complete the soulmate quiz to unlock your personalized personality insights.');
+      navigate('/quiz');
+      return;
+    }
     if (data.natalChart) return;
     setLoading(true);
     try {
@@ -132,20 +231,6 @@ export default function Dashboard() {
       setData(prev => ({ ...prev, natalChart: chart }));
     } catch (error) {
       console.error('Failed to load natal chart:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadSoulmateSketch = async () => {
-    if (data.soulmateSketch !== null) return; // Already loaded (null means no sketch)
-    setLoading(true);
-    try {
-      const sketch = await getUserSoulmateSketch();
-      setData(prev => ({ ...prev, soulmateSketch: sketch }));
-    } catch (error) {
-      console.error('Failed to load soulmate sketch:', error);
-      setData(prev => ({ ...prev, soulmateSketch: { hasSketch: false } }));
     } finally {
       setLoading(false);
     }
@@ -177,10 +262,19 @@ export default function Dashboard() {
               <div className="relative">
                 <button
                   onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                  className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:shadow-lg"
+                  className="flex items-center gap-3 px-4 py-2 rounded-full transition-all hover:shadow-lg"
                   style={{ backgroundColor: 'rgba(212, 163, 75, 0.1)' }}
                 >
-                  <User size={20} style={{ color: '#D4A34B' }} />
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: 'rgba(212, 163, 75, 0.2)' }}
+                  >
+                    <User size={20} style={{ color: '#D4A34B' }} />
+                  </div>
+                  {user?.name && (
+                    <span className="text-sm font-semibold hidden sm:block" style={{ color: '#1A2336' }}>
+                      {user.name}
+                    </span>
+                  )}
                 </button>
                 
                 {/* Dropdown Menu */}
@@ -300,6 +394,10 @@ export default function Dashboard() {
                 if (tab.id === 'horoscope') loadHoroscope(horoscopeType);
                 if (tab.id === 'insight') {
                   setShowSoulmateSketch(false); // Reset to insights list when switching to insight tab
+                  // Load soulmate sketch if not already loaded
+                  if (data.soulmateSketch === null) {
+                    loadSoulmateSketch();
+                  }
                 }
               }}
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
@@ -329,11 +427,38 @@ export default function Dashboard() {
           {!loading && activeTab === 'horoscope' && (
             <div>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-3xl font-black" style={{ color: '#1A2336' }}>
-                  {horoscopeType === 'tomorrow' ? "Tomorrow's Horoscope" : 
-                   horoscopeType === 'monthly' ? "Monthly Horoscope" : 
-                   "Today's Horoscope"}
-                </h2>
+                <div className="space-y-3">
+                  <div
+                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold"
+                    style={{ backgroundColor: 'rgba(212, 163, 75, 0.15)', color: '#8B5E20' }}
+                  >
+                    {horoscopeType === 'tomorrow'
+                      ? 'Tomorrow'
+                      : horoscopeType === 'monthly'
+                      ? 'Monthly'
+                      : 'Today'}
+                    ’s Horoscope
+                  </div>
+                  <h2 className="text-3xl font-black" style={{ color: '#1A2336', letterSpacing: '-0.02em' }}>
+                    {horoscopeType === 'tomorrow'
+                      ? "Tomorrow's Horoscope"
+                      : horoscopeType === 'monthly'
+                      ? "Monthly Horoscope"
+                      : "Today's Horoscope"}
+                  </h2>
+                  <p className="text-sm font-medium uppercase tracking-wide" style={{ color: '#888' }}>
+                    {horoscopeType === 'monthly' && data.horoscope?.monthName
+                      ? `${data.horoscope.monthName} ${data.horoscope.year}`
+                      : data.horoscope
+                      ? new Date(data.horoscope.date).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })
+                      : ''}
+                  </p>
+                </div>
                 
                 {/* Horoscope Type Selector */}
                 <div className="flex gap-2">
@@ -380,59 +505,110 @@ export default function Dashboard() {
               </div>
               
               {data.horoscope ? (
-                <div className="space-y-4">
-                  {/* Date Header */}
-                  <div className="mb-6">
-                    <p className="text-sm font-semibold" style={{ color: '#666' }}>
-                      {horoscopeType === 'monthly' && data.horoscope.monthName ? 
-                        `${data.horoscope.monthName} ${data.horoscope.year}` :
-                        new Date(data.horoscope.date).toLocaleDateString('en-US', { 
-                          weekday: 'long', 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
-                        })}
-                    </p>
-                      </div>
-                  
+                <div className="space-y-6">
                   {/* Horoscope Sections as Cards */}
-                  {parseHoroscopeSections(data.horoscope.guidance || data.horoscope).map((section, index) => {
-                    const IconComponent = section.icon;
-                    return (
-                      <div 
-                        key={index}
-                        className="p-6 rounded-xl border transition-all hover:shadow-lg"
-                        style={{ 
-                          borderColor: 'rgba(212, 163, 75, 0.3)',
-                          backgroundColor: 'white',
-                        }}
-                      >
-                        <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(212, 163, 75, 0.1)' }}>
-                            <IconComponent size={24} style={{ color: '#D4A34B' }} />
-                      </div>
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold mb-3" style={{ color: '#1A2336' }}>
-                              {section.title}
-                            </h3>
-                            <div className="prose max-w-none" style={{ color: '#1A2336', lineHeight: '1.8' }}>
-                              <p className="whitespace-pre-wrap">{section.content}</p>
-                    </div>
+                  <div className="space-y-5">
+                    {(() => {
+                      const sections = parseHoroscopeSections(data.horoscope.guidance || data.horoscope);
+
+                      if (horoscopeType === 'monthly') {
+                        const monthlyContent = sections?.[0]?.content || data.horoscope.guidance || '';
+                        return (
+                          <div
+                            key={`${horoscopeType}-monthly`}
+                            className="rounded-2xl border shadow-sm"
+                            style={{
+                              borderColor: 'rgba(26, 35, 54, 0.08)',
+                              background: 'linear-gradient(135deg, rgba(255,255,255,0.97), rgba(247, 249, 252, 0.92))',
+                            }}
+                          >
+                            <div className="px-6 py-6 space-y-3">
+                              <h3 className="text-xl font-semibold" style={{ color: '#1A2336', letterSpacing: '-0.01em' }}>
+                                Monthly Guidance
+                              </h3>
+                              <p className="text-base leading-7 whitespace-pre-wrap" style={{ color: '#2F394B' }}>
+                                {monthlyContent}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      const sectionMap = new Map();
+                      sections.forEach(section => {
+                        sectionMap.set(section.title.toLowerCase(), section.content);
+                      });
+
+                      return HOROSCOPE_SECTIONS_CONFIG.map(({ title, icon: IconComponent, color, badgeBg }) => {
+                        const content = sectionMap.get(title.toLowerCase());
+                        if (!content) return null;
+
+                        return (
+                          <div
+                            key={`${horoscopeType}-${title}`}
+                            className="rounded-2xl border shadow-sm"
+                            style={{
+                              borderColor: 'rgba(26, 35, 54, 0.08)',
+                              background: 'linear-gradient(135deg, rgba(255,255,255,0.97), rgba(247, 249, 252, 0.92))',
+                            }}
+                          >
+                            <div className="px-6 py-5">
+                              <div className="flex items-start gap-4">
+                                <div
+                                  className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                                  style={{
+                                    backgroundColor: badgeBg,
+                                    color,
+                                  }}
+                                >
+                                  {IconComponent ? <IconComponent size={26} /> : null}
+                                </div>
+                                <div className="flex-1 space-y-2">
+                                  <h3
+                                    className="text-xl font-semibold"
+                                    style={{ color: '#1A2336', letterSpacing: '-0.01em' }}
+                                  >
+                                    {title}
+                                  </h3>
+                                  <p
+                                    className="text-base leading-7 whitespace-pre-wrap"
+                                    style={{ color: '#2F394B' }}
+                                  >
+                                    {content}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      });
+                    })()}
                   </div>
-                      </div>
-                    </div>
-                    );
-                  })}
                 </div>
-              ) : (
+              ) : hasCompletedQuiz ? (
                 <p style={{ color: '#666' }}>Loading your horoscope...</p>
+              ) : (
+                <div className="text-center py-12 space-y-4" style={{ color: '#1A2336' }}>
+                  <h3 className="text-2xl font-black">Complete the Soulmate Quiz First</h3>
+                  <p className="text-lg" style={{ color: '#666' }}>
+                    Take the soulmate quiz to unlock your personalized horoscope and insights.
+                  </p>
+                  <button
+                    onClick={() => navigate('/quiz')}
+                    className="px-8 py-3 rounded-lg font-bold text-lg transition-all hover:shadow-lg"
+                    style={{ backgroundColor: '#D4A34B', color: '#1A2336' }}
+                  >
+                    Start Soulmate Quiz
+                  </button>
+                </div>
               )}
             </div>
           )}
 
           {!loading && activeTab === 'personality' && (
             <div>
-              {data.natalChart ? (
+              {hasCompletedQuiz ? (
+                data.natalChart ? (
                 <div className="space-y-6">
                   {(() => {
                     const report = data.natalChart.report || '';
@@ -611,8 +787,23 @@ export default function Dashboard() {
                     ));
                   })()}
                 </div>
+                ) : (
+                  <p style={{ color: '#666' }}>Loading your personality report...</p>
+                )
               ) : (
-                <p style={{ color: '#666' }}>Loading your personality report...</p>
+                <div className="text-center py-12 space-y-4" style={{ color: '#1A2336' }}>
+                  <h3 className="text-2xl font-black">Complete the Soulmate Quiz First</h3>
+                  <p className="text-lg" style={{ color: '#666' }}>
+                    Take the soulmate quiz to unlock your core personality insights.
+                  </p>
+                  <button
+                    onClick={() => navigate('/quiz')}
+                    className="px-8 py-3 rounded-lg font-bold text-lg transition-all hover:shadow-lg"
+                    style={{ backgroundColor: '#D4A34B', color: '#1A2336' }}
+                  >
+                    Start Soulmate Quiz
+                  </button>
+                </div>
               )}
             </div>
           )}
@@ -681,18 +872,15 @@ export default function Dashboard() {
                             // Load soulmate sketch and show it
                             setLoading(true);
                             try {
-                              const sketch = await getUserSoulmateSketch();
-                              setData(prev => ({ ...prev, soulmateSketch: sketch }));
-                              // If sketch exists, show it in the tab
-                              if (sketch?.hasSketch && sketch?.imageUrl) {
+                              const sketch = await loadSoulmateSketch({ force: true, silent: true });
+                              const result = sketch || data.soulmateSketch;
+                              if (result?.hasSketch && result?.imageUrl) {
                                 setShowSoulmateSketch(true);
                               } else {
-                                // If no sketch, navigate to quiz
                                 navigate('/quiz');
                               }
                             } catch (error) {
                               console.error('Failed to load soulmate sketch:', error);
-                              // On error, navigate to quiz
                               navigate('/quiz');
                             } finally {
                               setLoading(false);
@@ -722,6 +910,14 @@ export default function Dashboard() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
 
 
 

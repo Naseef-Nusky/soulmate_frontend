@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, User } from 'lucide-react';
 import { getUser } from '../lib/auth.js';
 import { getProfile, updateProfile } from '../lib/api.js';
 
@@ -158,6 +158,18 @@ export default function Profile() {
                 GuruLink<span style={{ color: '#D4A34B' }}>.app</span>
               </div>
             </div>
+            {user?.name && (
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: 'rgba(212, 163, 75, 0.1)' }}
+                >
+                  <User size={20} style={{ color: '#D4A34B' }} />
+                </div>
+                <span className="text-sm font-semibold hidden sm:block" style={{ color: '#1A2336' }}>
+                  {user.name}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </header>

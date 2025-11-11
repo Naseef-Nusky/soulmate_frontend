@@ -38,7 +38,24 @@ export default function Login({ isRegister = false }) {
         if (result.horoscope) {
           localStorage.setItem('initialHoroscope', JSON.stringify(result.horoscope));
         }
-        navigate('/dashboard');
+        
+        // Check for redirect params in URL
+        const redirect = searchParams.get('redirect');
+        const tab = searchParams.get('tab');
+        const showSoulmate = searchParams.get('showSoulmate');
+        
+        if (redirect === 'dashboard') {
+          let dashboardUrl = '/dashboard';
+          const params = new URLSearchParams();
+          if (tab) params.set('tab', tab);
+          if (showSoulmate) params.set('showSoulmate', showSoulmate);
+          if (params.toString()) {
+            dashboardUrl += '?' + params.toString();
+          }
+          navigate(dashboardUrl);
+        } else {
+          navigate('/dashboard');
+        }
       } else {
         setError('Invalid or expired login link');
       }
@@ -164,7 +181,6 @@ export default function Login({ isRegister = false }) {
           {message && (
             <div className="mb-4 p-4 rounded-lg text-sm" style={{ backgroundColor: 'rgba(212, 163, 75, 0.1)', color: '#1A2336', border: '1px solid rgba(212, 163, 75, 0.3)' }}>
               <p className="font-semibold mb-2">✓ {message}</p>
-              <p className="text-xs" style={{ color: '#666' }}>Please check your email inbox (and spam folder) for the login link.</p>
             </div>
           )}
 
@@ -371,5 +387,6 @@ export default function Login({ isRegister = false }) {
     </div>
   );
 }
+
 
 
