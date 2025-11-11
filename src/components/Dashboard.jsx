@@ -250,7 +250,7 @@ export default function Dashboard() {
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50 border-b" style={{ borderColor: 'rgba(212, 163, 75, 0.2)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
               <img src="/logoicon.png" alt="GuruLink" className="h-8 w-8 object-contain" />
               <div className="text-2xl font-black" style={{ color: '#1A2336' }}>
@@ -380,7 +380,7 @@ export default function Dashboard() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 overflow-x-auto">
+        <div className="flex flex-wrap gap-2 mb-8 overflow-x-auto sm:overflow-visible">
           {[
             { id: 'horoscope', label: 'Daily Horoscope', icon: Calendar },
             { id: 'personality', label: 'Your Core Personality', icon: Sparkles },
@@ -400,14 +400,14 @@ export default function Dashboard() {
                   }
                 }
               }}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
-                activeTab === tab.id ? '' : 'opacity-70'
-              }`}
               style={{
                 backgroundColor: activeTab === tab.id ? '#D4A34B' : 'white',
                 color: activeTab === tab.id ? '#1A2336' : '#666',
                 border: `1px solid ${activeTab === tab.id ? '#D4A34B' : 'rgba(212, 163, 75, 0.3)'}`
               }}
+              className={`flex items-center gap-2 px-4 sm:px-6 py-3 text-sm sm:text-base rounded-lg font-semibold transition-all whitespace-nowrap ${
+                activeTab === tab.id ? '' : 'opacity-70'
+              } ${activeTab === tab.id ? 'shadow-sm' : ''} flex-1 sm:flex-none min-w-[180px]`}
             >
               <tab.icon size={20} />
               {tab.label}
@@ -416,7 +416,7 @@ export default function Dashboard() {
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-2xl shadow-xl border p-8" style={{ borderColor: 'rgba(212, 163, 75, 0.3)' }}>
+        <div className="bg-white rounded-2xl shadow-xl border p-6 sm:p-8" style={{ borderColor: 'rgba(212, 163, 75, 0.3)' }}>
           {loading && (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-t-transparent" style={{ borderColor: '#D4A34B' }} />
@@ -426,7 +426,7 @@ export default function Dashboard() {
 
           {!loading && activeTab === 'horoscope' && (
             <div>
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between mb-6">
                 <div className="space-y-3">
                   <div
                     className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold"
@@ -461,7 +461,7 @@ export default function Dashboard() {
                 </div>
                 
                 {/* Horoscope Type Selector */}
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => handleHoroscopeTypeChange('today')}
                     className={`px-4 py-2 rounded-lg font-semibold transition-all ${
@@ -553,7 +553,7 @@ export default function Dashboard() {
                             }}
                           >
                             <div className="px-6 py-5">
-                              <div className="flex items-start gap-4">
+                              <div className="flex flex-col sm:flex-row items-start gap-4">
                                 <div
                                   className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
                                   style={{
@@ -752,31 +752,40 @@ export default function Dashboard() {
                                     [sectionKey]: !isExpanded
                                   }));
                                 }}
-                                className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                                className="w-full p-4 sm:p-6 text-left flex items-start sm:items-center justify-between gap-4 hover:bg-gray-50 transition-colors"
                                 style={{ backgroundColor: isExpanded ? 'rgba(212, 163, 75, 0.05)' : 'white' }}
                               >
                                 <div className="flex-1">
-                                  <h4 className="text-xl font-bold mb-2 uppercase" style={{ color: '#D4A34B' }}>
+                                  <h4 className="text-lg sm:text-xl font-bold uppercase mb-1 sm:mb-2" style={{ color: '#D4A34B' }}>
                                     {subsection.planet.toUpperCase()}
                                   </h4>
                                   {subsection.title && (
-                                    <h5 className="text-lg font-semibold uppercase" style={{ color: '#1A2336' }}>
+                                    <h5 className="text-sm sm:text-lg font-semibold uppercase" style={{ color: '#1A2336' }}>
                                       {subsection.title.toUpperCase()}
                                     </h5>
               )}
                 </div>
-                                <div className="ml-4 flex-shrink-0">
-                                  {isExpanded ? (
-                                    <ChevronUp size={24} style={{ color: '#D4A34B' }} />
-              ) : (
-                                    <ChevronDown size={24} style={{ color: '#D4A34B' }} />
-              )}
+                                <div className="flex-shrink-0 flex items-center gap-2 text-xs sm:text-sm font-semibold uppercase tracking-wide" style={{ color: '#D4A34B' }}>
+                                  <span>{isExpanded ? 'Hide' : 'View'}</span>
+                                  <div
+                                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border"
+                                    style={{
+                                      borderColor: 'rgba(212, 163, 75, 0.3)',
+                                      backgroundColor: 'rgba(212, 163, 75, 0.1)',
+                                    }}
+                                  >
+                                    {isExpanded ? (
+                                      <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#D4A34B' }} />
+                                    ) : (
+                                      <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#D4A34B' }} />
+                                    )}
+                                  </div>
             </div>
                 </button>
                               {isExpanded && (
-                                <div className="px-6 pb-6">
-                                  <div className="prose max-w-none" style={{ color: '#1A2336', lineHeight: '1.8' }}>
-                                    <p className="whitespace-pre-wrap">{subsection.content}</p>
+                                <div className="px-4 sm:px-6 pb-6">
+                                  <div className="prose max-w-none text-sm sm:text-base" style={{ color: '#1A2336', lineHeight: '1.8' }}>
+                                    <p className="whitespace-pre-wrap leading-relaxed">{subsection.content}</p>
                       </div>
                     </div>
                   )}
@@ -857,14 +866,14 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-6">
                   {/* Soulmate Sketch Reading Card */}
-                  <div className="p-8 rounded-xl border bg-white" style={{ borderColor: 'rgba(212, 163, 75, 0.3)' }}>
-                    <div className="flex items-start gap-4 mb-6">
+                  <div className="p-6 sm:p-8 rounded-xl border bg-white" style={{ borderColor: 'rgba(212, 163, 75, 0.3)' }}>
+                    <div className="flex flex-col sm:flex-row items-start gap-4 mb-6">
                       <div className="flex-shrink-0">
                         <Heart size={32} style={{ color: '#D4A34B' }} />
                       </div>
                       <div className="flex-1">
-                        <h2 className="text-3xl font-black mb-4" style={{ color: '#1A2336' }}>Soulmate Sketch Reading</h2>
-                        <p className="text-lg mb-6" style={{ color: '#666', lineHeight: '1.8' }}>
+                        <h2 className="text-2xl sm:text-3xl font-black mb-4" style={{ color: '#1A2336' }}>Soulmate Sketch Reading</h2>
+                        <p className="text-base sm:text-lg mb-6" style={{ color: '#666', lineHeight: '1.8' }}>
                           See your soulmate through a personalized sketch and explore the romantic potential destined for you.
                         </p>
                         <button
@@ -886,7 +895,7 @@ export default function Dashboard() {
                               setLoading(false);
                             }
                           }}
-                          className="px-8 py-4 rounded-lg font-bold text-lg transition-all hover:shadow-lg"
+                          className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg transition-all hover:shadow-lg"
                           style={{
                             backgroundColor: '#D4A34B',
                             color: '#1A2336',
