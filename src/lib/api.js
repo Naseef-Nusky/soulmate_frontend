@@ -202,6 +202,20 @@ export async function updateProfile(profileData) {
   return res.json();
 }
 
+// Translation API (server-side Google Cloud Translation proxy)
+export async function translateTexts({ texts, target, source }) {
+  const res = await fetch(withBase('/api/translate'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ texts, target, source }),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Translation failed' }));
+    throw new Error(error.error || 'Translation failed');
+  }
+  return res.json(); // { translations: string[] }
+}
+
 
 
 

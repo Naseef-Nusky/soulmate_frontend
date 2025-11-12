@@ -41,12 +41,6 @@ export default function ResultView({ result, onRestart }) {
             {result.astrology.sunSign && (
               <p className="text-sm sm:text-base"><span className="font-semibold" style={{ color: '#D4A34B' }}>Sun Sign:</span> {result.astrology.sunSign}</p>
             )}
-            {result.astrology.moonSign && (
-              <p className="text-sm sm:text-base"><span className="font-semibold" style={{ color: '#D4A34B' }}>Moon Sign:</span> {result.astrology.moonSign}</p>
-            )}
-            {result.astrology.risingSign && (
-              <p className="text-sm sm:text-base"><span className="font-semibold" style={{ color: '#D4A34B' }}>Rising Sign:</span> {result.astrology.risingSign}</p>
-            )}
             {result.astrology.element && (
               <p className="text-sm sm:text-base"><span className="font-semibold" style={{ color: '#D4A34B' }}>Element:</span> {result.astrology.element}</p>
             )}
@@ -94,7 +88,7 @@ export default function ResultView({ result, onRestart }) {
         >
           View in Dashboard & Generate Horoscopes
         </button>
-        <button className="btn px-8 py-3 text-base" onClick={onRestart}>Start Over</button>
+    
       </div>
     </div>
   );

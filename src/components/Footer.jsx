@@ -1,117 +1,67 @@
 import { useEffect, useRef, useState } from 'react';
+import { translateTexts } from '../lib/api.js';
 
 export default function Footer() {
   const translateElementRef = useRef(null);
-  const [showCustomDropdown, setShowCustomDropdown] = useState(true); // Show custom dropdown by default
+  const [showCustomDropdown, setShowCustomDropdown] = useState(true); // kept for future UI toggles
 
-  useEffect(() => {
-    let retryCount = 0;
-    const maxRetries = 5;
-
-    const initializeTranslate = () => {
-      const element = document.getElementById('google_translate_element');
-      if (element && window.google && window.google.translate) {
-        try {
-          // Clear any existing content
-          element.innerHTML = '';
-          
-          new window.google.translate.TranslateElement({
-            pageLanguage: 'en',
-            includedLanguages: 'ar,da,de,en,es,fr,hu,it,ja,ko,nl,no,pl,pt,ro,sv,tr,el,bg,cs,et,fi,hr,lt,lv,ru,sk,uk,zh',
-            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-            autoDisplay: false
-          }, 'google_translate_element');
-          
-          // Check if widget was created
-          setTimeout(() => {
-            const select = element.querySelector('select');
-            if (!select && retryCount < maxRetries) {
-              retryCount++;
-              setTimeout(initializeTranslate, 500);
-            } else if (!select) {
-              setShowCustomDropdown(true);
-            }
-          }, 1000);
-        } catch (error) {
-          console.error('Error initializing Google Translate:', error);
-          if (retryCount < maxRetries) {
-            retryCount++;
-            setTimeout(initializeTranslate, 500);
-          } else {
-            setShowCustomDropdown(true);
-          }
-        }
-      } else if (retryCount < maxRetries) {
-        retryCount++;
-        setTimeout(initializeTranslate, 500);
-      } else {
-        setShowCustomDropdown(true);
-      }
-    };
-
-    const loadScript = () => {
-      if (window.google && window.google.translate) {
-        initializeTranslate();
-      } else {
-        // Check if script already exists
-        if (!document.querySelector('script[src*="translate_a/element.js"]')) {
-          const script = document.createElement('script');
-          script.type = 'text/javascript';
-          script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-          script.async = true;
-          script.onerror = () => {
-            console.error('Failed to load Google Translate script');
-            setShowCustomDropdown(true);
-          };
-          document.body.appendChild(script);
-        }
-
-        window.googleTranslateElementInit = () => {
-          setTimeout(initializeTranslate, 100);
-        };
-      }
-    };
-
-    // Start loading after component mounts
-    const timer = setTimeout(loadScript, 200);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  // No Google Website Widget: server-side translation only
 
   const handleLanguageChange = (langCode) => {
     if (langCode === 'en') {
-      // If English is selected, remove translation
-      if (window.google && window.google.translate) {
-        const select = document.querySelector('#google_translate_element select');
-        if (select) {
-          select.value = 'en';
-          select.dispatchEvent(new Event('change'));
-        }
-      }
-      // Remove Google Translate iframe if exists
-      const iframe = document.querySelector('iframe[src*="translate"]');
-      if (iframe) {
-        iframe.remove();
-      }
-      // Reload to original language
+      // Reload to original English content
       window.location.reload();
       return;
     }
 
-    // Try to use Google Translate widget if available
-    if (window.google && window.google.translate) {
-      const select = document.querySelector('#google_translate_element select');
-      if (select) {
-        select.value = langCode;
-        select.dispatchEvent(new Event('change'));
-        return;
-      }
-    }
+    // Use server-side Google Cloud Translation API to translate visible text nodes
+    (async () => {
+      try {
+        const root = document.getElementById('root');
+        if (!root) return alert('Unable to access page root for translation.');
 
-    // Fallback: if widget isn't available, inform the user (do not redirect to translate proxy on IPs)
-    alert('Automatic translation is currently unavailable. Please disable ad blockers and ensure translate.google.com is reachable, or switch to a supported domain.');
+        // Collect visible text nodes
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+          acceptNode: (node) => {
+            if (!node.nodeValue) return NodeFilter.FILTER_REJECT;
+            const text = node.nodeValue.trim();
+            // skip very short texts and whitespace-only
+            if (text.length < 2) return NodeFilter.FILTER_REJECT;
+            // skip text inside script/style/noscript
+            const p = node.parentElement;
+            if (!p) return NodeFilter.FILTER_REJECT;
+            const tag = p.tagName?.toLowerCase();
+            if (['script', 'style', 'noscript', 'select', 'option'].includes(tag)) return NodeFilter.FILTER_REJECT;
+            return NodeFilter.FILTER_ACCEPT;
+          }
+        });
+
+        const nodes = [];
+        let n;
+        const maxNodes = 300; // safety cap
+        while ((n = walker.nextNode()) && nodes.length < maxNodes) {
+          nodes.push(n);
+        }
+
+        if (nodes.length === 0) {
+          return alert('Nothing to translate on this view.');
+        }
+
+        const texts = nodes.map(node => node.nodeValue);
+        const { translations } = await translateTexts({ texts, target: langCode });
+        if (!Array.isArray(translations) || translations.length !== nodes.length) {
+          return alert('Translation service returned an unexpected response.');
+        }
+
+        // Apply translations in-place
+        for (let i = 0; i < nodes.length; i++) {
+          nodes[i].nodeValue = translations[i];
+        }
+      } catch (err) {
+        console.error('Translate fallback error:', err);
+        alert('Automatic translation is unavailable. Please try again later.');
+      }
+    })();
   };
 
   return (
@@ -174,11 +124,10 @@ export default function Footer() {
               />
             </div>
             <div style={{ minWidth: '200px' }}>
-              {/* Always show custom dropdown - Google Translate widget will appear above it if it loads */}
-              <div id="google_translate_element" ref={translateElementRef} style={{ minHeight: '0px', marginBottom: '8px' }}></div>
+              {/* Language selection dropdown (uses server-side translation) */}
               <select 
                 className="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm w-full"
-                style={{ backgroundColor: 'rgba(212, 163, 75, 0.1)', color: '#F5F5F5', border: '1px solid rgba(212, 163, 75, 0.3)' }}
+                style={{ backgroundColor: '#0F172A', color: '#F5F5F5', border: '1px solid rgba(212, 163, 75, 0.4)' }}
                 defaultValue="en"
                 onChange={(e) => handleLanguageChange(e.target.value)}
               >
