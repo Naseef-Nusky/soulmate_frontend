@@ -110,17 +110,8 @@ export default function Footer() {
       }
     }
 
-    // For production: use Google Translate URL (only works on public URLs, not localhost)
-    const currentUrl = window.location.href;
-    const isLocalhost = currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1') || currentUrl.includes('0.0.0.0');
-    
-    if (!isLocalhost) {
-      // Production: redirect to Google Translate
-      window.location.href = `https://translate.google.com/translate?sl=auto&tl=${langCode}&u=${encodeURIComponent(currentUrl)}`;
-    } else {
-      // Development: show alert that translation works in production
-      alert(`Language translation will work when the site is deployed. Selected language: ${langCode}\n\nIn production, the entire website will be translated to the selected language.`);
-    }
+    // Fallback: if widget isn't available, inform the user (do not redirect to translate proxy on IPs)
+    alert('Automatic translation is currently unavailable. Please disable ad blockers and ensure translate.google.com is reachable, or switch to a supported domain.');
   };
 
   return (
