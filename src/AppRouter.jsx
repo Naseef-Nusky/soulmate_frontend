@@ -6,6 +6,11 @@ import Login from './components/Login.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import SoulmatePage from './components/SoulmatePage.jsx';
 import Profile from './components/Profile.jsx';
+import Terms from './components/Terms.jsx';
+import Privacy from './components/Privacy.jsx';
+import Cookies from './components/Cookies.jsx';
+import Refund from './components/Refund.jsx';
+import Support from './components/Support.jsx';
 
 export default function AppRouter() {
   return (
@@ -19,6 +24,11 @@ export default function AppRouter() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/soulmate" element={<SoulmatePage />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/cookies" element={<Cookies />} />
+        <Route path="/refund" element={<Refund />} />
+        <Route path="/support" element={<Support />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

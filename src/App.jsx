@@ -287,8 +287,8 @@ export default function QuizApp() {
         </div>
 
         {/* Title Section */}
-        <div className="mb-6">
-          <h1 className="text-3xl sm:text-4xl font-black mb-3" style={{ color: '#1A2336' }}>
+        <div className="mb-6 text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black mb-3" style={{ color: '#1A2336' }}>
             {STEPS[step]?.title || 'Quest'}
           </h1>
           <ProgressBar progress={progress} />

@@ -337,7 +337,7 @@ export default function Dashboard() {
                         <button
                           onClick={() => {
                             setShowProfileDropdown(false);
-                            // Navigate to terms
+                            navigate('/terms');
                           }}
                           className="w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-gray-50 transition-colors"
                           style={{ color: '#1A2336' }}
@@ -348,7 +348,7 @@ export default function Dashboard() {
                         <button
                           onClick={() => {
                             setShowProfileDropdown(false);
-                            // Navigate to privacy
+                            navigate('/privacy');
                           }}
                           className="w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-gray-50 transition-colors"
                           style={{ color: '#1A2336' }}

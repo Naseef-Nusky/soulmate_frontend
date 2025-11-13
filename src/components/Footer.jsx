@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { translateTexts } from '../lib/api.js';
 
 export default function Footer() {
@@ -120,23 +121,23 @@ export default function Footer() {
             <h3 className="text-sm sm:text-base font-bold mb-4">Customer Support</h3>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li><a href="#" className="hover:opacity-70 transition-opacity">How to Cancel</a></li>
-              <li><a href="#" className="hover:opacity-70 transition-opacity">Customer Support 24/7/365</a></li>
+              <li><Link to="/support" className="hover:opacity-70 transition-opacity">Customer Support 24/7/365</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="text-sm sm:text-base font-bold mb-4">Legal</h3>
             <ul className="space-y-2 text-xs sm:text-sm">
-              <li><a href="#" className="hover:opacity-70 transition-opacity">Privacy Policy</a></li>
-              <li><a href="#" className="hover:opacity-70 transition-opacity">Terms & Conditions</a></li>
-              <li><a href="#" className="hover:opacity-70 transition-opacity">Cookie Policy</a></li>
-              <li><a href="#" className="hover:opacity-70 transition-opacity">Refund Policy</a></li>
+              <li><Link to="/privacy" className="hover:opacity-70 transition-opacity">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="hover:opacity-70 transition-opacity">Terms &amp; Conditions</Link></li>
+              <li><Link to="/cookies" className="hover:opacity-70 transition-opacity">Cookie Policy</Link></li>
+              <li><Link to="/refund" className="hover:opacity-70 transition-opacity">Refund Policy</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="text-sm sm:text-base font-bold mb-4">About Us</h3>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li><a href="#" className="hover:opacity-70 transition-opacity">Help Center</a></li>
-              <li><a href="#" className="hover:opacity-70 transition-opacity">Pricing</a></li>
+              <li><Link to="/pricing" className="hover:opacity-70 transition-opacity">Pricing</Link></li>
             </ul>
           </div>
         </div>

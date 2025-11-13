@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Smile, CheckCircle } from 'lucide-react';
 
 function CheckboxGroup({ options, values, onChange }) {
@@ -152,13 +153,15 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
 
         {/* Stats Cards with gold theme - reduced size */}
         <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
-          <div className="rounded-2xl p-3 shadow-lg transform hover:scale-105 transition-all duration-300 border-2" style={{ backgroundColor: '#D4A34B', color: '#1A2336', borderColor: '#D4A34B' }}>
-            <div className="text-2xl font-black mb-0.5">87.3%</div>
-            <div className="text-[10px] font-bold opacity-90 leading-tight">Say it felt Familiar</div>
+          <div className="rounded-2xl p-4 shadow-sm border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
+            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>86%</div>
+            <div className="text-xs font-semibold" style={{ color: '#1A2336' }}>Accuracy Rate</div>
+            <p className="text-[10px] mt-1" style={{ color: '#4B5563' }}>Users say the sketch captured their soulmate.</p>
           </div>
-          <div className="rounded-2xl p-3 shadow-lg transform hover:scale-105 transition-all duration-300 border-2" style={{ backgroundColor: '#D4A34B', color: '#1A2336', borderColor: '#D4A34B' }}>
-            <div className="text-2xl font-black mb-0.5">172K+</div>
-            <div className="text-[10px] font-bold opacity-90 leading-tight">Happy Customers</div>
+          <div className="rounded-2xl p-4 shadow-sm border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
+            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>1,000+</div>
+            <div className="text-xs font-semibold" style={{ color: '#1A2336' }}>Happy Customers</div>
+            <p className="text-[10px] mt-1" style={{ color: '#4B5563' }}>Real people discovering their true connection.</p>
           </div>
         </div>
 
@@ -172,8 +175,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
         {/* Legal Text - reduced spacing */}
         <div className="pt-2 space-y-1">
           <p className="text-[10px] leading-tight" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>
-            By continuing, you agree to our <a className="underline transition-colors font-semibold hover:opacity-80" href="#" onClick={(e) => e.preventDefault()} style={{ color: '#D4A34B' }}>Terms & Conditions</a> and <a className="underline transition-colors font-semibold hover:opacity-80" href="#" onClick={(e) => e.preventDefault()} style={{ color: '#D4A34B' }}>Privacy Notice</a>. 
-            Have a question? <a className="underline transition-colors font-semibold hover:opacity-80" href="#" onClick={(e) => e.preventDefault()} style={{ color: '#D4A34B' }}>Reach our support team here</a>.
+            By continuing, you agree to our <Link className="underline transition-colors font-semibold hover:opacity-80" to="/terms" style={{ color: '#D4A34B' }}>Terms &amp; Conditions</Link> and <Link className="underline transition-colors font-semibold hover:opacity-80" to="/privacy" style={{ color: '#D4A34B' }}>Privacy Notice</Link>.
+            Have a question? <Link className="underline transition-colors font-semibold hover:opacity-80" to="/support" style={{ color: '#D4A34B' }}>Reach our support team here</Link>.
           </p>
           <p className="text-[10px] font-medium" style={{ color: 'rgba(212, 163, 75, 0.6)' }}>For entertainment purposes only.</p>
         </div>
@@ -186,9 +189,9 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       <div className="space-y-6">
         <div className="text-center space-y-2">
           <h2 className="text-2xl sm:text-3xl font-black" style={{ color: '#1A2336' }}>
-            Over 25 Million people have already met their Soulmate
+            Over 1 Million People Have Found Their Soulmate with GuruLink
           </h2>
-          <p style={{ color: '#4B5563' }}>Join thousands each day uncovering the face of their true connection 💞</p>
+          <p style={{ color: '#4B5563' }}>Join more than a thousand people each day discovering the face of their true connection 💞</p>
         </div>
         
         {/* Testimonial Card */}
@@ -196,16 +199,16 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
           <div className="space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
-                <div className="text-sm font-semibold" style={{ color: '#1A2336' }}>Rebecca Bauman</div>
-                <div className="text-xs" style={{ color: '#666' }}>March 5, 2025</div>
+                <div className="text-sm font-semibold" style={{ color: '#1A2336' }}>Emily Harper</div>
+                <div className="text-xs" style={{ color: '#666' }}>February 18, 2025</div>
               </div>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: '#4B5563' }}>
-              I can’t believe how accurate it was! The sketch matched him perfectly — and now we’re together. This experience gave me hope and helped me open my heart again.
+              “I was amazed by how real it felt! The sketch looked just like the person I met weeks later. GuruLink helped me believe in love again and trust the universe’s timing.”
             </p>
             <div className="flex gap-1" aria-label="5 out of 5 stars">
               {[...Array(5)].map((_, i) => (
-                <span key={i} className="text-yellow-400 text-lg">⭐</span>
+                <span key={i} className="text-yellow-400 text-lg">⭐️</span>
               ))}
             </div>
           </div>
@@ -214,17 +217,17 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="rounded-3xl p-5 border-2 shadow-md hover:shadow-lg transition-all duration-300" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>900+</div>
-            <div className="text-sm" style={{ color: '#4B5563' }}>people discovered their soulmate today</div>
+            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>1,200+</div>
+            <div className="text-sm" style={{ color: '#4B5563' }}>people found their soulmate today</div>
           </div>
           <div className="rounded-3xl p-5 border-2 shadow-md hover:shadow-lg transition-all duration-300" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>25M+</div>
-            <div className="text-sm" style={{ color: '#4B5563' }}>people trust GuruLink worldwide</div>
+            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>1M+</div>
+            <div className="text-sm" style={{ color: '#4B5563' }}>people trust GuruLink across the world</div>
           </div>
         </div>
         
         <div className="text-center pt-2">
-          <p className="text-sm font-semibold" style={{ color: '#D4A34B' }}>Your soulmate could be waiting — start your journey below</p>
+          <p className="text-sm font-semibold" style={{ color: '#D4A34B' }}>Your perfect match could be waiting — begin your journey now. 💖</p>
         </div>
       </div>
     );
@@ -235,8 +238,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
     const isConfirm = key === 'gender2';
     const options = [ { label: 'Male', img: '/MaleAvatar.png' }, { label: 'Female', img: '/FemaleAvatar.png' } ];
     return (
-      <div className="space-y-4">
-        <h3 className="text-base font-bold mb-4" style={{ color: '#D4A34B' }}>{isConfirm ? 'Who are you interested in?' : 'Select your gender'}</h3>
+      <div className="space-y-4 text-center sm:text-left">
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>{isConfirm ? 'Who are you interested in?' : 'Select your gender'}</h3>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
           {options.map((opt) => (
             isConfirm ? (
@@ -323,8 +326,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       { label: '50+', emoji: '👴' },
     ];
     return (
-      <div className="space-y-4">
-        <h3 className="text-base font-bold mb-4" style={{ color: '#D4A34B' }}>Ideal age range for your soulmate?</h3>
+      <div className="space-y-4 text-center sm:text-left">
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>Ideal age range for your soulmate?</h3>
         <div className="grid grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -374,8 +377,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       { label: 'No preference', emoji: '🫥', img: '/ethnicity/any.png' },
     ];
     return (
-      <div className="space-y-4">
-        <h3 className="text-base font-bold mb-4" style={{ color: '#D4A34B' }}>Do you have a preferred ethnic background for your sketch?</h3>
+      <div className="space-y-4 text-center sm:text-left">
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>Do you have a preferred ethnic background for your sketch?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -435,8 +438,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       { label: 'Very important', emoji: '👍' },
     ];
     return (
-      <div className="space-y-2">
-        <label className="label">How important is a soulmate's appearance to you?</label>
+      <div className="space-y-2 text-center sm:text-left">
+        <label className="label text-sm sm:text-base">How important is a soulmate's appearance to you?</label>
         <div className="grid grid-cols-5 gap-2">
           {options.map((o, idx) => (
             <button
@@ -499,8 +502,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       onAutoNext && onAutoNext();
     }
     return (
-      <div className="space-y-2">
-        <label className="label">What’s the key trait your soulmate should have?</label>
+      <div className="space-y-2 text-center sm:text-left">
+        <label className="label text-sm sm:text-base">What’s the key trait your soulmate should have?</label>
         <div className="space-y-3">
           {options.map((o) => {
             const selected = form.keyTraits.includes(o.label);
@@ -554,7 +557,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
 
   if (key === 'traitFeedback') {
     return (
-      <div className="space-y-2" style={{ color: '#1A2336' }}>
+      <div className="space-y-2 text-center sm:text-left" style={{ color: '#1A2336' }}>
         <p>Choosing qualities like <strong>{form.keyTraits.join(', ') || '—'}</strong> suggests you value depth and mutual respect. Great matches often share or complement these traits.</p>
       </div>
     );
@@ -562,10 +565,10 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
 
   if (key === 'birth') {
     return (
-      <div className="space-y-4">
-        <p className="text-sm" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>It helps us create your natal chart and identify key planetary positions.</p>
+      <div className="space-y-4 text-center sm:text-left">
+        <p className="text-sm sm:text-base" style={{ color: '#4B5563' }}>It helps us create your natal chart and identify key planetary positions.</p>
         <div>
-          <label className="label">Birth date</label>
+          <label className="label text-sm sm:text-base">Birth date</label>
           <input
             type="date"
             className="w-full px-4 py-3 rounded-xl border text-sm"
@@ -639,7 +642,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       { label: 'Both', emoji: '⚖️' },
     ];
     return (
-      <div className="space-y-2">
+      <div className="space-y-2 text-center sm:text-left">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {options.map((o) => (
             <button
@@ -687,7 +690,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
     else if (choice === 'Head') stat = '40% of Virgo Sun people also make decisions using their head.';
     else if (choice === 'Both') stat = 'only the top 22% of Virgo Sun people make decisions using their heart and head.';
     return (
-      <div className="space-y-2" style={{ color: '#1A2336' }}>
+      <div className="space-y-2 text-center sm:text-left" style={{ color: '#1A2336' }}>
         <p className="font-medium">Good to know!</p>
         <p>Based on our data, {stat || 'many people share your approach to decision-making.'}</p>
         <p>Stay true to your core values; the right person resonates with your rhythm.</p>
@@ -705,8 +708,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       { label: 'Dealing with uncertainty', emoji: '🌤️', img: '/challenge/uncertainty.png' },
     ];
     return (
-      <div className="space-y-2">
-        <h3 className="text-base font-bold mb-4" style={{ color: '#D4A34B' }}>What's your biggest personal challenge?</h3>
+      <div className="space-y-2 text-center sm:text-left">
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What's your biggest personal challenge?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -757,7 +760,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
 
   if (key === 'challengeFeedback') {
     return (
-      <div style={{ color: '#1A2336' }}>
+      <div className="text-center sm:text-left" style={{ color: '#1A2336' }}>
         <p>Working through “{form.challenge || '—'}” strengthens resilience and attracts a partner who meets you with care.</p>
       </div>
     );
@@ -773,8 +776,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       { label: 'Self-centeredness', emoji: '😎' },
     ];
     return (
-      <div className="space-y-2">
-        <h3 className="text-base font-bold mb-4" style={{ color: '#D4A34B' }}>What is your biggest red flag?</h3>
+      <div className="space-y-2 text-center sm:text-left">
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What is your biggest red flag?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -821,8 +824,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       { label: 'Brings contrast', emoji: '🤩' },
     ];
     return (
-      <div className="space-y-2">
-        <h3 className="text-base font-bold mb-4" style={{ color: '#D4A34B' }}>Do you prefer a similar partner or one who contrasts with you?</h3>
+      <div className="space-y-2 text-center sm:text-left">
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>Do you prefer a similar partner or one who contrasts with you?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -872,8 +875,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       { label: 'Balanced growth', emoji: '🎯' },
     ];
     return (
-      <div className="space-y-2">
-        <h3 className="text-base font-bold mb-4" style={{ color: '#D4A34B' }}>What's your ideal relationship dynamic?</h3>
+      <div className="space-y-2 text-center sm:text-left">
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What's your ideal relationship dynamic?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -923,8 +926,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       { label: 'Quality time', emoji: '⏳' },
     ];
     return (
-      <div className="space-y-2">
-        <h3 className="text-base font-bold mb-4" style={{ color: '#D4A34B' }}>What's your primary love language?</h3>
+      <div className="space-y-2 text-center sm:text-left">
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What's your primary love language?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -976,8 +979,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       { label: 'Other', emoji: '🤔' },
     ];
     return (
-      <div className="space-y-2">
-        <h3 className="text-base font-bold mb-4" style={{ color: '#D4A34B' }}>What's your ideal connection with a partner?</h3>
+      <div className="space-y-2 text-center sm:text-left">
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What's your ideal connection with a partner?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -1029,8 +1032,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
       { label: 'Other', emoji: '❓' },
     ];
     return (
-      <div className="space-y-2">
-        <h3 className="text-base font-bold mb-4" style={{ color: '#D4A34B' }}>What's your biggest relationship fear? <span aria-hidden>🫣</span></h3>
+      <div className="space-y-2 text-center sm:text-left">
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What's your biggest relationship fear? <span aria-hidden>🫣</span></h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -1089,8 +1092,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
     }
 
     return (
-      <div className="space-y-2">
-        <h3 className="text-base font-bold mb-4" style={{ color: '#D4A34B' }}>What life goals do you hope to achieve with your soulmate?</h3>
+      <div className="space-y-2 text-center sm:text-left">
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What life goals do you hope to achieve with your soulmate?</h3>
         <div className="space-y-3">
           {options.map((o) => {
             const selected = form.lifeGoals.includes(o.label);

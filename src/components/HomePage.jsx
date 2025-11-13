@@ -147,9 +147,9 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-3 gap-8">
           {[
-            { value: '94%', label: 'Users recommend GuruLink Horoscope & Astrology', icon: Star },
-            { value: '500k', label: 'Palmistry readings completed', icon: Star },
-            { value: '4.7/5', label: 'Stars satisfaction score', icon: Star },
+            { value: '96%', label: 'Users recommend GuruLink Spiritual Guidance', icon: Star },
+            { value: '750k', label: 'Palmistry readings completed', icon: Star },
+            { value: '4.8/5', label: 'Stars satisfaction score', icon: Star },
           ].map((stat, i) => (
             <div 
               key={i}

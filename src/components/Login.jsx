@@ -341,9 +341,9 @@ export default function Login({ isRegister = false }) {
                 />
                 <label className="text-sm" style={{ color: '#666' }}>
                   I have read and agree to GuruLink's{' '}
-                  <a href="#" className="underline" style={{ color: '#D4A34B' }}>Terms & Conditions</a>
+                  <Link to="/terms" className="underline" style={{ color: '#D4A34B' }}>Terms &amp; Conditions</Link>
                   {' '}and{' '}
-                  <a href="#" className="underline" style={{ color: '#D4A34B' }}>Privacy Policy</a>.
+                  <Link to="/privacy" className="underline" style={{ color: '#D4A34B' }}>Privacy Policy</Link>.
                 </label>
               </div>
             )}

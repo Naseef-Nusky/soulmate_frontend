@@ -177,24 +177,6 @@ export default function PreGenerationLanding({ onSubmit, email, loading = false 
           </div>
         </div>
 
-        {/* Karmic Love Guide */}
-        <div className="rounded-lg shadow p-6 mb-8 border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-          <h2 className="text-xl font-bold mb-3 flex items-center gap-2" style={{ color: '#1A2336' }}>
-            <span>❤️</span> Karmic Love Guide
-          </h2>
-          <p className="mb-4" style={{ color: '#4B5563' }}>
-            Finding a partner who shares your vision and complements your journey is one of life's greatest adventures. 
-            Your soulmate sketch reveals not just appearance, but the deeper spiritual connection that binds you.
-          </p>
-          <div className="rounded p-4 flex items-center gap-3 border" style={{ backgroundColor: '#F8FAFC', borderColor: '#E5E7EB' }}>
-            <Lock size={20} style={{ color: '#D4A34B' }} />
-            <div>
-              <div className="font-semibold text-sm" style={{ color: '#1A2336' }}>To read the full report, you need full access</div>
-              <div className="text-xs" style={{ color: '#4B5563' }}>Unlock complete insights with your sketch</div>
-            </div>
-          </div>
-        </div>
-
         {/* Testimonials */}
         <div className="rounded-lg shadow p-6 mb-8 border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
           <h2 className="text-2xl font-bold mb-6 text-center" style={{ color: '#1A2336' }}>Why does everyone love GuruLink?</h2>

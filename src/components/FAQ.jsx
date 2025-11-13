@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 
 const faqs = [
@@ -20,7 +21,12 @@ const faqs = [
   },
   {
     q: 'Is my information safe?',
-    a: 'Your privacy is our top priority. GuruLink is built with strict adherence to privacy laws, using advanced technical and organizational measures to protect your personal information from unauthorized access or disclosure. For more information, please review our Privacy Policy.',
+    a: (
+      <>
+        Your privacy is our top priority. GuruLink is built with strict adherence to privacy laws, using advanced technical and organizational measures to protect your personal information from unauthorized access or disclosure. For more information, please review our{' '}
+        <Link to="/privacy" style={{ color: '#D4A34B' }}>Privacy Policy</Link>.
+      </>
+    ),
   },
   {
     q: 'Can I ask an astrologer personal questions on GuruLink?',
