@@ -14,7 +14,7 @@ export default function Refund() {
 
         <section className="bg-white rounded-2xl shadow-sm border p-6 sm:p-8 space-y-6" style={{ borderColor: '#E5E7EB' }}>
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">7.1 Trial Period Refunds</h2>
+            <h2 className="text-xl font-semibold">Trial Period Refunds</h2>
             <p className="text-sm" style={{ color: '#4B5563' }}>Trials (£0.50, £3.99, £5, £6.99, £9, £13.21) are eligible for a full refund within 30 days if all conditions are met:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
               <li>You are a first-time trial user</li>
@@ -25,7 +25,7 @@ export default function Refund() {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">7.2 Regular Subscription Refunds</h2>
+            <h2 className="text-xl font-semibold">Regular Subscription Refunds</h2>
             <p className="text-sm" style={{ color: '#4B5563' }}>Regular subscriptions are generally non-refundable unless one of the following applies:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
               <li><strong>Service Unavailability:</strong> Documented downtime exceeding 24 consecutive hours</li>
@@ -36,7 +36,7 @@ export default function Refund() {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">7.3 Non-Refundable Cases</h2>
+            <h2 className="text-xl font-semibold">Non-Refundable Cases</h2>
             <p className="text-sm" style={{ color: '#4B5563' }}>We cannot offer refunds in these circumstances:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
               <li>Partial or unused subscription time after cancellation</li>
@@ -48,7 +48,7 @@ export default function Refund() {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">7.4 Refund Process</h2>
+            <h2 className="text-xl font-semibold">Refund Process</h2>
             <p className="text-sm font-medium" style={{ color: '#4B5563' }}>Submit your request through one of these official channels:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
               <li>GuruLink Help Center</li>
@@ -65,7 +65,7 @@ export default function Refund() {
             <p className="text-sm" style={{ color: '#4B5563' }}>We aim to process all refund requests within 3 business days.</p>
 
             <div className="space-y-1 text-sm" style={{ color: '#4B5563' }}>
-              <p className="font-semibold">7.4.1 Refund Payment Methods</p>
+              <p className="font-semibold">Refund Payment Methods</p>
               <ul className="list-disc pl-5 space-y-1">
                 <li>Refunds are issued only to the original payment method</li>
                 <li>If a card has expired or been cancelled, the refund is sent to the same card and your bank handles the credit</li>
