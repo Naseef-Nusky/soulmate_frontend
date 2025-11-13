@@ -267,8 +267,8 @@ export default function Dashboard() {
                 >
                   <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: 'rgba(212, 163, 75, 0.2)' }}
-                  >
-                    <User size={20} style={{ color: '#D4A34B' }} />
+                >
+                  <User size={20} style={{ color: '#D4A34B' }} />
                   </div>
                   {user?.name && (
                     <span className="text-sm font-semibold hidden sm:block" style={{ color: '#1A2336' }}>
@@ -445,7 +445,7 @@ export default function Dashboard() {
                       : horoscopeType === 'monthly'
                       ? "Monthly Horoscope"
                       : "Today's Horoscope"}
-                  </h2>
+                </h2>
                   <p className="text-sm font-medium uppercase tracking-wide" style={{ color: '#888' }}>
                     {horoscopeType === 'monthly' && data.horoscope?.monthName
                       ? `${data.horoscope.monthName} ${data.horoscope.year}`
@@ -543,8 +543,8 @@ export default function Dashboard() {
                         const content = sectionMap.get(title.toLowerCase());
                         if (!content) return null;
 
-                        return (
-                          <div
+                    return (
+                      <div 
                             key={`${horoscopeType}-${title}`}
                             className="rounded-2xl border shadow-sm"
                             style={{
@@ -556,31 +556,31 @@ export default function Dashboard() {
                               <div className="flex flex-col sm:flex-row items-start gap-4">
                                 <div
                                   className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-                                  style={{
+                        style={{ 
                                     backgroundColor: badgeBg,
                                     color,
-                                  }}
-                                >
+                        }}
+                      >
                                   {IconComponent ? <IconComponent size={26} /> : null}
-                                </div>
+                      </div>
                                 <div className="flex-1 space-y-2">
                                   <h3
                                     className="text-xl font-semibold"
                                     style={{ color: '#1A2336', letterSpacing: '-0.01em' }}
                                   >
                                     {title}
-                                  </h3>
+                            </h3>
                                   <p
                                     className="text-base leading-7 whitespace-pre-wrap"
                                     style={{ color: '#2F394B' }}
                                   >
                                     {content}
                                   </p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
+                    </div>
+                  </div>
+                      </div>
+                    </div>
+                    );
                       });
                     })()}
                   </div>
@@ -774,11 +774,11 @@ export default function Dashboard() {
                                       backgroundColor: 'rgba(212, 163, 75, 0.1)',
                                     }}
                                   >
-                                    {isExpanded ? (
+                                  {isExpanded ? (
                                       <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#D4A34B' }} />
-                                    ) : (
+              ) : (
                                       <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#D4A34B' }} />
-                                    )}
+              )}
                                   </div>
             </div>
                 </button>
@@ -796,8 +796,8 @@ export default function Dashboard() {
                     ));
                   })()}
                 </div>
-                ) : (
-                  <p style={{ color: '#666' }}>Loading your personality report...</p>
+              ) : (
+                <p style={{ color: '#666' }}>Loading your personality report...</p>
                 )
               ) : (
                 <div className="text-center py-12 space-y-4" style={{ color: '#1A2336' }}>

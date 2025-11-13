@@ -6,14 +6,11 @@
 @tailwind utilities;
 
 body { 
-  color: #F5F5F5;
+  color: #1A2336;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100vh;
-  background-image: url('/guruLinkBg.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-color: #F5F5F5;
+  background-image: none;
 }
 
 h1,
@@ -274,3 +271,4 @@ body {
     display: none !important;
   }
 }
+

@@ -32,6 +32,14 @@ export default function Footer() {
             if (!p) return NodeFilter.FILTER_REJECT;
             const tag = p.tagName?.toLowerCase();
             if (['script', 'style', 'noscript', 'select', 'option'].includes(tag)) return NodeFilter.FILTER_REJECT;
+            // skip anything inside .notranslate or [data-notranslate]
+            let el = p;
+            while (el) {
+              if (el.classList?.contains('notranslate') || el.hasAttribute?.('data-notranslate')) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              el = el.parentElement;
+            }
             return NodeFilter.FILTER_ACCEPT;
           }
         });
@@ -47,7 +55,20 @@ export default function Footer() {
           return alert('Nothing to translate on this view.');
         }
 
-        const texts = nodes.map(node => node.nodeValue);
+        // Preserve brand tokens in-text during translation
+        const preserveMap = new Map([
+          ['GuruLink.app', '__BRAND_GURULINK_APP__'],
+          ['GuruLink™', '__BRAND_GURULINK_TM__'],
+          ['GuruLink', '__BRAND_GURULINK__'],
+        ]);
+        const originalTexts = nodes.map(node => node.nodeValue);
+        const texts = originalTexts.map(t => {
+          let out = t;
+          preserveMap.forEach((token, key) => {
+            out = out.split(key).join(token);
+          });
+          return out;
+        });
         const { translations } = await translateTexts({ texts, target: langCode });
         if (!Array.isArray(translations) || translations.length !== nodes.length) {
           return alert('Translation service returned an unexpected response.');
@@ -55,7 +76,12 @@ export default function Footer() {
 
         // Apply translations in-place
         for (let i = 0; i < nodes.length; i++) {
-          nodes[i].nodeValue = translations[i];
+          let v = translations[i];
+          // Restore brand tokens
+          preserveMap.forEach((token, key) => {
+            v = v.split(token).join(key);
+          });
+          nodes[i].nodeValue = v;
         }
       } catch (err) {
         console.error('Translate fallback error:', err);
@@ -69,9 +95,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <img src="/logoicon.png" alt="GuruLink" className="h-8 w-8 object-contain" />
-              <div className="text-base sm:text-lg md:text-xl font-black">
+            <div className="flex items-center gap-2 mb-4 notranslate">
+              <img src="/logoicon.png" alt="GuruLink" className="h-8 w-8 object-contain notranslate" />
+              <div className="text-base sm:text-lg md:text-xl font-black notranslate">
                 GuruLink<span style={{ color: '#D4A34B' }}>.app</span>
               </div>
             </div>

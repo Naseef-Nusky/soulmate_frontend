@@ -10,13 +10,13 @@ export default function HowItWorks() {
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {[
             { step: 1, title: 'Complete the Registration Quiz', desc: '' },
-            { step: 2, title: 'Add Payment Method', desc: '' },
+            { step: 2, title: 'Add Your Payment Method', desc: '' },
             { 
               step: 3, 
-              title: 'Get Your Personalized Readings', 
+              title: 'Receive Your Personalized Readings', 
               desc: '' 
             },
-            { step: 4, title: 'Start 1-on-1 Guidance with Astrologers', desc: '' },
+            { step: 4, title: 'Begin One-on-One Sessions with Astrologers', desc: '' },
           ].map((item, i) => (
             <div key={i} className="text-center">
               <div 

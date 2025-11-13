@@ -8,8 +8,8 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-3 md:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3 cursor-pointer" onClick={() => navigate('/')}>
-            <img src="/logoicon.png" alt="GuruLink" className="h-6 w-6 sm:h-8 sm:w-8 object-contain" />
-            <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-black" style={{ color: '#1A2336' }}>
+            <img src="/logoicon.png" alt="GuruLink" className="h-6 w-6 sm:h-8 sm:w-8 object-contain notranslate" />
+            <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-black notranslate" style={{ color: '#1A2336' }}>
               GuruLink<span style={{ color: '#D4A34B' }}>.app</span>
             </div>
           </div>

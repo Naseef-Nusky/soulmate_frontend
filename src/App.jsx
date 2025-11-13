@@ -158,17 +158,12 @@ export default function QuizApp() {
   if (step === STEPS.length) {
     return (
       <div 
-        className="min-h-screen relative"
+        className="min-h-screen"
         style={{
-          backgroundImage: 'url(/guruLinkBg.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundAttachment: 'fixed'
+          backgroundColor: '#F5F5F5'
         }}
       >
-        <div className="absolute inset-0 backdrop-blur-sm pointer-events-none" style={{ backgroundColor: 'rgba(26, 35, 54, 0.6)' }} />
-        <div className="relative max-w-3xl mx-auto p-6 z-10">
+        <div className="max-w-3xl mx-auto p-6">
           <ResultView result={result} onRestart={() => { 
           setStep(0); 
           setResult(null);
@@ -204,50 +199,37 @@ export default function QuizApp() {
   if (STEPS[step]?.key === 'preGenerationLanding') {
     return (
       <div 
-        className="w-full min-h-screen p-4 relative"
+        className="w-full min-h-screen"
         style={{
-          backgroundImage: 'url(/guruLinkBg.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundAttachment: 'fixed'
+          backgroundColor: '#F5F5F5'
         }}
       >
-        <div className="absolute inset-0 backdrop-blur-sm pointer-events-none" style={{ backgroundColor: 'rgba(26, 35, 54, 0.6)' }} />
-        <div className="relative z-10">
-          <PreGenerationLanding 
-            onSubmit={onSubmit}
-            email={form.email}
-            loading={loading}
-          />
-        </div>
+        <PreGenerationLanding 
+          onSubmit={onSubmit}
+          email={form.email}
+          loading={loading}
+        />
       </div>
     );
   }
 
   return (
     <div 
-      className="min-h-screen relative overflow-hidden"
+      className="min-h-screen"
       style={{
-        backgroundImage: 'url(/guruLinkBg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed'
+        backgroundColor: '#F5F5F5'
       }}
     >
-      {/* Dark overlay for better text readability */}
-      <div className="absolute inset-0 backdrop-blur-sm pointer-events-none" style={{ backgroundColor: 'rgba(26, 35, 54, 0.6)' }} />
-
-      <div className="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8 z-10">
+      <div className="max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         {/* Header with logo theme */}
         <div className="flex items-center justify-between mb-6">
           <button 
-            className="flex items-center gap-2 px-4 py-2 rounded-2xl hover:bg-opacity-60 disabled:opacity-30 transition-all duration-200 disabled:cursor-not-allowed backdrop-blur-sm border shadow-lg" 
+            className="flex items-center gap-2 px-4 py-2 rounded-2xl disabled:opacity-30 transition-all duration-200 disabled:cursor-not-allowed border shadow-sm" 
             style={{ 
-              color: '#D4A34B',
-              backgroundColor: 'rgba(26, 35, 54, 0.6)',
-              borderColor: 'rgba(212, 163, 75, 0.2)'
+              color: '#1A2336',
+              backgroundColor: '#FFFFFF',
+              borderColor: '#E5E7EB',
+              boxShadow: '0 10px 15px -3px rgba(15, 23, 42, 0.08)'
             }}
             onClick={prev} 
             disabled={step === 0} 
@@ -263,17 +245,18 @@ export default function QuizApp() {
               alt="GuruLink" 
               className="h-10 w-10 object-contain"
             />
-            <div className="text-2xl font-black" style={{ color: '#F5F5F5' }}>
+            <div className="text-2xl font-black" style={{ color: '#1A2336' }}>
               GuruLink<span style={{ color: '#D4A34B' }}>.app</span>
             </div>
           </div>
           
           <button
-            className="flex items-center gap-2 px-4 py-2 rounded-2xl hover:bg-opacity-60 disabled:opacity-30 transition-all duration-200 disabled:cursor-not-allowed backdrop-blur-sm border shadow-lg"
+            className="flex items-center gap-2 px-4 py-2 rounded-2xl disabled:opacity-30 transition-all duration-200 disabled:cursor-not-allowed border shadow-sm"
             style={{ 
-              color: '#D4A34B',
-              backgroundColor: 'rgba(26, 35, 54, 0.6)',
-              borderColor: 'rgba(212, 163, 75, 0.2)'
+              color: '#1A2336',
+              backgroundColor: '#FFFFFF',
+              borderColor: '#E5E7EB',
+              boxShadow: '0 10px 15px -3px rgba(15, 23, 42, 0.08)'
             }}
             onClick={() => {
               const key = STEPS[step].key;
@@ -291,13 +274,13 @@ export default function QuizApp() {
 
         {/* Title Section */}
         <div className="mb-6">
-          <h1 className="text-3xl sm:text-4xl font-black mb-3" style={{ color: '#F5F5F5' }}>
+          <h1 className="text-3xl sm:text-4xl font-black mb-3" style={{ color: '#1A2336' }}>
             {STEPS[step]?.title || 'Quest'}
           </h1>
           <ProgressBar progress={progress} />
         </div>
 
-        {/* Step Content with navy blue card */}
+        {/* Step Content */}
         <div className="mt-8">
           <AnimatePresence mode="wait">
             <motion.div
@@ -306,10 +289,10 @@ export default function QuizApp() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.97 }}
               transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              className="backdrop-blur-xl rounded-3xl shadow-2xl border p-8 sm:p-10"
+              className="rounded-3xl shadow-2xl border p-8 sm:p-10"
               style={{ 
-                backgroundColor: 'rgba(26, 35, 54, 0.9)',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#FFFFFF',
+                borderColor: '#E5E7EB'
               }}
             >
               <QuizStep

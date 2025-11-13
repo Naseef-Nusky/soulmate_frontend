@@ -21,10 +21,10 @@ function CheckboxGroup({ options, values, onChange }) {
 function Modal({ open, icon, text, onSelect }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
-      <div className="rounded-xl shadow-xl w-[520px] max-w-[90%] p-6 space-y-4" style={{ backgroundColor: 'rgba(26, 35, 54, 0.95)', border: '2px solid rgba(212, 163, 75, 0.3)' }}>
+    <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center">
+      <div className="rounded-xl shadow-xl w-[520px] max-w-[90%] p-6 space-y-4 border-2" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
         <div className="text-3xl text-center" style={{ color: '#D4A34B' }} aria-hidden>{icon}</div>
-        <p className="text-center" style={{ color: '#F5F5F5' }}>{text}</p>
+        <p className="text-center" style={{ color: '#4B5563' }}>{text}</p>
         <div className="grid grid-cols-2 gap-3">
           <button className="btn" onClick={() => onSelect(false)}>No</button>
           <button className="btn" onClick={() => onSelect(true)}>Yes</button>
@@ -37,10 +37,10 @@ function Modal({ open, icon, text, onSelect }) {
 function Warning({ open, onAcknowledge }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
-      <div className="rounded-xl shadow-xl w-[560px] max-w-[92%] p-6 space-y-4" style={{ backgroundColor: 'rgba(26, 35, 54, 0.95)', border: '2px solid rgba(212, 163, 75, 0.3)' }}>
-        <h3 className="text-center font-bold text-xl" style={{ color: '#D4A34B' }}>WARNING</h3>
-        <p className="text-center" style={{ color: '#F5F5F5' }}>We have noticed something shocking while searching for your Soulmate. Prepare for surprising results!</p>
+    <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center">
+      <div className="rounded-xl shadow-xl w-[560px] max-w-[92%] p-6 space-y-4 border-2" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
+        <h3 className="text-center font-bold text-xl" style={{ color: '#1A2336' }}>WARNING</h3>
+        <p className="text-center" style={{ color: '#4B5563' }}>We have noticed something shocking while searching for your Soulmate. Prepare for surprising results!</p>
         <div className="flex justify-center">
           <button className="btn" onClick={onAcknowledge}>I Understand</button>
         </div>
@@ -52,11 +52,11 @@ function Warning({ open, onAcknowledge }) {
 function Bar({ label, value }) {
   return (
     <div className="space-y-1">
-      <div className="flex items-center justify-between text-sm" style={{ color: '#F5F5F5' }}>
+      <div className="flex items-center justify-between text-sm" style={{ color: '#1A2336' }}>
         <span>{label}</span>
         <span style={{ color: '#D4A34B' }}>{Math.round(value)}%</span>
       </div>
-      <div className="h-2 w-full rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(26, 35, 54, 0.5)' }}>
+      <div className="h-2 w-full rounded-full overflow-hidden" style={{ backgroundColor: '#E5E7EB' }}>
         <div className="h-full" style={{ width: `${Math.min(100, value)}%`, backgroundColor: '#D4A34B' }} />
       </div>
     </div>
@@ -140,7 +140,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
        <div className="space-y-4 text-center">
         {/* Hero Image with gold gradient overlay */}
         <div className="relative mx-auto max-w-lg">
-          <div className="relative rounded-2xl overflow-hidden shadow-xl border-2" style={{ borderColor: 'rgba(212, 163, 75, 0.3)' }}>
+          <div className="relative rounded-2xl overflow-hidden shadow-xl border-2" style={{ borderColor: '#E5E7EB' }}>
             <div className="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-transparent to-transparent z-10" />
           <img
               src="soulmatePortrait2.png"
@@ -184,52 +184,47 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
   if (key === 'socialProof') {
     return (
       <div className="space-y-6">
-        <div className="text-center">
-          <h2 className="text-2xl sm:text-3xl font-black mb-2" style={{ color: '#F5F5F5' }}>
-            25 Million+ people have seen their Soulmate
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl sm:text-3xl font-black" style={{ color: '#1A2336' }}>
+            Over 25 Million people have already met their Soulmate
           </h2>
-          <p style={{ color: 'rgba(212, 163, 75, 0.8)' }}>Join thousands discovering their perfect match every day</p>
+          <p style={{ color: '#4B5563' }}>Join thousands each day uncovering the face of their true connection 💞</p>
         </div>
         
         {/* Testimonial Card */}
-        <div className="backdrop-blur-lg rounded-3xl p-6 border-2 shadow-xl" style={{ backgroundColor: 'rgba(26, 35, 54, 0.6)', borderColor: 'rgba(212, 163, 75, 0.3)' }}>
-          <div className="flex items-start gap-4">
-            <div className="h-14 w-14 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg border-2" style={{ backgroundColor: '#D4A34B', borderColor: '#D4A34B' }}>
-              <span className="text-xl font-black" style={{ color: '#1A2336' }}>RB</span>
+        <div className="rounded-3xl p-6 border-2 shadow-xl" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
+          <div className="space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <div className="text-sm font-semibold" style={{ color: '#1A2336' }}>Rebecca Bauman</div>
+                <div className="text-xs" style={{ color: '#666' }}>March 5, 2025</div>
+              </div>
             </div>
-            <div className="space-y-2 flex-1">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold" style={{ color: '#F5F5F5' }}>Rebecca Bauman</span>
-                <span className="text-xs" style={{ color: 'rgba(212, 163, 75, 0.6)' }}>· March 5, 2025</span>
-          </div>
-              <div className="text-xl font-black" style={{ color: '#D4A34B' }}>"It's changed my life!"</div>
-              <p className="text-sm leading-relaxed" style={{ color: 'rgba(212, 163, 75, 0.8)' }}>
-                I'm so thankful for this app! It showed me my soulmate, and I actually found him — it's unbelievable. 
-                The details were spot on and gave me the confidence to follow my heart.
-              </p>
-              <div className="flex gap-1 pt-1">
-                {[...Array(5)].map((_, i) => (
-                  <span key={i} className="text-yellow-400 text-lg">⭐</span>
-                ))}
-        </div>
-        </div>
+            <p className="text-sm leading-relaxed" style={{ color: '#4B5563' }}>
+              I can’t believe how accurate it was! The sketch matched him perfectly — and now we’re together. This experience gave me hope and helped me open my heart again.
+            </p>
+            <div className="flex gap-1" aria-label="5 out of 5 stars">
+              {[...Array(5)].map((_, i) => (
+                <span key={i} className="text-yellow-400 text-lg">⭐</span>
+              ))}
+            </div>
           </div>
         </div>
         
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="backdrop-blur-lg rounded-3xl p-5 border-2 shadow-md hover:shadow-lg transition-all duration-300" style={{ backgroundColor: 'rgba(26, 35, 54, 0.6)', borderColor: 'rgba(212, 163, 75, 0.3)' }}>
+          <div className="rounded-3xl p-5 border-2 shadow-md hover:shadow-lg transition-all duration-300" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
             <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>900+</div>
-            <div className="text-sm" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>users have seen their soulmate today</div>
+            <div className="text-sm" style={{ color: '#4B5563' }}>people discovered their soulmate today</div>
           </div>
-          <div className="backdrop-blur-lg rounded-3xl p-5 border-2 shadow-md hover:shadow-lg transition-all duration-300" style={{ backgroundColor: 'rgba(26, 35, 54, 0.6)', borderColor: 'rgba(212, 163, 75, 0.3)' }}>
+          <div className="rounded-3xl p-5 border-2 shadow-md hover:shadow-lg transition-all duration-300" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
             <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>25M+</div>
-            <div className="text-sm" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>trusted users worldwide</div>
+            <div className="text-sm" style={{ color: '#4B5563' }}>people trust GuruLink worldwide</div>
           </div>
         </div>
         
         <div className="text-center pt-2">
-          <p className="text-sm font-semibold" style={{ color: '#D4A34B' }}>Ready to discover yours? Continue below 👇</p>
+          <p className="text-sm font-semibold" style={{ color: '#D4A34B' }}>Your soulmate could be waiting — start your journey below</p>
         </div>
       </div>
     );
@@ -255,21 +250,21 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                   borderColor: '#D4A34B',
                   boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.5)'
                 } : {
-                  backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                  color: '#F5F5F5',
-                  borderColor: 'rgba(212, 163, 75, 0.3)'
+                  backgroundColor: '#F8FAFC',
+                  color: '#1A2336',
+                  borderColor: '#E5E7EB'
                 }}
                 onMouseEnter={(e) => {
                   if (form[field] !== opt.label) {
                     e.currentTarget.style.borderColor = '#D4A34B';
-                    e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                    e.currentTarget.style.backgroundColor = '#FFF7EB';
                     e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (form[field] !== opt.label) {
-                    e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                    e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                    e.currentTarget.style.borderColor = '#E5E7EB';
+                    e.currentTarget.style.backgroundColor = '#F8FAFC';
                     e.currentTarget.style.boxShadow = 'none';
                   }
                 }}
@@ -285,11 +280,11 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 style={form[field] === opt.label ? {
                   ringColor: 'rgba(212, 163, 75, 0.5)',
                   borderColor: '#D4A34B',
-                  boxShadow: '0 20px 25px -5px rgba(212, 163, 75, 0.5)',
-                  backgroundColor: 'rgba(26, 35, 54, 0.4)'
+                  boxShadow: '0 20px 25px -5px rgba(212, 163, 75, 0.4)',
+                  backgroundColor: '#FFF7EB'
                 } : {
-                  borderColor: 'rgba(212, 163, 75, 0.3)',
-                  backgroundColor: 'rgba(26, 35, 54, 0.4)'
+                  borderColor: '#E5E7EB',
+                  backgroundColor: '#F1F5F9'
                 }}
                 onMouseEnter={(e) => {
                   if (form[field] !== opt.label) {
@@ -298,7 +293,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 }}
                 onMouseLeave={(e) => {
                   if (form[field] !== opt.label) {
-                    e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
+                    e.currentTarget.style.borderColor = '#E5E7EB';
                   }
                 }}
                 onClick={() => { setForm({ ...form, [field]: opt.label }); onAutoNext && onAutoNext(); }}
@@ -310,7 +305,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                     className="w-full h-24 sm:h-40 md:h-56 object-cover"
                     onError={(e) => { e.currentTarget.src = 'https://api.dicebear.com/7.x/adventurer/png?seed=avatar&size=256'; }}
                   />
-                  <div className="text-sm font-bold text-center pb-4" style={{ color: '#D4A34B' }}>{opt.label}</div>
+                  <div className="text-sm font-bold text-center pb-4" style={{ color: '#1A2336' }}>{opt.label}</div>
                 </div>
               </button>
             )
@@ -342,21 +337,21 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.5)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.ageRange !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.ageRange !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
@@ -393,21 +388,21 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.5)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.ethnicity !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.ethnicity !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
@@ -456,21 +451,21 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.5)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.appearanceImportance !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.appearanceImportance !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
@@ -520,21 +515,21 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                   borderColor: '#D4A34B',
                   boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.3)'
                 } : {
-                  backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                  color: '#F5F5F5',
-                  borderColor: 'rgba(212, 163, 75, 0.3)'
+                  backgroundColor: '#F8FAFC',
+                  color: '#1A2336',
+                  borderColor: '#E5E7EB'
                 }}
                 onMouseEnter={(e) => {
                   if (!selected) {
                     e.currentTarget.style.borderColor = '#D4A34B';
-                    e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                    e.currentTarget.style.backgroundColor = '#FFF7EB';
                     e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!selected) {
-                    e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                    e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                    e.currentTarget.style.borderColor = '#E5E7EB';
+                    e.currentTarget.style.backgroundColor = '#F8FAFC';
                     e.currentTarget.style.boxShadow = 'none';
                   }
                 }}
@@ -548,7 +543,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                   />
                 ) : null}
                 <span className="text-xl" aria-hidden>{o.emoji}</span>
-                <span className="flex-1 text-sm font-medium" style={{ color: '#F5F5F5' }}>{o.label}</span>
+                <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
               </button>
             );
           })}
@@ -559,7 +554,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
 
   if (key === 'traitFeedback') {
     return (
-      <div className="space-y-2" style={{ color: 'rgba(212, 163, 75, 0.8)' }}>
+      <div className="space-y-2" style={{ color: '#1A2336' }}>
         <p>Choosing qualities like <strong>{form.keyTraits.join(', ') || '—'}</strong> suggests you value depth and mutual respect. Great matches often share or complement these traits.</p>
       </div>
     );
@@ -571,7 +566,17 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
         <p className="text-sm" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>It helps us create your natal chart and identify key planetary positions.</p>
         <div>
           <label className="label">Birth date</label>
-          <input type="date" className="input" value={form.birthDate} onChange={(e) => setForm({ ...form, birthDate: e.target.value })} />
+          <input
+            type="date"
+            className="w-full px-4 py-3 rounded-xl border text-sm"
+            value={form.birthDate}
+            onChange={(e) => setForm({ ...form, birthDate: e.target.value })}
+            style={{
+              backgroundColor: '#F8FAFC',
+              borderColor: '#E5E7EB',
+              color: '#1A2336'
+            }}
+          />
         </div>
       </div>
     );
@@ -599,21 +604,21 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.5)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.element !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.element !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
@@ -647,21 +652,21 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.5)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.decisionMaking !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.decisionMaking !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
@@ -682,7 +687,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
     else if (choice === 'Head') stat = '40% of Virgo Sun people also make decisions using their head.';
     else if (choice === 'Both') stat = 'only the top 22% of Virgo Sun people make decisions using their heart and head.';
     return (
-      <div className="space-y-2" style={{ color: 'rgba(212, 163, 75, 0.8)' }}>
+      <div className="space-y-2" style={{ color: '#1A2336' }}>
         <p className="font-medium">Good to know!</p>
         <p>Based on our data, {stat || 'many people share your approach to decision-making.'}</p>
         <p>Stay true to your core values; the right person resonates with your rhythm.</p>
@@ -713,21 +718,21 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.3)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.challenge !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.challenge !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
@@ -742,7 +747,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 />
               ) : null}
               <span className="text-xl" aria-hidden>{o.emoji}</span>
-              <span className="flex-1 text-sm font-medium" style={{ color: '#F5F5F5' }}>{o.label}</span>
+              <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
             </button>
           ))}
         </div>
@@ -752,7 +757,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
 
   if (key === 'challengeFeedback') {
     return (
-      <div style={{ color: 'rgba(212, 163, 75, 0.8)' }}>
+      <div style={{ color: '#1A2336' }}>
         <p>Working through “{form.challenge || '—'}” strengthens resilience and attracts a partner who meets you with care.</p>
       </div>
     );
@@ -781,28 +786,28 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.3)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.redFlag !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.redFlag !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
               onClick={() => { setForm({ ...form, redFlag: o.label }); onAutoNext && onAutoNext(); }}
             >
               <span className="text-xl" aria-hidden>{o.emoji}</span>
-              <span className="flex-1 text-sm font-medium" style={{ color: '#F5F5F5' }}>{o.label}</span>
+              <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
             </button>
           ))}
         </div>
@@ -829,28 +834,28 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.3)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.partnerPreference !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.partnerPreference !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
               onClick={() => { setForm({ ...form, partnerPreference: o.label }); onAutoNext && onAutoNext(); }}
             >
               <span className="text-xl" aria-hidden>{o.emoji}</span>
-              <span className="flex-1 text-sm font-medium" style={{ color: '#F5F5F5' }}>{o.label}</span>
+              <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
             </button>
           ))}
         </div>
@@ -880,28 +885,28 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.3)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.relationshipDynamic !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.relationshipDynamic !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
               onClick={() => { setForm({ ...form, relationshipDynamic: o.label }); onAutoNext && onAutoNext(); }}
             >
               <span className="text-xl" aria-hidden>{o.emoji}</span>
-              <span className="flex-1 text-sm font-medium" style={{ color: '#F5F5F5' }}>{o.label}</span>
+              <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
             </button>
           ))}
         </div>
@@ -931,28 +936,28 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.3)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.loveLanguage !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.loveLanguage !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
               onClick={() => { setForm({ ...form, loveLanguage: o.label }); onAutoNext && onAutoNext(); }}
             >
               <span className="text-xl" aria-hidden>{o.emoji}</span>
-              <span className="flex-1 text-sm font-medium">{o.label}</span>
+              <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
             </button>
           ))}
         </div>
@@ -984,28 +989,28 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.3)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.idealConnection !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.idealConnection !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
               onClick={() => { setForm({ ...form, idealConnection: o.label }); onAutoNext && onAutoNext(); }}
             >
               <span className="text-xl" aria-hidden>{o.emoji}</span>
-              <span className="flex-1 text-sm" style={{ color: '#F5F5F5' }}>{o.label}</span>
+              <span className="flex-1 text-sm" style={{ color: '#1A2336' }}>{o.label}</span>
             </button>
           ))}
         </div>
@@ -1037,28 +1042,28 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                 borderColor: '#D4A34B',
                 boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.3)'
               } : {
-                backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                color: '#F5F5F5',
-                borderColor: 'rgba(212, 163, 75, 0.3)'
+                backgroundColor: '#F8FAFC',
+                color: '#1A2336',
+                borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
                 if (form.relationshipFear !== o.label) {
                   e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (form.relationshipFear !== o.label) {
-                  e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
               onClick={() => { setForm({ ...form, relationshipFear: o.label }); onAutoNext && onAutoNext(); }}
             >
               <span className={`${o.label === 'Being vulnerable' ? 'text-2xl' : 'text-xl'}`} aria-hidden>{o.emoji}</span>
-              <span className="flex-1 text-sm font-medium">{o.label}</span>
+              <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
             </button>
           ))}
         </div>
@@ -1100,27 +1105,27 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
                   borderColor: '#D4A34B',
                   boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.3)'
                 } : {
-                  backgroundColor: 'rgba(26, 35, 54, 0.6)',
-                  color: '#F5F5F5',
-                  borderColor: 'rgba(212, 163, 75, 0.3)'
+                  backgroundColor: '#F8FAFC',
+                  color: '#1A2336',
+                  borderColor: '#E5E7EB'
                 }}
                 onMouseEnter={(e) => {
                   if (!selected) {
                     e.currentTarget.style.borderColor = '#D4A34B';
-                    e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.8)';
+                    e.currentTarget.style.backgroundColor = '#FFF7EB';
                     e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!selected) {
-                    e.currentTarget.style.borderColor = 'rgba(212, 163, 75, 0.3)';
-                    e.currentTarget.style.backgroundColor = 'rgba(26, 35, 54, 0.6)';
+                    e.currentTarget.style.borderColor = '#E5E7EB';
+                    e.currentTarget.style.backgroundColor = '#F8FAFC';
                     e.currentTarget.style.boxShadow = 'none';
                   }
                 }}
               >
                 <span className="text-xl" aria-hidden>{o.emoji}</span>
-                <span className="flex-1 text-sm font-medium" style={{ color: '#F5F5F5' }}>{o.label}</span>
+                <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
                 {selected ? (
                   <CheckCircle size={18} style={{ color: '#D4A34B' }} />
                 ) : (

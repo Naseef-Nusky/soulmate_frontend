@@ -33,10 +33,10 @@ export default function HomePage() {
           {/* Text and Button - Second on mobile, first on desktop */}
           <div className="order-2 lg:order-1 text-center lg:text-left w-full">
             <h1 className="font-semibold mb-4 sm:mb-6 leading-tight text-2xl sm:text-3xl md:text-4xl lg:text-5xl" style={{ color: '#1A2336', fontFamily: 'Inter, sans-serif, "Hiragino Kaku Gothic"' }}>
-              Navigate through life with the help of modern astrology
+              Discover your life's path with the power of modern astrology
             </h1>
             <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8" style={{ color: '#666' }}>
-              The #1 app educating people by simplifying astrology for a greater awareness
+              The leading app that makes astrology simple and accessible for deeper self-awareness
             </p>
             <button
               onClick={() => navigate('/register')}
@@ -77,9 +77,9 @@ export default function HomePage() {
                   <Sparkles size={24} style={{ color: '#D4A34B' }} />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: '#1A2336' }}>Personalised Astrological Insights</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: '#1A2336' }}>Personalized Astrological Insights</h3>
                   <p className="text-sm sm:text-base" style={{ color: '#666' }}>
-                    GuruLink uses AI and NASA data to provide personalised birth chart guidance, helping you understand your unique astrological profile and life path.
+                    GuruLink combines AI intelligence with NASA's precise data to deliver custom birth chart interpretations, helping you explore your unique astrological identity and life journey.
                   </p>
                 </div>
               </div>
@@ -90,7 +90,7 @@ export default function HomePage() {
                 <div>
                   <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: '#1A2336' }}>Expert Guidance</h3>
                   <p className="text-sm sm:text-base" style={{ color: '#666' }}>
-                    Connect with professional astrologers for tailored advice and insights that help you navigate life's challenges and opportunities.
+                    Get connected with skilled astrologers who offer personalized advice and deep insights to help you overcome challenges and seize life's opportunities.
                   </p>
                 </div>
               </div>
@@ -101,7 +101,7 @@ export default function HomePage() {
                 <div>
                   <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: '#1A2336' }}>Birth Chart Compatibility</h3>
                   <p className="text-sm sm:text-base" style={{ color: '#666' }}>
-                    Uncover compatibility insights with others, understanding how your astrological signs interact and what that means for your relationships.
+                    Discover how your astrological signs align with others — gain meaningful insights into compatibility, connection, and relationship dynamics.
                   </p>
                 </div>
               </div>
@@ -112,10 +112,10 @@ export default function HomePage() {
         {/* Feature Cards */}
         <div className="grid md:grid-cols-4 gap-6">
           {[
-            { icon: Users, title: '1-on-1 Guidance with Astrologers', desc: '' },
-            { icon: Sparkles, title: 'Personalized Astrology', desc: '' },
-            { icon: Heart, title: 'Comprehensive Compatibility Reading', desc: '' },
-            { icon: Globe, title: 'Detailed Natal Chart Reading Decoding', desc: '' },
+            { icon: Users, title: 'One-on-One Astrologer Sessions', desc: '' },
+            { icon: Sparkles, title: 'Tailored Astrological Insights', desc: '' },
+            { icon: Heart, title: 'Tailored Astrological Insights', desc: '' },
+            { icon: Globe, title: 'Detailed Birth Chart Interpretation', desc: '' },
           ].map((feature, i) => (
             <div 
               key={i}
@@ -184,7 +184,7 @@ export default function HomePage() {
         </div>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <h2 className="font-semibold mb-6 sm:mb-8 text-2xl sm:text-3xl md:text-4xl lg:text-5xl" style={{ color: '#F5F5F5', fontFamily: 'Inter, sans-serif, "Hiragino Kaku Gothic"' }}>
-            It is time to transform your life with astrology
+            It's time to change your life through the power of astrology
           </h2>
           <button
             onClick={() => navigate('/register')}
@@ -210,17 +210,17 @@ export default function HomePage() {
             {
               icon: Shield,
               title: '',
-              desc: 'We combine real astronomical data with astrological wisdom to provide you with accurate and meaningful insights into your life path and relationships.',
+              desc: 'We blend authentic astronomical data with timeless astrological wisdom to deliver accurate and insightful guidance about your life journey and relationships.',
             },
             {
               icon: MessageCircle,
               title: '',
-              desc: 'We\'re proud of the positive feedback from our users who have found clarity, guidance, and understanding through GuruLink\'s personalized astrological readings.',
+              desc: 'We\'re honored by the positive feedback from our users who have discovered clarity, direction, and self-understanding through GuruLink\'s personalized astrology readings.',
             },
             {
               icon: Users,
               title: '',
-              desc: 'We offer direct access to professional astrologers who can provide personalized guidance tailored to your unique birth chart and life circumstances.',
+              desc: 'GuruLink also connects you directly with experienced astrologers who offer customized guidance based on your birth chart and individual life path.',
             },
           ].map((item, i) => (
             <div 
@@ -282,12 +282,11 @@ export default function HomePage() {
               className="testimonials-swiper"
             >
               {[
-                { name: 'Sarah M.', text: 'I was skeptical at first, but when I met someone matching the sketch, I was amazed!', date: '2 weeks ago' },
-                { name: 'James K.', text: 'The accuracy was incredible. My sketch helped me recognize my partner instantly.', date: '1 month ago' },
-                { name: 'Emma L.', text: 'Best experience I\'ve had. The detailed insights were spot-on and helped me understand my connection.', date: '3 weeks ago' },
-                { name: 'Michael R.', text: 'The astrological insights were incredibly accurate. It helped me understand myself better.', date: '1 week ago' },
-                { name: 'Lisa T.', text: 'Amazing service! The compatibility reading was spot-on and helped improve my relationship.', date: '3 weeks ago' },
-                { name: 'David P.', text: 'The daily horoscope has become part of my morning routine. Very insightful!', date: '2 months ago' },
+                { name: 'Anika R.', text: 'The birth chart reading gave me so much clarity about my career and life direction. Truly eye-opening!', date: '1 month ago' },
+                { name: 'Michael L.', text: 'I was amazed by how detailed my personalized horoscope was. It felt like it truly understood me!', date: '2 weeks ago' },
+                { name: 'Priya S.', text: 'The astrologer I spoke with was so kind and insightful. The guidance I received changed how I view my relationships.', date: '1 month ago' },
+                { name: 'Jonathan K.', text: 'I love how accurate the predictions are. Every reading feels personal and deeply meaningful.', date: '3 weeks ago' },
+                { name: 'Emily D.', text: 'GuruLink has become my daily companion. The astrology insights keep me grounded and inspired every morning.', date: '5 days ago' },
               ].map((testimonial, i) => (
                 <SwiperSlide key={i}>
                   <div 
@@ -297,12 +296,9 @@ export default function HomePage() {
                       borderColor: 'rgba(212, 163, 75, 0.2)'
                     }}
                   >
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full" style={{ backgroundColor: '#D4A34B' }} />
-                      <div>
-                        <div className="text-sm sm:text-base font-bold" style={{ color: '#1A2336' }}>{testimonial.name}</div>
-                        <div className="text-xs sm:text-sm" style={{ color: '#666' }}>Verified Customer • {testimonial.date}</div>
-                      </div>
+                    <div className="mb-4">
+                      <div className="text-sm sm:text-base font-bold" style={{ color: '#1A2336' }}>{testimonial.name}</div>
+                      <div className="text-xs sm:text-sm" style={{ color: '#666' }}>Verified Customer • {testimonial.date}</div>
                     </div>
                     <div className="flex gap-1 mb-3">
                       {[...Array(5)].map((_, j) => (
@@ -329,17 +325,17 @@ export default function HomePage() {
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         <div className="bg-white rounded-2xl shadow-xl border p-8 sm:p-12" style={{ borderColor: 'rgba(212, 163, 75, 0.3)' }}>
           <div className="text-center mb-8">
-            <h2 className="font-semibold mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl" style={{ color: '#1A2336', fontFamily: 'Inter, sans-serif, "Hiragino Kaku Gothic"' }}>Start Your 7-Day Trial</h2>
+            <h2 className="font-semibold mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl" style={{ color: '#1A2336', fontFamily: 'Inter, sans-serif, "Hiragino Kaku Gothic"' }}>Try GuruLink for 7 Days — Only $1!</h2>
             <p className="text-base sm:text-lg md:text-xl" style={{ color: '#666' }}>
-              Experience the full power of GuruLink for just $1.00
+              Discover your destiny with personalized readings and expert guidance.
             </p>
           </div>
           <ul className="space-y-4 mb-8 max-w-2xl mx-auto">
             {[
-              'Unlock the secrets of your destiny through personalized palmistry insights',
-              'Enjoy 1:1 live chats with professional astrologers for tailored guidance',
-              'Receive a personalized daily horoscope for celestial inspiration',
-              'Your 7-Day Trial will cost only $1.00. Afterwards, it will be $29.99/month',
+              'Get detailed palmistry insights made just for you',
+              'Chat live with professional astrologers',
+              'Enjoy daily horoscopes that inspire and guide you',
+              'After your 7-day trial ($1.00), your subscription continues at $29.99/month.',
             ].map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <Check size={20} style={{ color: '#D4A34B', flexShrink: 0, marginTop: '2px' }} />
