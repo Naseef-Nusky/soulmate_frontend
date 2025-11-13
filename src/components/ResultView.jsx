@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { sendHoroscopeLoginEmail } from '../lib/api.js';
 
-export default function ResultView({ result, onRestart }) {
+export default function ResultView({ result, onRestart, email }) {
   const navigate = useNavigate();
+  const [sendingLoginLink, setSendingLoginLink] = useState(false);
 
   if (!result) {
     return (
@@ -77,17 +80,29 @@ export default function ResultView({ result, onRestart }) {
       <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
         <button 
           className="btn px-8 py-3 text-base font-bold" 
-          onClick={() => {
-            navigate('/login');
+          onClick={async () => {
+            if (email) {
+              try {
+                setSendingLoginLink(true);
+                await sendHoroscopeLoginEmail(email);
+              } catch (err) {
+                console.error('Failed to send login link', err);
+              } finally {
+                setSendingLoginLink(false);
+              }
+            }
+            const target = email ? `/login?generateHoroscope=true&email=${encodeURIComponent(email)}` : '/login?generateHoroscope=true';
+            navigate(target);
           }}
           style={{
             backgroundColor: '#D4A34B',
             color: '#1A2336',
           }}
+          disabled={sendingLoginLink}
         >
-          View in Dashboard & Generate Horoscopes
+          {sendingLoginLink ? 'Sending login link...' : 'Login & Generate Horoscopes'}
         </button>
-    
+
       </div>
     </div>
   );

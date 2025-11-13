@@ -216,6 +216,32 @@ export async function translateTexts({ texts, target, source }) {
   return res.json(); // { translations: string[] }
 }
 
+export async function sendSketchReadyEmail(email) {
+  const res = await fetch(withBase('/api/notifications/sketch-ready'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Failed to send sketch email' }));
+    throw new Error(error.error || 'Failed to send sketch email');
+  }
+  return res.json();
+}
+
+export async function sendHoroscopeLoginEmail(email) {
+  const res = await fetch(withBase('/api/notifications/login-link'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Failed to send login email' }));
+    throw new Error(error.error || 'Failed to send login email');
+  }
+  return res.json();
+}
+
 
 
 

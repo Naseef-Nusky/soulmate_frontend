@@ -1154,20 +1154,34 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
     );
   }
 
-  if (key === 'email') {
-    return (
-      <div className="space-y-2">
-        <label className="label">Where should we send it?</label>
-        <input type="email" className="input" placeholder="you@example.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-      </div>
-    );
-  }
-
   if (key === 'promoCode') {
     return (
       <div className="space-y-2">
         <p style={{ color: 'rgba(212, 163, 75, 0.8)' }}>Your one-time promo code:</p>
         <div className="text-2xl font-bold tracking-wide">GURULINK93</div>
+      </div>
+    );
+  }
+
+  if (key === 'email') {
+    return (
+      <div className="space-y-3">
+        <p className="text-sm" style={{ color: '#4B5563' }}>Where should we send your sketch?</p>
+        <div>
+          <label className="label">Email address</label>
+          <input
+            type="email"
+            className="w-full px-4 py-3 rounded-xl border text-sm"
+            placeholder="you@example.com"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            style={{
+              backgroundColor: '#F8FAFC',
+              borderColor: '#E5E7EB',
+              color: '#1A2336'
+            }}
+          />
+        </div>
       </div>
     );
   }

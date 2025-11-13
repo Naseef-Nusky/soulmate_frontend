@@ -5,7 +5,7 @@ import ProgressBar from './components/ProgressBar.jsx';
 import QuizStep from './components/QuizStep.jsx';
 import ResultView from './components/ResultView.jsx';
 import PreGenerationLanding from './components/PreGenerationLanding.jsx';
-import { submitQuiz, requestGeneration, getJobStatus, getResult } from './lib/api.js';
+import { submitQuiz, requestGeneration, getJobStatus, getResult, sendSketchReadyEmail } from './lib/api.js';
 
 const STEPS = [
   { key: 'intro', title: 'Ready to finally discover your True Soulmate?' },
@@ -43,6 +43,7 @@ export default function QuizApp() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [job, setJob] = useState({ id: null, status: null, resultId: null });
+  const [submittedEmail, setSubmittedEmail] = useState('');
   const [form, setForm] = useState({
     gender: '',
     genderConfirm: '',
@@ -91,8 +92,8 @@ export default function QuizApp() {
         relationshipFear: '',
         lifeGoals: [],
         warningAcknowledged: false,
-          email: '',
-        });
+        email: '',
+      });
     }
   }, [step]);
 
@@ -102,6 +103,7 @@ export default function QuizApp() {
   async function onSubmit() {
     setLoading(true);
     setResult(null);
+    setSubmittedEmail(form.email);
     try {
       const payload = {
         answers: { ...form },
@@ -110,12 +112,20 @@ export default function QuizApp() {
           time: form.birthTime || null,
           city: form.birthCity || null,
         },
-          email: form.email || null,
+        email: form.email || null,
       };
       const res = await submitQuiz(payload);
       setResult(res);
       setJob({ id: null, status: null, resultId: null });
       setStep(STEPS.length);
+
+      if (form.email) {
+        try {
+          await sendSketchReadyEmail(form.email);
+        } catch (err) {
+          console.error('Failed to send sketch email', err);
+        }
+      }
     } catch (e) {
       alert('Failed to generate results. Make sure the backend is running.');
     } finally {
@@ -149,7 +159,7 @@ export default function QuizApp() {
       case 'idealConnection': return !form.idealConnection;
       case 'relationshipFear': return !form.relationshipFear;
       case 'lifeGoals': return form.lifeGoals.length === 0;
-      case 'email': return false;
+      case 'email': return !form.email;
       case 'preGenerationLanding': return false;
       default: return false;
     }
@@ -164,33 +174,38 @@ export default function QuizApp() {
         }}
       >
         <div className="max-w-3xl mx-auto p-6">
-          <ResultView result={result} onRestart={() => { 
-          setStep(0); 
-          setResult(null);
-          setForm({
-            gender: '',
-            genderConfirm: '',
-            ageRange: '',
-            ethnicity: '',
-            appearanceImportance: '',
-            keyTraits: [],
-            birthDate: '',
-            birthTime: '',
-            birthCity: '',
-            element: '',
-            decisionMaking: '',
-            challenge: '',
-            redFlag: '',
-            partnerPreference: '',
-            relationshipDynamic: '',
-            loveLanguage: '',
-            idealConnection: '',
-            relationshipFear: '',
-            lifeGoals: [],
-            warningAcknowledged: false,
-            email: '',
-          });
-        }} />
+          <ResultView
+            result={result}
+            email={submittedEmail}
+            onRestart={() => { 
+            setStep(0); 
+            setResult(null);
+            setJob({ id: null, status: null, resultId: null });
+            setSubmittedEmail('');
+            setForm({
+              gender: '',
+              genderConfirm: '',
+              ageRange: '',
+              ethnicity: '',
+              appearanceImportance: '',
+              keyTraits: [],
+              birthDate: '',
+              birthTime: '',
+              birthCity: '',
+              element: '',
+              decisionMaking: '',
+              challenge: '',
+              redFlag: '',
+              partnerPreference: '',
+              relationshipDynamic: '',
+              loveLanguage: '',
+              idealConnection: '',
+              relationshipFear: '',
+              lifeGoals: [],
+              warningAcknowledged: false,
+              email: '',
+            });
+          }} />
         </div>
       </div>
     );
@@ -260,7 +275,6 @@ export default function QuizApp() {
             }}
             onClick={() => {
               const key = STEPS[step].key;
-              if (key === 'email') return next();
               if (key === 'promoCode') return setStep(STEPS.length);
               return next();
             }}
@@ -317,6 +331,7 @@ export default function QuizApp() {
             'challengeFeedback',
             'lifeGoals',
             'portraitReady',
+            'email',
           ]);
           if (continueKeys.has(key)) {
             return (
@@ -336,11 +351,11 @@ export default function QuizApp() {
               </div>
             );
           }
-          if (key === 'email') {
+          if (key === 'preGenerationLanding') {
             return (
               <div className="mt-8 flex justify-center">
-                <button className="btn px-8 py-3" onClick={() => next()} disabled={isNextDisabled}>
-                  Continue
+                <button className="btn px-8 py-3" onClick={() => next()} disabled={loading}>
+                  Get Your Sketch
                 </button>
               </div>
             );

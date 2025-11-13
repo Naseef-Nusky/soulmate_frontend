@@ -325,7 +325,7 @@ export default function HomePage() {
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         <div className="bg-white rounded-2xl shadow-xl border p-8 sm:p-12" style={{ borderColor: 'rgba(212, 163, 75, 0.3)' }}>
           <div className="text-center mb-8">
-            <h2 className="font-semibold mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl" style={{ color: '#1A2336', fontFamily: 'Inter, sans-serif, "Hiragino Kaku Gothic"' }}>Try GuruLink for 7 Days — Only $1!</h2>
+            <h2 className="font-semibold mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl" style={{ color: '#1A2336', fontFamily: 'Inter, sans-serif, "Hiragino Kaku Gothic"' }}>Try GuruLink for 7 Days</h2>
             <p className="text-base sm:text-lg md:text-xl" style={{ color: '#666' }}>
               Discover your destiny with personalized readings and expert guidance.
             </p>
