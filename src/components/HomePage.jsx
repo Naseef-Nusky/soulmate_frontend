@@ -51,7 +51,7 @@ export default function HomePage() {
                 e.currentTarget.style.color = '#F5F5F5';
               }}
             >
-              Begin My Journey
+              Get Started
             </button>
           </div>
         </div>
@@ -77,7 +77,7 @@ export default function HomePage() {
                   <Sparkles size={24} style={{ color: '#D4A34B' }} />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: '#1A2336' }}>Personalized Astrological Insights</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: '#1A2336' }}>Individual Astrology Analysis</h3>
                   <p className="text-sm sm:text-base" style={{ color: '#666' }}>
                     GuruLink combines AI intelligence with NASA's precise data to deliver custom birth chart interpretations, helping you explore your unique astrological identity and life journey.
                   </p>
@@ -88,7 +88,7 @@ export default function HomePage() {
                   <MessageCircle size={24} style={{ color: '#D4A34B' }} />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: '#1A2336' }}>Expert Guidance</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: '#1A2336' }}>Professional Astrologer Support</h3>
                   <p className="text-sm sm:text-base" style={{ color: '#666' }}>
                     Get connected with skilled astrologers who offer personalized advice and deep insights to help you overcome challenges and seize life's opportunities.
                   </p>
@@ -99,7 +99,7 @@ export default function HomePage() {
                   <Heart size={24} style={{ color: '#D4A34B' }} />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: '#1A2336' }}>Birth Chart Compatibility</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: '#1A2336' }}>Birth Chart Match Insights</h3>
                   <p className="text-sm sm:text-base" style={{ color: '#666' }}>
                     Discover how your astrological signs align with others — gain meaningful insights into compatibility, connection, and relationship dynamics.
                   </p>
@@ -197,7 +197,7 @@ export default function HomePage() {
               e.currentTarget.style.backgroundColor = '#D4A34B';
             }}
           >
-            Begin My Journey
+            Get Started
           </button>
         </div>
       </section>
@@ -249,7 +249,6 @@ export default function HomePage() {
                 <Star key={i} size={20} style={{ fill: '#D4A34B', color: '#D4A34B' }} />
               ))}
             </div>
-            <p className="text-sm sm:text-base md:text-lg" style={{ color: '#666' }}>Excellent 4.83 based on 1,739 reviews</p>
           </div>
           <div className="relative px-12 sm:px-16">
             <Swiper

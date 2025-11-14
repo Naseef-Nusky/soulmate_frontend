@@ -40,14 +40,14 @@ export default function PreGenerationLanding({ onSubmit, email, loading = false 
         {/* Hero Section */}
         <div className="rounded-lg shadow-lg p-8 mb-8 border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center" style={{ color: '#1A2336' }}>
-            Your Sketch is Ready! See Your Soulmate Today!
+            Your Sketch is Complete! See Your Soulmate Now!
           </h1>
           
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mt-6">
             <div className="flex-1 text-center md:text-left">
-              <div className="mb-2" style={{ color: '#D4A34B' }}>900+ users have seen their soulmate today.</div>
+              <div className="mb-2" style={{ color: '#D4A34B' }}>100+ users have seen their soulmate today.</div>
               <div className="mb-6" style={{ color: '#666' }}>
-                Trusted by over 25 million people.
+                Trusted by over 1 million people.
                 <span className="flex items-center gap-1 justify-center md:justify-start mt-1">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} size={16} style={{ fill: '#D4A34B', color: '#D4A34B' }} />
@@ -84,15 +84,6 @@ export default function PreGenerationLanding({ onSubmit, email, loading = false 
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Left: Benefits */}
           <div className="rounded-lg shadow p-6 border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-            <div className="flex items-center gap-2 mb-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="w-8 h-8 rounded-full border-2 -ml-2 first:ml-0" style={{ backgroundColor: '#D4A34B', borderColor: '#FFFFFF' }} />
-              ))}
-              <div>
-                <div className="text-sm" style={{ color: '#D4A34B' }}>996 people joined today</div>
-                <div className="text-sm" style={{ color: '#666' }}>+993</div>
-              </div>
-            </div>
 
             <h2 className="text-2xl font-bold mb-6" style={{ color: '#1A2336' }}>WHY GURULINK'S SOULMATE SKETCH STANDS OUT</h2>
 
@@ -244,7 +235,7 @@ export default function PreGenerationLanding({ onSubmit, email, loading = false 
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div>
               <div className="font-bold">Your Soulmate Sketch Awaits</div>
-              <div className="text-sm opacity-90">Join 25+ million users who found their match</div>
+              <div className="text-sm opacity-90">Join 1+ million users who found their match</div>
             </div>
             <button 
               onClick={onSubmit}

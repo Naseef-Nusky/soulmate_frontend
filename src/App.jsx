@@ -8,7 +8,7 @@ import PreGenerationLanding from './components/PreGenerationLanding.jsx';
 import { submitQuiz, requestGeneration, getJobStatus, getResult, sendSketchReadyEmail } from './lib/api.js';
 
 const STEPS = [
-  { key: 'intro', title: 'Ready to finally discover your True Soulmate?' },
+  { key: 'intro', title: 'Ready to discover your soulmate fate?' },
   { key: 'socialProof', title: 'Why GuruLink' },
   { key: 'gender1', title: 'Your Gender' },
   { key: 'gender2', title: 'Confirm Gender' },

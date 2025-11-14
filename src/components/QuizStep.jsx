@@ -41,7 +41,7 @@ function Warning({ open, onAcknowledge }) {
     <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center">
       <div className="rounded-xl shadow-xl w-[560px] max-w-[92%] p-6 space-y-4 border-2" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
         <h3 className="text-center font-bold text-xl" style={{ color: '#1A2336' }}>WARNING</h3>
-        <p className="text-center" style={{ color: '#4B5563' }}>We have noticed something shocking while searching for your Soulmate. Prepare for surprising results!</p>
+        <p className="text-center" style={{ color: '#4B5563' }}>We've discovered something unexpected while uncovering your Soulmate. Get ready for surprising results!</p>
         <div className="flex justify-center">
           <button className="btn" onClick={onAcknowledge}>I Understand</button>
         </div>
@@ -122,12 +122,12 @@ function Preparing({ onDone }) {
 
   return (
     <div className="space-y-5">
-      <h2 className="text-xl font-bold" style={{ color: '#D4A34B' }}>Preparing Your Personal Soulmate Insights</h2>
+      <h2 className="text-xl font-bold" style={{ color: '#D4A34B' }}>Creating your personalized soulmate insights</h2>
       <Bar label="Heart’s Intentions" value={a} />
       <Bar label="Portrait of the Soulmate" value={b} />
       <Bar label="Connection Insights" value={c} />
-      <Modal open={m1} icon="✨" text="Do you consider yourself a spiritual person?" onSelect={closeM1} />
-      <Modal open={m2} icon="✨" text="Are you familiar with the concept of Psychic Artistry?" onSelect={closeM2} />
+      <Modal open={m1} icon="✨" text="Would you describe yourself as a spiritual individual?" onSelect={closeM1} />
+      <Modal open={m2} icon="✨" text="Are you aware of what psychic artistry is?" onSelect={closeM2} />
       <Warning open={warn} onAcknowledge={ackWarn} />
     </div>
   );
@@ -175,10 +175,12 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
         {/* Legal Text - reduced spacing */}
         <div className="pt-2 space-y-1">
           <p className="text-[10px] leading-tight" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>
-            By continuing, you agree to our <Link className="underline transition-colors font-semibold hover:opacity-80" to="/terms" style={{ color: '#D4A34B' }}>Terms &amp; Conditions</Link> and <Link className="underline transition-colors font-semibold hover:opacity-80" to="/privacy" style={{ color: '#D4A34B' }}>Privacy Notice</Link>.
-            Have a question? <Link className="underline transition-colors font-semibold hover:opacity-80" to="/support" style={{ color: '#D4A34B' }}>Reach our support team here</Link>.
+            By continuing to use this service, you acknowledge and accept our <Link className="underline transition-colors font-semibold hover:opacity-80" to="/terms" style={{ color: '#D4A34B' }}>Terms of Service</Link> and <Link className="underline transition-colors font-semibold hover:opacity-80" to="/privacy" style={{ color: '#D4A34B' }}>Privacy Policy</Link>.
           </p>
-          <p className="text-[10px] font-medium" style={{ color: 'rgba(212, 163, 75, 0.6)' }}>For entertainment purposes only.</p>
+          <p className="text-[10px] leading-tight" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>
+            If you have any questions, please <Link className="underline transition-colors font-semibold hover:opacity-80" to="/support" style={{ color: '#D4A34B' }}>contact our support team</Link>.
+          </p>
+          <p className="text-[10px] font-medium" style={{ color: 'rgba(212, 163, 75, 0.6)' }}>All content provided is for entertainment purposes only.</p>
         </div>
       </div>
     );
@@ -200,7 +202,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
                 <div className="text-sm font-semibold" style={{ color: '#1A2336' }}>Emily Harper</div>
-                <div className="text-xs" style={{ color: '#666' }}>February 18, 2025</div>
+                <div className="text-xs" style={{ color: '#666' }}>October 15, 2024</div>
               </div>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: '#4B5563' }}>
@@ -217,7 +219,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="rounded-3xl p-5 border-2 shadow-md hover:shadow-lg transition-all duration-300" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>1,200+</div>
+            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>100+</div>
             <div className="text-sm" style={{ color: '#4B5563' }}>people found their soulmate today</div>
           </div>
           <div className="rounded-3xl p-5 border-2 shadow-md hover:shadow-lg transition-all duration-300" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
@@ -237,81 +239,55 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
     const field = key === 'gender1' ? 'gender' : 'genderConfirm';
     const isConfirm = key === 'gender2';
     const options = [ { label: 'Male', img: '/MaleAvatar.png' }, { label: 'Female', img: '/FemaleAvatar.png' } ];
+    const heading = isConfirm ? 'Who are you interested in?' : 'Select your gender';
     return (
       <div className="space-y-4 text-center sm:text-left">
-        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>{isConfirm ? 'Who are you interested in?' : 'Select your gender'}</h3>
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>{heading}</h3>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
           {options.map((opt) => (
-            isConfirm ? (
-              <button
-                key={opt.label}
-                type="button"
-                className={`w-full py-4 rounded-2xl border-2 text-sm font-bold transition-all duration-300 ${form[field] === opt.label ? 'scale-[1.02]' : ''}`}
-                style={form[field] === opt.label ? {
-                  backgroundColor: '#D4A34B',
-                  color: '#1A2336',
-                  borderColor: '#D4A34B',
-                  boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.5)'
-                } : {
-                  backgroundColor: '#F8FAFC',
-                  color: '#1A2336',
-                  borderColor: '#E5E7EB'
-                }}
-                onMouseEnter={(e) => {
-                  if (form[field] !== opt.label) {
-                    e.currentTarget.style.borderColor = '#D4A34B';
-                    e.currentTarget.style.backgroundColor = '#FFF7EB';
-                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (form[field] !== opt.label) {
-                    e.currentTarget.style.borderColor = '#E5E7EB';
-                    e.currentTarget.style.backgroundColor = '#F8FAFC';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }
-                }}
-                onClick={() => { setForm({ ...form, [field]: opt.label }); onAutoNext && onAutoNext(); }}
-              >
-                {opt.label}
-              </button>
-            ) : (
-              <button
-                key={opt.label}
-                type="button"
-                className={`w-full rounded-3xl border-2 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] ${form[field] === opt.label ? 'scale-[1.02] ring-4' : ''}`}
-                style={form[field] === opt.label ? {
-                  ringColor: 'rgba(212, 163, 75, 0.5)',
-                  borderColor: '#D4A34B',
-                  boxShadow: '0 20px 25px -5px rgba(212, 163, 75, 0.4)',
-                  backgroundColor: '#FFF7EB'
-                } : {
-                  borderColor: '#E5E7EB',
-                  backgroundColor: '#F1F5F9'
-                }}
-                onMouseEnter={(e) => {
-                  if (form[field] !== opt.label) {
-                    e.currentTarget.style.borderColor = '#D4A34B';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (form[field] !== opt.label) {
-                    e.currentTarget.style.borderColor = '#E5E7EB';
-                  }
-                }}
-                onClick={() => { setForm({ ...form, [field]: opt.label }); onAutoNext && onAutoNext(); }}
-              >
-                <div className="flex flex-col items-stretch gap-3">
+            <button
+              key={opt.label}
+              type="button"
+              className={`${isConfirm ? 'py-4' : ''} w-full rounded-3xl border-2 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] ${form[field] === opt.label ? 'scale-[1.02] ring-4' : ''}`}
+              style={form[field] === opt.label ? {
+                ringColor: 'rgba(212, 163, 75, 0.5)',
+                borderColor: '#D4A34B',
+                boxShadow: isConfirm ? '0 10px 15px -3px rgba(212, 163, 75, 0.5)' : '0 20px 25px -5px rgba(212, 163, 75, 0.4)',
+                backgroundColor: '#FFF7EB'
+              } : {
+                borderColor: '#E5E7EB',
+                backgroundColor: isConfirm ? '#F8FAFC' : '#F1F5F9'
+              }}
+              onMouseEnter={(e) => {
+                if (form[field] !== opt.label) {
+                  e.currentTarget.style.borderColor = '#D4A34B';
+                  if (!isConfirm) return;
+                  e.currentTarget.style.backgroundColor = '#FFF7EB';
+                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (form[field] !== opt.label) {
+                  e.currentTarget.style.borderColor = '#E5E7EB';
+                  if (!isConfirm) return;
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
+                  e.currentTarget.style.boxShadow = 'none';
+                }
+              }}
+              onClick={() => { setForm({ ...form, [field]: opt.label }); onAutoNext && onAutoNext(); }}
+            >
+              <div className={`flex ${isConfirm ? 'items-center justify-center' : 'flex-col items-stretch gap-3'}`}>
+                {!isConfirm && (
                   <img
                     src={opt.img}
                     alt={`${opt.label} avatar`}
                     className="w-full h-24 sm:h-40 md:h-56 object-cover"
                     onError={(e) => { e.currentTarget.src = 'https://api.dicebear.com/7.x/adventurer/png?seed=avatar&size=256'; }}
                   />
-                  <div className="text-sm font-bold text-center pb-4" style={{ color: '#1A2336' }}>{opt.label}</div>
-                </div>
-              </button>
-            )
+                )}
+                <div className={`${isConfirm ? 'text-base' : 'text-sm'} font-bold text-center ${isConfirm ? '' : 'pb-1'}`} style={{ color: '#1A2336' }}>{opt.label}</div>
+              </div>
+            </button>
           ))}
         </div>
       </div>
@@ -319,12 +295,18 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
   }
 
   if (key === 'ageRange') {
-    const options = [
-      { label: '20-30', emoji: '🧑' },
-      { label: '30-40', emoji: '🧑‍🦰' },
-      { label: '40-50', emoji: '🧔' },
-      { label: '50+', emoji: '👴' },
-    ];
+    const baseRanges = ['20-30', '30-40', '40-50', '50+'];
+    const interest = form.genderConfirm || form.gender || '';
+    const emojiSets = {
+      Female: ['👩', '👩‍🦰', '👩‍🦳', '👵'],
+      Male: ['🧑', '🧑‍🦰', '🧔', '👴'],
+      default: ['💫', '✨', '🌟', '🌙']
+    };
+    const emojiSet = emojiSets[interest] || emojiSets.default;
+    const options = baseRanges.map((label, idx) => ({
+      label,
+      emoji: emojiSet[idx] || emojiSet[emojiSet.length - 1]
+    }));
     return (
       <div className="space-y-4 text-center sm:text-left">
         <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>Ideal age range for your soulmate?</h3>
@@ -825,7 +807,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
     ];
     return (
       <div className="space-y-2 text-center sm:text-left">
-        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>Do you prefer a similar partner or one who contrasts with you?</h3>
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>Are you looking for someone similar to yourself or someone who contrasts you?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -876,7 +858,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
     ];
     return (
       <div className="space-y-2 text-center sm:text-left">
-        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What's your ideal relationship dynamic?</h3>
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>How would you describe your perfect kind of relationship?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -927,7 +909,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
     ];
     return (
       <div className="space-y-2 text-center sm:text-left">
-        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What's your primary love language?</h3>
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>Which love language best fits you?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -980,7 +962,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
     ];
     return (
       <div className="space-y-2 text-center sm:text-left">
-        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What's your ideal connection with a partner?</h3>
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What does an ideal partnership look like to you?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -1033,7 +1015,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
     ];
     return (
       <div className="space-y-2 text-center sm:text-left">
-        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What's your biggest relationship fear? <span aria-hidden>🫣</span></h3>
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What is your greatest fear when it comes to relationships?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {options.map((o) => (
             <button
@@ -1093,7 +1075,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
 
     return (
       <div className="space-y-2 text-center sm:text-left">
-        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What life goals do you hope to achieve with your soulmate?</h3>
+        <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>What long-term goals would you like to accomplish with your soulmate?</h3>
         <div className="space-y-3">
           {options.map((o) => {
             const selected = form.lifeGoals.includes(o.label);
@@ -1151,8 +1133,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
   if (key === 'portraitReady') {
     return (
       <div className="space-y-2">
-        <h2 className="text-xl font-bold" style={{ color: '#D4A34B' }}>Your soulmate portrait is ready!</h2>
-        <p style={{ color: 'rgba(212, 163, 75, 0.8)' }}>Proceed to see your soulmate now.</p>
+        <h2 className="text-xl font-bold" style={{ color: '#D4A34B' }}>Your soulmate portrait is ready for you!</h2>
+        <p style={{ color: 'rgba(212, 163, 75, 0.8)' }}>Go ahead and view your soulmate now.</p>
       </div>
     );
   }

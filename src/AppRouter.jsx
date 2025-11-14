@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import HomePage from './components/HomePage.jsx';
 import PricingPage from './components/PricingPage.jsx';
 import QuizApp from './App.jsx';
@@ -12,9 +13,20 @@ import Cookies from './components/Cookies.jsx';
 import Refund from './components/Refund.jsx';
 import Support from './components/Support.jsx';
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 export default function AppRouter() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/pricing" element={<PricingPage />} />
@@ -34,6 +46,7 @@ export default function AppRouter() {
     </BrowserRouter>
   );
 }
+
 
 
 

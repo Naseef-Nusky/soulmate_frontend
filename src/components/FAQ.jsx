@@ -4,33 +4,33 @@ import { ChevronDown } from 'lucide-react';
 
 const faqs = [
   {
-    q: 'Who is GuruLink for?',
-    a: 'GuruLink is for anyone curious about astrology — from beginners who want to learn the basics to enthusiasts seeking deeper, personalized insights. Whether you\'re exploring self-discovery, improving relationships, or simply curious about how the cosmos influences your life, GuruLink offers tailored guidance to help you navigate your journey.',
+    q: 'Who is GuruLink designed for?',
+    a: 'GuruLink is ideal for anyone interested in astrology — whether you’re just getting started or already passionate about understanding cosmic influences. From personal growth to relationship insights, our platform offers tailored guidance for every level of curiosity.',
   },
   {
-    q: 'Is GuruLink free to use?',
-    a: 'No, GuruLink is a subscription-based service. However, we offer a 7-day trial for just $1.00* that provides full access to all features. Cancel within the trial period and you won\'t be charged further. If you continue, your subscription will automatically renew at the weekly plan starting at $14.99/biweekly*. Pricing will always be clearly presented during signup.',
+    q: 'Is GuruLink free?',
+    a: 'GuruLink operates on a subscription model. We provide a 7-day trial for only $1.00*, giving you full access to all features. You may cancel during the trial with no further charges. If you continue, your plan will renew automatically at the biweekly rate starting at $14.99*. All pricing will be shown clearly during signup.',
   },
   {
-    q: 'What if I\'m not satisfied with the service?',
-    a: 'We\'re confident you\'ll find value in GuruLink, but if you\'re not satisfied or encounter technical issues, you may be eligible for a refund. Please refer to our Refund Policy for full details.',
+    q: 'What if the service doesn’t meet my expectations?',
+    a: 'If you’re not fully satisfied or encounter any issues, you may qualify for a refund. Please check our Refund Policy for complete information.',
   },
   {
-    q: 'How do I cancel my subscription?',
-    a: 'Canceling is quick and easy. Visit our Help Center and follow the instructions. You\'ll retain access to GuruLink until the end of your current billing cycle.',
+    q: 'How can I cancel my subscription?',
+    a: 'Canceling your subscription is simple. Head to our Help Center and follow the steps provided. Your access will remain active until the end of your current billing period.',
   },
   {
-    q: 'Is my information safe?',
+    q: 'Is my personal data secure?',
     a: (
       <>
-        Your privacy is our top priority. GuruLink is built with strict adherence to privacy laws, using advanced technical and organizational measures to protect your personal information from unauthorized access or disclosure. For more information, please review our{' '}
+        Protecting your privacy is extremely important to us. GuruLink follows strict privacy standards and uses advanced security measures to keep your information safe from unauthorized access. You can read more in our{' '}
         <Link to="/privacy" style={{ color: '#D4A34B' }}>Privacy Policy</Link>.
       </>
     ),
   },
   {
-    q: 'Can I ask an astrologer personal questions on GuruLink?',
-    a: 'Absolutely! GuruLink connects you with professional astrologers who can answer personal questions. Whether it\'s guidance on your birth chart, a life situation, or a detailed palm reading, our astrologers provide personalized insights and advice.',
+    q: 'Can I ask astrologers personal questions on GuruLink?',
+    a: 'Yes! GuruLink connects you with experienced astrologers who can answer personal or detailed questions. Whether you need clarity on your birth chart, life choices, or palm reading, our experts offer customized insights just for you.',
   },
 ];
 

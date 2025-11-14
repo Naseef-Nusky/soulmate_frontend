@@ -44,7 +44,7 @@ export default function HowItWorks() {
               e.currentTarget.style.color = '#F5F5F5';
             }}
           >
-            Begin My Journey
+            Get Started
           </button>
         </div>
       </div>

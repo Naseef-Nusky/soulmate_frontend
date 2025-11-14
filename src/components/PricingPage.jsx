@@ -1,24 +1,15 @@
-import { useState } from 'react';
 import { Check, Headphones } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import HowItWorks from './HowItWorks';
 import FAQ from './FAQ';
-import { detectCurrency, getPricing, getAvailableCurrencies, setCurrency } from '../utils/currency.js';
+import { detectCurrency, getPricing } from '../utils/currency.js';
 
 export default function PricingPage() {
   const navigate = useNavigate();
-  const [currency, setCurrencyState] = useState(() => detectCurrency());
+  const currency = detectCurrency();
   const pricing = getPricing(currency);
-  const currencies = getAvailableCurrencies();
-
-  const handleCurrencyChange = (event) => {
-    const newCurrency = event.target.value;
-    if (setCurrency(newCurrency)) {
-      setCurrencyState(newCurrency);
-    }
-  };
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F5F5F5' }}>
@@ -30,28 +21,11 @@ export default function PricingPage() {
         <div className="text-center mb-12 space-y-6">
           <div>
             <h1 className="font-semibold mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl" style={{ color: '#1A2336', fontFamily: 'Inter, sans-serif, \"Hiragino Kaku Gothic\"' }}>
-              Unlock the Full Power of GuruLink
+              Experience the complete power of GuruLink.
             </h1>
             <p className="text-xl max-w-3xl mx-auto" style={{ color: '#666' }}>
-              Discover flexible plans designed to support your journey of self-discovery, guidance, and cosmic insight. Choose the plan that fits your path best.
+              Our customizable plans are designed to guide your self-discovery and spiritual insight. Choose the package that best matches your path.
             </p>
-          </div>
-
-          <div className="flex items-center justify-center gap-3 text-sm">
-            <label htmlFor="currency" className="font-semibold" style={{ color: '#1A2336' }}>Display prices in:</label>
-            <select
-              id="currency"
-              value={currency}
-              onChange={handleCurrencyChange}
-              className="px-4 py-2 rounded-lg border text-sm"
-              style={{ borderColor: '#E5E7EB', backgroundColor: '#FFFFFF', color: '#1A2336' }}
-            >
-              {currencies.map((option) => (
-                <option key={option.code} value={option.code}>
-                  {option.symbol} {option.name}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
 
