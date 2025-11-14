@@ -204,7 +204,7 @@ export default function HomePage() {
 
       {/* Why Trust Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-        <h2 className="font-semibold text-center mb-8 sm:mb-12 text-2xl sm:text-3xl md:text-4xl lg:text-5xl" style={{ color: '#1A2336', fontFamily: 'Inter, sans-serif, "Hiragino Kaku Gothic"' }}>Why you can Trust GuruLink</h2>
+        <h2 className="font-semibold text-center mb-8 sm:mb-12 text-2xl sm:text-3xl md:text-4xl lg:text-5xl" style={{ color: '#1A2336', fontFamily: 'Inter, sans-serif, "Hiragino Kaku Gothic"' }}>Why GuruLink Deserves Your Trust</h2>
         <div className="grid md:grid-cols-3 gap-8">
           {[
             {
@@ -243,7 +243,7 @@ export default function HomePage() {
       <section className="bg-white py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="font-semibold mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl" style={{ color: '#1A2336', fontFamily: 'Inter, sans-serif, "Hiragino Kaku Gothic"' }}>Thousands Have Found Their Path with GuruLink</h2>
+            <h2 className="font-semibold mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl" style={{ color: '#1A2336', fontFamily: 'Inter, sans-serif, "Hiragino Kaku Gothic"' }}>Thousands have discovered their direction through GuruLink</h2>
             <div className="flex items-center justify-center gap-2 mb-2">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} size={20} style={{ fill: '#D4A34B', color: '#D4A34B' }} />
@@ -281,11 +281,11 @@ export default function HomePage() {
               className="testimonials-swiper"
             >
               {[
-                { name: 'Anika R.', text: 'The birth chart reading gave me so much clarity about my career and life direction. Truly eye-opening!', date: '1 month ago' },
-                { name: 'Michael L.', text: 'I was amazed by how detailed my personalized horoscope was. It felt like it truly understood me!', date: '2 weeks ago' },
-                { name: 'Priya S.', text: 'The astrologer I spoke with was so kind and insightful. The guidance I received changed how I view my relationships.', date: '1 month ago' },
-                { name: 'Jonathan K.', text: 'I love how accurate the predictions are. Every reading feels personal and deeply meaningful.', date: '3 weeks ago' },
-                { name: 'Emily D.', text: 'GuruLink has become my daily companion. The astrology insights keep me grounded and inspired every morning.', date: '5 days ago' },
+                { name: 'Anika R.', text: 'The birth chart reading gave me so much clarity about my career and life direction. Truly eye-opening!', date: '1 week ago' },
+                { name: 'Michael L.', text: 'I was amazed by how detailed my personalized horoscope was. It felt like it truly understood me!', date: '1 week ago' },
+                { name: 'Priya S.', text: 'The astrologer I spoke with was so kind and insightful. The guidance I received changed how I view my relationships.', date: '1 week ago' },
+                { name: 'Jonathan K.', text: 'I love how accurate the predictions are. Every reading feels personal and deeply meaningful.', date: '1 week ago' },
+                { name: 'Emily D.', text: 'GuruLink has become my daily companion. The astrology insights keep me grounded and inspired every morning.', date: '1 week ago' },
               ].map((testimonial, i) => (
                 <SwiperSlide key={i}>
                   <div 
