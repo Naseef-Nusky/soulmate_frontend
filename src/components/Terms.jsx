@@ -6,9 +6,9 @@ export default function Terms() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-left" style={{ color: '#1A2336' }}>
         <div className="space-y-3 text-center">
           <p className="text-xs uppercase tracking-wide" style={{ color: '#D4A34B' }}>GuruLink Terms &amp; Conditions</p>
-          <h1 className="text-3xl sm:text-4xl font-bold">Understand How GuruLink Works</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold">How GuruLink Operates</h1>
           <p className="text-sm sm:text-base" style={{ color: '#4B5563' }}>
-            These terms govern your use of GuruLink&apos;s services. By continuing to use our website or products, you agree to the policies described below.
+            These Terms explain how you may use GuruLink and its services. By continuing to browse our website or access our products, you acknowledge and agree to the rules outlined here.
           </p>
         </div>
 
@@ -16,8 +16,8 @@ export default function Terms() {
           <div className="space-y-1">
             <h2 className="text-xl font-semibold">Service Provider</h2>
             <p className="text-sm" style={{ color: '#4B5563' }}>
-              GuruLink Ltd<br />
-              Trident House, 42-43 Victoria Street<br />
+              GuruLink<br />
+              Trident House, 42–43 Victoria Street<br />
               St Albans, Hertfordshire AL1 3HZ<br />
               United Kingdom<br />
               Website: <a href="https://gurulink.app" target="_blank" rel="noreferrer" className="underline" style={{ color: '#D4A34B' }}>https://gurulink.app</a>
@@ -25,130 +25,138 @@ export default function Terms() {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">1. Acceptance of Terms</h2>
+            <h2 className="text-xl font-semibold">1. Agreement to These Terms</h2>
             <p className="text-sm" style={{ color: '#4B5563' }}>
-              By accessing GuruLink (&ldquo;we,&rdquo; &ldquo;us,&rdquo; &ldquo;our&rdquo;), you agree to these Terms. We provide spiritual guidance services including birth chart analysis and palm readings through our platform.
+              By using GuruLink (&ldquo;we,&rdquo; &ldquo;our,&rdquo; &ldquo;us&rdquo;), you confirm that you accept these Terms. GuruLink offers spiritual and metaphysical services, including palm readings, birth chart insights, and related features available through our platform.
             </p>
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">2. Service Description</h2>
+            <h2 className="text-xl font-semibold">2. Services We Offer</h2>
+            <p className="text-sm" style={{ color: '#4B5563' }}>Our platform includes:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
-              <li>Digital astrology and palm reading services</li>
-              <li>Birth chart analysis and spiritual guidance</li>
-              <li>Expert consultations via chat or video</li>
-              <li>Subscription-based premium features</li>
+              <li>Digital palmistry and astrology tools</li>
+              <li>Personal birth chart interpretations and spiritual guidance</li>
+              <li>Expert consultations via chat or video sessions</li>
+              <li>Subscription-based upgrades and premium services</li>
             </ul>
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">3. Important Disclaimers</h2>
+            <h2 className="text-xl font-semibold">3. Important Notices &amp; Disclaimers</h2>
             <p className="text-sm font-medium" style={{ color: '#4B5563' }}>Our services are intended for:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
-              <li>Entertainment purposes</li>
-              <li>Personal reflection and spiritual guidance</li>
-              <li>Educational value</li>
+              <li>Entertainment</li>
+              <li>Spiritual exploration and personal insight</li>
+              <li>Educational and reflective purposes</li>
             </ul>
-            <p className="text-sm font-medium" style={{ color: '#4B5563' }}>They are not intended for:</p>
+            <p className="text-sm font-medium mt-3" style={{ color: '#4B5563' }}>They are not intended to:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
-              <li>Professional medical, financial, or legal advice</li>
-              <li>Making important life decisions</li>
-              <li>Predicting future events with certainty</li>
+              <li>Replace professional medical, legal, or financial advice</li>
+              <li>Serve as the basis for significant life decisions</li>
+              <li>Guarantee predictions or outcomes</li>
             </ul>
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">4. Account Requirements</h2>
+            <h2 className="text-xl font-semibold">4. Account Eligibility</h2>
+            <p className="text-sm" style={{ color: '#4B5563' }}>To use GuruLink, you must:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
-              <li>You must be 18 years or older</li>
-              <li>Only one account per user</li>
-              <li>Accurate information is required</li>
-              <li>Keep your login details secure</li>
+              <li>Be at least 18 years old</li>
+              <li>Create only one user account</li>
+              <li>Provide accurate and truthful information</li>
+              <li>Keep your login credentials private and secure</li>
             </ul>
           </div>
 
           <div className="space-y-2">
             <h2 className="text-xl font-semibold">5. Subscription Plans</h2>
-            <p className="text-sm font-medium" style={{ color: '#4B5563' }}>Trial Period</p>
+            <p className="text-sm font-medium" style={{ color: '#4B5563' }}>Trial Access</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
-              <li>7-day trial available</li>
-              <li>Price starts from £0.50</li>
-              <li>Converts to paid subscription automatically</li>
+              <li>A 7-day introductory trial is available</li>
+              <li>Pricing begins at £1.00</li>
+              <li>Trials automatically convert into a paid plan unless cancelled</li>
             </ul>
-            <p className="text-sm font-medium" style={{ color: '#4B5563' }}>Subscription Options</p>
+            <p className="text-sm font-medium mt-3" style={{ color: '#4B5563' }}>Subscription Options</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
-              <li>Weekly plans: £7.99 - £14.99 per week</li>
-              <li>Monthly plans: £19.99 - £49 per month</li>
+              <li>Weekly plans: £7.99–£14.99</li>
+              <li>Monthly plans: £19.99–£49</li>
             </ul>
-            <p className="text-sm font-medium" style={{ color: '#4B5563' }}>Payment</p>
+            <p className="text-sm font-medium mt-3" style={{ color: '#4B5563' }}>Payments</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
-              <li>Major cards accepted</li>
-              <li>Secure payment processing</li>
-              <li>Auto-renewal until cancelled</li>
+              <li>Payments are processed securely</li>
+              <li>Major credit and debit cards accepted</li>
+              <li>Subscriptions renew automatically until cancelled</li>
             </ul>
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">6. Cancellation &amp; Refunds</h2>
+            <h2 className="text-xl font-semibold">6. Cancellations &amp; Refunds</h2>
             <p className="text-sm font-medium" style={{ color: '#4B5563' }}>How to Cancel</p>
+            <p className="text-sm" style={{ color: '#4B5563' }}>You may cancel:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
-              <li>Self-service via account settings</li>
-              <li>Email: <a href="mailto:help@gurulink.app" className="underline" style={{ color: '#D4A34B' }}>help@gurulink.app</a></li>
-              <li>Cancellation becomes effective at the end of the current billing period</li>
+              <li>Through your account settings</li>
+              <li>By emailing <a href="mailto:help@gurulink.app" className="underline" style={{ color: '#D4A34B' }}>help@gurulink.app</a></li>
             </ul>
-            <p className="text-sm font-medium" style={{ color: '#4B5563' }}>Refund Policy</p>
+            <p className="text-sm mt-2" style={{ color: '#4B5563' }}>Cancellations apply at the end of the current billing cycle.</p>
+            <p className="text-sm font-medium mt-4" style={{ color: '#4B5563' }}>Refund Terms</p>
             <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
-              <li>Trial periods: refundable within 30 days</li>
-              <li>Regular subscriptions: generally non-refundable</li>
-              <li>Exceptions made for service unavailability</li>
-              <li>All refunds returned to the original payment method</li>
-            </ul>
-          </div>
-
-          <div className="space-y-2">
-            <h2 className="text-xl font-semibold">7. User Responsibilities</h2>
-            <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
-              <li>Provide accurate birth information</li>
-              <li>Submit clear palm images</li>
-              <li>Maintain respectful communication with experts</li>
-              <li>Do not record sessions without consent</li>
-              <li>Use the services responsibly</li>
+              <li>Trial fees can be refunded within 30 days</li>
+              <li>Standard subscriptions are generally non-refundable</li>
+              <li>Exceptions may apply if services are unavailable</li>
+              <li>Refunds are issued only to the original payment method</li>
             </ul>
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">8. Intellectual Property</h2>
+            <h2 className="text-xl font-semibold">7. User Obligations</h2>
+            <p className="text-sm" style={{ color: '#4B5563' }}>Users agree to:</p>
+            <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
+              <li>Provide correct birth information for readings</li>
+              <li>Upload clear palm images</li>
+              <li>Interact respectfully with advisors and experts</li>
+              <li>Refrain from recording sessions without permission</li>
+              <li>Use the app responsibly and ethically</li>
+            </ul>
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold">8. Intellectual Property Rights</h2>
             <p className="text-sm" style={{ color: '#4B5563' }}>
-              GuruLink owns all platform content, technologies, analytical methods, algorithms, and trademarks. Your access is limited to a personal, non-transferable license.
+              All content, technologies, algorithms, trademarks, and materials belonging to GuruLink remain our exclusive property. You receive a limited, personal, non-transferable right to access and use the platform.
             </p>
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">9. Limitations</h2>
+            <h2 className="text-xl font-semibold">9. Limitations of Liability</h2>
+            <p className="text-sm" style={{ color: '#4B5563' }}>GuruLink is not responsible for:</p>
+            <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
+              <li>Choices or actions taken based on readings</li>
+              <li>Interruptions caused by events outside of our control</li>
+              <li>Device-related technical problems</li>
+              <li>The accuracy or interpretation of analyses provided</li>
+            </ul>
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold">10. Resolving Disputes</h2>
             <p className="text-sm" style={{ color: '#4B5563' }}>
-              GuruLink is not liable for personal decisions made based on readings, service interruptions beyond our control, technical issues with user devices, or the accuracy of interpretations.
+              These Terms are governed by the laws of England and Wales. We encourage you to contact us first to address concerns. Any legal action must be pursued through the courts located in the United Kingdom.
             </p>
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">10. Dispute Resolution</h2>
+            <h2 className="text-xl font-semibold">11. Updates to These Terms</h2>
             <p className="text-sm" style={{ color: '#4B5563' }}>
-              These terms are governed by the laws of England and Wales. Please contact us first to resolve any issues. Legal proceedings must take place in UK courts.
+              We may revise our Terms from time to time. You will receive at least 30 days&apos; notice of any significant changes. Continued use of GuruLink after updates indicates acceptance of the new Terms.
             </p>
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">11. Changes to Terms</h2>
-            <p className="text-sm" style={{ color: '#4B5563' }}>
-              We may update these terms with 30 days&apos; notice. Continued use of GuruLink after updates means you accept the revised terms.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <h2 className="text-xl font-semibold">12. Contact Information</h2>
+            <h2 className="text-xl font-semibold">12. Contact Details</h2>
             <p className="text-sm" style={{ color: '#4B5563' }}>
               Customer Support: <a href="mailto:help@gurulink.app" className="underline" style={{ color: '#D4A34B' }}>help@gurulink.app</a><br />
-              Legal Matters: <a href="mailto:legal@gurulink.app" className="underline" style={{ color: '#D4A34B' }}>legal@gurulink.app</a>
+              Legal Enquiries: <a href="mailto:legal@gurulink.app" className="underline" style={{ color: '#D4A34B' }}>legal@gurulink.app</a>
             </p>
           </div>
         </section>
@@ -162,4 +170,5 @@ export default function Terms() {
     </div>
   );
 }
+
 
