@@ -222,6 +222,8 @@ export default function QuizApp() {
         <PreGenerationLanding 
           onSubmit={onSubmit}
           email={form.email}
+          name={form.name || form.fullName || ''}
+          birthDate={form.birthDate || null}
           loading={loading}
         />
       </div>

@@ -180,13 +180,10 @@ export default function Login({ isRegister = false }) {
         if (result.horoscope) {
           localStorage.setItem('initialHoroscope', JSON.stringify(result.horoscope));
         }
-        if (result.user && result.token) {
-          setUser(result.user, result.token);
-        }
-        setMessage('Payment successful! Please check your email for the login link. Redirecting you to the quiz...');
         setPaymentState(null);
+        setMessage('Payment successful! Please check your inbox for your secure login link.');
         setTimeout(() => {
-          navigate('/quiz');
+          navigate('/login');
         }, 1800);
         return;
       }

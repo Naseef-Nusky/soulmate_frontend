@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Star, Check, Lock, ChevronDown } from 'lucide-react';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { detectCurrency, getPricing } from '../utils/currency.js';
+import { createPaymentIntent } from '../lib/api.js';
+import PaymentDialog from './PaymentDialog.jsx';
 import Footer from './Footer';
 
-export default function PreGenerationLanding({ onSubmit, email, loading = false }) {
+const stripePublishableKey = import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY || '';
+const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
+
+export default function PreGenerationLanding({ onSubmit, email, name, birthDate, loading = false }) {
   // Payment integration can be added here before calling onSubmit
   // For example: handlePayment().then(() => onSubmit())
   const faqs = [
@@ -33,6 +40,70 @@ export default function PreGenerationLanding({ onSubmit, email, loading = false 
 	const [openFaq, setOpenFaq] = useState(null);
 	const [currency] = useState(() => detectCurrency());
 	const pricing = getPricing(currency);
+  const paymentSectionRef = useRef(null);
+  const [paymentState, setPaymentState] = useState(null);
+  const [paymentError, setPaymentError] = useState('');
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [creatingIntent, setCreatingIntent] = useState(false);
+
+  useEffect(() => {
+    if (!stripePromise) {
+      setPaymentError('Stripe is not configured. Please contact support.');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!email || !email.trim()) {
+      setPaymentError('Please provide your email to continue.');
+      return;
+    }
+    if (paymentSuccess || !stripePromise) return;
+    let isMounted = true;
+    setCreatingIntent(true);
+    setPaymentError('');
+    (async () => {
+      try {
+        const paymentInit = await createPaymentIntent({
+          email: email.trim(),
+          name: name?.trim() || null,
+          birthDate,
+          currency,
+        });
+        if (!isMounted) return;
+        setPaymentState({
+          clientSecret: paymentInit.clientSecret,
+          paymentIntentId: paymentInit.paymentIntentId,
+          amountLabel: paymentInit.displayAmount || pricing.trial.formatted,
+          currencyLabel: paymentInit.currency || currency,
+        });
+      } catch (err) {
+        if (isMounted) {
+          setPaymentError(err.message || 'Unable to start secure payment. Please try again.');
+        }
+      } finally {
+        if (isMounted) setCreatingIntent(false);
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, [email, name, birthDate, currency, pricing.trial.formatted, paymentSuccess]);
+
+  const handleScrollToPayment = () => {
+    if (paymentSectionRef.current) {
+      paymentSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handlePaymentCompletion = async (_paymentIntentId) => {
+    setPaymentSuccess(true);
+    setPaymentState(null);
+    try {
+      await onSubmit();
+    } catch (err) {
+      setPaymentError(err.message || 'Payment succeeded but we could not continue. Please contact support.');
+    }
+  };
 
   return (
     <>
@@ -40,29 +111,31 @@ export default function PreGenerationLanding({ onSubmit, email, loading = false 
         {/* Hero Section */}
         <div className="rounded-lg shadow-lg p-8 mb-8 border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center" style={{ color: '#1A2336' }}>
-            Your Sketch is Complete! See Your Soulmate Now!
+            Get Full Access to GuruLink – Start Your 7-Day Trial
           </h1>
           
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mt-6">
             <div className="flex-1 text-center md:text-left">
-              <div className="mb-2" style={{ color: '#D4A34B' }}>100+ users have seen their soulmate today.</div>
-              <div className="mb-6" style={{ color: '#666' }}>
-                Trusted by over 1 million people.
-                <span className="flex items-center gap-1 justify-center md:justify-start mt-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={16} style={{ fill: '#D4A34B', color: '#D4A34B' }} />
-                  ))}
-                </span>
+              <p className="text-sm uppercase tracking-wide mb-2" style={{ color: '#D4A34B' }}>
+                Secure Stripe Checkout · 564,000+ Happy Members
+              </p>
+              <div className="mb-4" style={{ color: '#4B5563' }}>
+                Unlock your life path with a detailed soulmate sketch, compatibility reading, and unlimited 1-on-1 chats with real astrologers.
+              </div>
+              <div className="flex items-center justify-center md:justify-start gap-1 mb-6">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={18} style={{ fill: '#D4A34B', color: '#D4A34B' }} />
+                ))}
+                <span className="text-sm font-semibold" style={{ color: '#4B5563' }}>5-Star Rated Experience</span>
               </div>
               <button 
-                onClick={onSubmit}
-                disabled={loading}
-                className="font-bold py-4 px-8 rounded-lg text-lg transition disabled:opacity-50"
+                onClick={handleScrollToPayment}
+                className="font-bold py-4 px-8 rounded-lg text-lg transition"
                 style={{ backgroundColor: '#D4A34B', color: '#1A2336' }}
-                onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#c4933a')}
-                onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#D4A34B')}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#c4933a')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#D4A34B')}
               >
-                {loading ? 'Generating Your Sketch...' : 'Get My Soulmate Sketch'}
+                {loading ? 'Please wait...' : 'Get My Soulmate Sketch'}
               </button>
             </div>
             <div className="flex-1 max-w-md">
@@ -112,45 +185,42 @@ export default function PreGenerationLanding({ onSubmit, email, loading = false 
           </div>
 
           {/* Right: Pricing */}
-          <div className="rounded-lg shadow-lg p-6 border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-            <h3 className="text-xl font-bold mb-4" style={{ color: '#1A2336' }}>Try GuruLink for 7 days</h3>
-            
-            <div className="space-y-4 mb-6">
-              <div>
-                <div className="text-3xl font-bold" style={{ color: '#D4A34B' }}>{pricing.trial.formatted}</div>
-                <div className="text-sm" style={{ color: '#666' }}>for 7-day trial</div>
-              </div>
-              <div className="text-sm line-through" style={{ color: '#9CA3AF' }}>{pricing.monthly.formatted}/month</div>
-              
-              <div className="rounded p-3 border" style={{ backgroundColor: '#FFF7EB', borderColor: '#F6D9A5' }}>
-                <div className="text-sm font-semibold" style={{ color: '#B7791F' }}>Promo Code GURULINK93 Applied</div>
-                <div className="text-xs" style={{ color: '#B7791F' }}>You save 93%</div>
-              </div>
-
-              <div className="pt-4" style={{ borderTop: '1px solid #E5E7EB' }}>
-                <div className="text-sm mb-1" style={{ color: '#4B5563' }}>Total Due:</div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-lg line-through" style={{ color: '#9CA3AF' }}>{pricing.total.formatted}</span>
-                  <span className="text-3xl font-bold" style={{ color: '#D4A34B' }}>{pricing.trial.formatted}</span>
-                </div>
-                <div className="text-sm font-semibold mt-1" style={{ color: '#B7791F' }}>You save 93%</div>
-              </div>
+          <div ref={paymentSectionRef} className="rounded-lg shadow-lg p-6 border space-y-5" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
+            <div className="rounded-lg border p-4 space-y-2" style={{ borderColor: '#E5E7EB', backgroundColor: '#FFF8F2' }}>
+              <p className="text-sm font-semibold" style={{ color: '#1A2336' }}>What you’ll receive today</p>
+              <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
+                <li>Beautifully crafted soulmate sketch, drawn by real artists.</li>
+                <li>Unique personality traits & compatibility notes tailored to you.</li>
+                <li>Personalized astrological and spiritual insights made just for you.</li>
+              </ul>
             </div>
 
-            <button 
-              onClick={onSubmit}
-              disabled={loading}
-              className="w-full font-bold py-4 px-6 rounded-lg text-lg transition mb-4 disabled:opacity-50"
-              style={{ backgroundColor: '#D4A34B', color: '#1A2336' }}
-              onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#c4933a')}
-              onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#D4A34B')}
-            >
-              {loading ? 'Generating Your Sketch...' : 'Get My Soulmate Sketch'}
-            </button>
-
-            <p className="text-xs text-center" style={{ color: '#4B5563' }}>
-              Cancel anytime. Your sketch will be ready instantly.
-            </p>
+            <div className="mt-4">
+              {paymentError && (
+                <div className="mb-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+                  {paymentError}
+                </div>
+              )}
+              {creatingIntent && (
+                <div className="text-sm text-center text-[#4B5563]">Loading secure checkout…</div>
+              )}
+              {paymentSuccess && (
+                <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+                  Payment received! We’re preparing your personalized sketch.
+                </div>
+              )}
+              {paymentState?.clientSecret && stripePromise && !paymentSuccess && (
+                <Elements stripe={stripePromise} options={{ clientSecret: paymentState.clientSecret }}>
+                  <PaymentDialog
+                    inline
+                    amountLabel={paymentState.amountLabel}
+                    currencyLabel={paymentState.currencyLabel}
+                    email={email}
+                    onSuccess={handlePaymentCompletion}
+                  />
+                </Elements>
+              )}
+            </div>
           </div>
         </div>
 
@@ -238,14 +308,13 @@ export default function PreGenerationLanding({ onSubmit, email, loading = false 
               <div className="text-sm opacity-90">Join 1+ million users who found their match</div>
             </div>
             <button 
-              onClick={onSubmit}
-              disabled={loading}
-              className="font-bold py-3 px-8 rounded-lg disabled:opacity-50 transition"
+              onClick={handleScrollToPayment}
+              className="font-bold py-3 px-8 rounded-lg transition"
               style={{ backgroundColor: '#D4A34B', color: '#1A2336' }}
-              onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#c4933a')}
-              onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#D4A34B')}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#c4933a')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#D4A34B')}
             >
-              {loading ? 'Generating...' : 'Get My Soulmate Sketch'}
+              {loading ? 'Please wait...' : 'Get My Soulmate Sketch'}
             </button>
           </div>
         </div>
