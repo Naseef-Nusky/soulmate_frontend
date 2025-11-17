@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { signup, emailLogin, verifyLoginToken } from '../lib/api.js';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import { signup, emailLogin, verifyLoginToken, createPaymentIntent } from '../lib/api.js';
+import { detectCurrency, getPricing } from '../utils/currency.js';
 import { setUser } from '../lib/auth.js';
+import PaymentDialog from './PaymentDialog.jsx';
+
+const publishableKey = import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY || '';
+const stripePromise = publishableKey ? loadStripe(publishableKey) : null;
 
 export default function Login({ isRegister = false }) {
   const navigate = useNavigate();
@@ -18,6 +25,7 @@ export default function Login({ isRegister = false }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [paymentState, setPaymentState] = useState(null);
 
   // Check for login token in URL
   useEffect(() => {
@@ -69,6 +77,7 @@ export default function Login({ isRegister = false }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setMessage('');
     setLoading(true);
 
     try {
@@ -96,31 +105,37 @@ export default function Login({ isRegister = false }) {
           const year = formData.birthYear;
           birthDate = `${year}-${month}-${day}`;
         }
-        const result = await signup({
-          email: formData.email.trim(),
-          name: formData.name?.trim() || null,
-          birthDate,
-        });
-        
-        // Show success message
-        if (result.ok) {
-          // Store horoscope if provided (for immediate display)
-          if (result.horoscope) {
-            localStorage.setItem('initialHoroscope', JSON.stringify(result.horoscope));
-          }
-          
-          // Store user and token if provided
-          if (result.user && result.token) {
-            setUser(result.user, result.token);
-          }
-          
-          setMessage('Account created successfully! Please check your email for the login link. You can also proceed to the quiz.');
-          // Navigate to quiz after a short delay
-          setTimeout(() => {
-            navigate('/quiz');
-          }, 2000);
+        if (!stripePromise) {
+          setError('Stripe is not configured. Please try again later.');
+          setLoading(false);
           return;
         }
+
+        const cleanedEmail = formData.email.trim();
+        const currency = detectCurrency();
+        const pricing = getPricing(currency);
+        const paymentInit = await createPaymentIntent({
+          email: cleanedEmail,
+          name: formData.name?.trim() || null,
+          birthDate,
+          currency,
+        });
+
+        setPaymentState({
+          clientSecret: paymentInit.clientSecret,
+          paymentIntentId: paymentInit.paymentIntentId,
+          registrationPayload: {
+            email: cleanedEmail,
+            name: formData.name?.trim() || null,
+            birthDate,
+            paymentIntentId: paymentInit.paymentIntentId,
+          },
+          amountLabel: paymentInit.displayAmount || pricing.trial.formatted,
+          currencyLabel: paymentInit.currency || currency,
+          email: cleanedEmail,
+        });
+        setLoading(false);
+        return;
       } else {
         if (!formData.email) {
           setError('Please enter your email address');
@@ -149,6 +164,42 @@ export default function Login({ isRegister = false }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePaymentSuccess = async (confirmedPaymentId) => {
+    if (!paymentState) return;
+    setLoading(true);
+    setError('');
+    try {
+      const result = await signup({
+        ...paymentState.registrationPayload,
+        paymentIntentId: confirmedPaymentId || paymentState.paymentIntentId,
+      });
+
+      if (result.ok) {
+        if (result.horoscope) {
+          localStorage.setItem('initialHoroscope', JSON.stringify(result.horoscope));
+        }
+        if (result.user && result.token) {
+          setUser(result.user, result.token);
+        }
+        setMessage('Payment successful! Please check your email for the login link. Redirecting you to the quiz...');
+        setPaymentState(null);
+        setTimeout(() => {
+          navigate('/quiz');
+        }, 1800);
+        return;
+      }
+      setError('Registration failed after payment. Please contact support.');
+    } catch (err) {
+      setError(err.message || 'Unable to finalize registration.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelPayment = () => {
+    setPaymentState(null);
   };
 
   return (
@@ -384,6 +435,21 @@ export default function Login({ isRegister = false }) {
           </Link>
         </div>
       </div>
+
+      {paymentState?.clientSecret && stripePromise && (
+        <Elements
+          stripe={stripePromise}
+          options={{ clientSecret: paymentState.clientSecret, appearance: { theme: 'flat' } }}
+        >
+          <PaymentDialog
+            amountLabel={paymentState.amountLabel}
+            currencyLabel={paymentState.currencyLabel}
+            email={paymentState.email}
+            onCancel={handleCancelPayment}
+            onSuccess={handlePaymentSuccess}
+          />
+        </Elements>
+      )}
     </div>
   );
 }

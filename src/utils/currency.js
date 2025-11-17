@@ -37,12 +37,15 @@ const EXCHANGE_RATES = {
   CLP: 920,
   COP: 4100,
   PEN: 3.70,
+  LKR: 305.0, // Sri Lankan Rupees
 };
 
-// Base price in USD
-const BASE_PRICE_USD = 3.82; // ~Rs316.99 / 83 = ~$3.82
-const BASE_MONTHLY_USD = 114.30; // ~Rs9486.99 / 83 = ~$114.30
-const BASE_TOTAL_USD = 57.14; // ~Rs4741.99 / 83 = ~$57.14
+const BASE_CURRENCY = 'GBP';
+
+// Base prices in GBP (match Stripe products)
+const BASE_TRIAL_PRICE = 1.0;      // GuruLink 7-Day Trial
+const BASE_MONTHLY_PRICE = 29.99;  // GuruLink Monthly Plan
+const BASE_TOTAL_PRICE = 15.0;     // Reference list price before discount
 
 // Currency symbols and formatting
 const CURRENCY_INFO = {
@@ -82,6 +85,7 @@ const CURRENCY_INFO = {
   CLP: { symbol: '$', code: 'CLP', name: 'Chilean Peso' },
   COP: { symbol: '$', code: 'COP', name: 'Colombian Peso' },
   PEN: { symbol: 'S/', code: 'PEN', name: 'Peruvian Sol' },
+  LKR: { symbol: 'Rs', code: 'LKR', name: 'Sri Lankan Rupee' },
 };
 
 // Detect currency from browser locale
@@ -109,7 +113,7 @@ export function detectCurrency() {
       ID: 'IDR', PH: 'PHP', VN: 'VND', KR: 'KRW', CH: 'CHF', SE: 'SEK',
       NO: 'NOK', DK: 'DKK', PL: 'PLN', HU: 'HUF', CZ: 'CZK', RO: 'RON',
       BG: 'BGN', HR: 'HRK', TR: 'TRY', ZA: 'ZAR', BR: 'BRL', MX: 'MXN',
-      AR: 'ARS', CL: 'CLP', CO: 'COP', PE: 'PEN',
+      AR: 'ARS', CL: 'CLP', CO: 'COP', PE: 'PEN', LK: 'LKR',
     };
     
     if (country && countryToCurrency[country]) {
@@ -142,10 +146,11 @@ export function getCurrencyInfo(currencyCode) {
   return CURRENCY_INFO[currencyCode] || CURRENCY_INFO.USD;
 }
 
-// Convert price from USD to target currency
-export function convertPrice(usdPrice, targetCurrency) {
-  const rate = EXCHANGE_RATES[targetCurrency] || EXCHANGE_RATES.USD;
-  return usdPrice * rate;
+// Convert price from base currency (GBP) to target currency
+export function convertPrice(baseAmount, targetCurrency) {
+  const targetRate = EXCHANGE_RATES[targetCurrency] || EXCHANGE_RATES.USD;
+  const baseRate = EXCHANGE_RATES[BASE_CURRENCY] || 1;
+  return baseAmount * (targetRate / baseRate);
 }
 
 // Format price with currency symbol
@@ -179,9 +184,9 @@ export function formatPrice(amount, currencyCode) {
 // Get pricing for a currency
 export function getPricing(currencyCode) {
   const currency = currencyCode || detectCurrency();
-  const trialPrice = convertPrice(BASE_PRICE_USD, currency);
-  const monthlyPrice = convertPrice(BASE_MONTHLY_USD, currency);
-  const totalPrice = convertPrice(BASE_TOTAL_USD, currency);
+  const trialPrice = convertPrice(BASE_TRIAL_PRICE, currency);
+  const monthlyPrice = convertPrice(BASE_MONTHLY_PRICE, currency);
+  const totalPrice = convertPrice(BASE_TOTAL_PRICE, currency);
   
   return {
     trial: {

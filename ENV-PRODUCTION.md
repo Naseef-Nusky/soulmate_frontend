@@ -4,6 +4,7 @@ Create a `.env.production` file in this folder with:
 
 ```
 VITE_API_BASE_URL=https://api.your-domain.com
+VITE_STRIPE_PUBLISHABLE_KEY=pk_live_xxx
 ```
 
 Then build and deploy:

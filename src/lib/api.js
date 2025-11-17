@@ -70,6 +70,19 @@ export async function signup(userData) {
   return res.json();
 }
 
+export async function createPaymentIntent(payload) {
+  const res = await fetch(withBase('/api/payments/create-intent'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Unable to start payment' }));
+    throw new Error(error.error || 'Unable to start payment');
+  }
+  return res.json();
+}
+
 export async function emailLogin(email) {
   const res = await fetch(withBase('/api/auth/login'), {
     method: 'POST',
