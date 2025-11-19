@@ -1141,24 +1141,30 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
 
   if (key === 'promoCode') {
     return (
-      <div className="space-y-4 text-center">
+      <div className="space-y-4 text-center px-2 sm:px-0">
         <div className="space-y-3">
-          <h2 className="text-xl font-bold" style={{ color: '#1A2336' }}>
+          <h2 className="text-xl font-bold leading-snug" style={{ color: '#1A2336' }}>
             You get an exclusive one-time promo code for a 93% discount
           </h2>
-          <div className="rounded-xl border-2 p-6 mx-auto max-w-md" style={{ 
-            backgroundColor: '#FFF7EB', 
-            borderColor: '#D4A34B' 
-          }}>
+          <div
+            className="rounded-xl border-2 p-4 sm:p-6 mx-auto w-full max-w-md text-center"
+            style={{
+              backgroundColor: '#FFF7EB',
+              borderColor: '#D4A34B',
+            }}
+          >
             <p className="text-sm mb-3 font-semibold" style={{ color: '#1A2336' }}>
               Your Promo Code:
             </p>
-            <div className="text-3xl font-black tracking-wider mb-4" style={{ color: '#D4A34B' }}>
+            <div
+              className="text-lg sm:text-3xl font-normal sm:font-black tracking-wider mb-4 break-words"
+              style={{ color: '#D4A34B' }}
+            >
               SOULMATEGURULINK93
             </div>
             <button
               onClick={() => onAutoNext && onAutoNext()}
-              className="btn text-base px-8 py-3 font-bold w-full"
+              className="btn text-base px-6 py-3 font-bold w-full"
               style={{
                 backgroundColor: '#D4A34B',
                 color: '#1A2336',
@@ -1167,7 +1173,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
               Continue
             </button>
           </div>
-          <p className="text-xs" style={{ color: '#6B7280' }}>
+          <p className="text-xs px-4 sm:px-0" style={{ color: '#6B7280' }}>
             Use this code at checkout to get 93% off your first month
           </p>
         </div>

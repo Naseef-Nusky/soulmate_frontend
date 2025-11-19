@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Calendar, Sparkles, Home, Briefcase, Activity, Smile, Plane, Clover, ChevronDown, ChevronUp, Lightbulb, Heart, User, Settings, CreditCard, HelpCircle, FileText, Shield, LogOut } from 'lucide-react';
-import { getNatalChart, getDailyHoroscope, getTomorrowHoroscope, getMonthlyHoroscope, getUserSoulmateSketch, updateSoulmateSketchSpeedOption, sendSketchReadyEmail, getSubscription } from '../lib/api.js';
+import { getNatalChart, getDailyHoroscope, getTomorrowHoroscope, getMonthlyHoroscope, getUserSoulmateSketch, updateSoulmateSketchSpeedOption, getSubscription } from '../lib/api.js';
 import { getUser } from '../lib/auth.js';
 
 const HOROSCOPE_SECTIONS_CONFIG = [
@@ -27,12 +27,22 @@ export default function Dashboard() {
   });
   const [expandedSections, setExpandedSections] = useState({});
   const [showSoulmateSketch, setShowSoulmateSketch] = useState(false);
+  const [autoShowTriggered, setAutoShowTriggered] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [sketchTimer, setSketchTimer] = useState(null); // Timer state: null = not started, number = seconds remaining
   const [sketchTimerActive, setSketchTimerActive] = useState(false);
+  const [releaseDeadline, setReleaseDeadline] = useState(null); // Timestamp (ms) when sketch unlocks
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [loadingSubscription, setLoadingSubscription] = useState(false);
+
+  const formatCountdown = (seconds) => {
+    const safeSeconds = Math.max(0, seconds || 0);
+    const hrs = Math.floor(safeSeconds / 3600);
+    const mins = Math.floor((safeSeconds % 3600) / 60);
+    const secs = safeSeconds % 60;
+    return [hrs, mins, secs].map((unit) => String(unit).padStart(2, '0')).join(':');
+  };
 
   const hasCompletedQuiz = Boolean(data.soulmateSketch?.hasSketch);
 
@@ -84,6 +94,59 @@ export default function Dashboard() {
       if (!silent) setLoading(false);
     }
   }, [data.soulmateSketch]);
+
+  const handleStartSketchCountdown = useCallback(async () => {
+    try {
+      let sketchData = data.soulmateSketch;
+      if (!sketchData) {
+        sketchData = await loadSoulmateSketch({ force: true });
+      }
+      if (!sketchData) return;
+
+      if (sketchData.isReady && sketchData.imageUrl) {
+        setShowSoulmateSketch(true);
+        setSketchTimer(null);
+        setReleaseDeadline(null);
+        setSketchTimerActive(false);
+        return;
+      }
+
+      const readyAtDate = sketchData.readyAt ? new Date(sketchData.readyAt) : null;
+      const fallbackMinutes = Number(sketchData.releaseDelayMinutes || 600);
+      const fallbackSeconds = Math.max(0, Math.ceil(fallbackMinutes * 60));
+      const releaseSeconds = readyAtDate
+        ? Math.max(0, Math.ceil((readyAtDate.getTime() - Date.now()) / 1000))
+        : fallbackSeconds;
+
+      if (releaseSeconds <= 0) {
+        const refreshed = await loadSoulmateSketch({ force: true });
+        if (refreshed?.isReady && refreshed?.imageUrl) {
+          setShowSoulmateSketch(true);
+        }
+        setSketchTimer(null);
+        setReleaseDeadline(null);
+        setSketchTimerActive(false);
+        return;
+      }
+
+      const generatedAtDate = sketchData.sketchGeneratedAt ? new Date(sketchData.sketchGeneratedAt) : null;
+      const promisedWindowSeconds = Math.max(0, Math.ceil(Number(sketchData.promisedWindowHours || 24) * 3600));
+      const elapsedSinceGeneration = generatedAtDate
+        ? Math.max(0, Math.floor((Date.now() - generatedAtDate.getTime()) / 1000))
+        : 0;
+      const remainingPromiseSeconds =
+        promisedWindowSeconds > 0
+          ? Math.max(0, promisedWindowSeconds - elapsedSinceGeneration)
+          : releaseSeconds;
+      const displaySeconds = Math.max(remainingPromiseSeconds, releaseSeconds);
+
+      setSketchTimer(displaySeconds);
+      setReleaseDeadline(readyAtDate ? readyAtDate.getTime() : Date.now() + fallbackSeconds * 1000);
+      setSketchTimerActive(true);
+    } catch (error) {
+      console.error('Failed to start sketch countdown:', error);
+    }
+  }, [data.soulmateSketch, loadSoulmateSketch]);
 
   useEffect(() => {
     const currentUser = getUser();
@@ -137,8 +200,20 @@ export default function Dashboard() {
     if (!data.horoscope) {
       loadHoroscope('today');
     }
+    if (
+      data.soulmateSketch?.isReady &&
+      data.soulmateSketch?.imageUrl &&
+      !showSoulmateSketch &&
+      !autoShowTriggered
+    ) {
+      setShowSoulmateSketch(true);
+      setAutoShowTriggered(true);
+      setSketchTimer(null);
+      setSketchTimerActive(false);
+      setReleaseDeadline(null);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.soulmateSketch]);
+  }, [data.soulmateSketch, showSoulmateSketch, autoShowTriggered]);
 
   useEffect(() => {
     if (data.soulmateSketch === null) return;
@@ -149,43 +224,34 @@ export default function Dashboard() {
 
   // Timer countdown effect
   useEffect(() => {
-    if (!sketchTimerActive || sketchTimer === null || sketchTimer <= 0) return;
+    if (!sketchTimerActive) return;
 
     const interval = setInterval(() => {
       setSketchTimer((prev) => {
-        const newTime = prev - 1;
-        if (newTime <= 0) {
-          setSketchTimerActive(false);
-          // Timer finished - show sketch and send email
-          (async () => {
-            try {
-              // Load and show sketch
-              const sketch = await loadSoulmateSketch({ force: true, silent: true });
-              const result = sketch || data.soulmateSketch;
-              if (result?.hasSketch && result?.imageUrl) {
-                setShowSoulmateSketch(true);
-              }
-
-              // Send email notification
-              if (user?.email) {
-                try {
-                  await sendSketchReadyEmail(user.email);
-                } catch (err) {
-                  console.error('Failed to send sketch ready email:', err);
-                }
-              }
-            } catch (error) {
-              console.error('Failed to load sketch after timer:', error);
-            }
-          })();
-          return 0;
-        }
-        return newTime;
+        if (prev === null) return prev;
+        const next = Math.max(0, prev - 1);
+        return next;
       });
+
+      if (releaseDeadline && Date.now() >= releaseDeadline) {
+        setSketchTimerActive(false);
+        setReleaseDeadline(null);
+        setSketchTimer(null);
+        (async () => {
+          try {
+            const result = await loadSoulmateSketch({ force: true, silent: true });
+            if (result?.isReady && result?.imageUrl) {
+              setShowSoulmateSketch(true);
+            }
+          } catch (error) {
+            console.error('Failed to load sketch after unlock:', error);
+          }
+        })();
+      }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [sketchTimerActive, sketchTimer, user?.email, loadSoulmateSketch, data.soulmateSketch]);
+  }, [sketchTimerActive, releaseDeadline, loadSoulmateSketch]);
 
   const loadHoroscope = async (type = 'today') => {
     if (!hasCompletedQuiz) {
@@ -884,7 +950,10 @@ export default function Dashboard() {
                 <div>
                   {/* Back Button */}
                   <button
-                    onClick={() => setShowSoulmateSketch(false)}
+                    onClick={() => {
+                      setShowSoulmateSketch(false);
+                      setAutoShowTriggered(false);
+                    }}
                     className="mb-6 px-4 py-2 rounded-lg font-semibold transition-all flex items-center gap-2"
                     style={{ backgroundColor: 'rgba(212, 163, 75, 0.1)', color: '#1A2336' }}
                   >
@@ -939,11 +1008,7 @@ export default function Dashboard() {
                         </p>
                         {sketchTimer === null ? (
                           <button
-                            onClick={() => {
-                              // Start 10 second timer
-                              setSketchTimer(10);
-                              setSketchTimerActive(true);
-                            }}
+                            onClick={handleStartSketchCountdown}
                             className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg transition-all hover:shadow-lg"
                             style={{
                               backgroundColor: '#D4A34B',
@@ -960,10 +1025,10 @@ export default function Dashboard() {
                               </p>
                               <div className="text-center">
                                 <div className="text-4xl font-black mb-2" style={{ color: '#D4A34B' }}>
-                                  {sketchTimer}
+                                  {formatCountdown(sketchTimer)}
                                 </div>
                                 <p className="text-sm" style={{ color: '#666' }}>
-                                  {sketchTimer === 1 ? 'second remaining' : 'seconds remaining'}
+                                  Estimated delivery window: within {data.soulmateSketch?.promisedWindowHours || 24} hours
                                 </p>
                               </div>
                             </div>
