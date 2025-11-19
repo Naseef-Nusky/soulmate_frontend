@@ -133,7 +133,7 @@ function Preparing({ onDone }) {
   );
 }
 
-export default function QuizStep({ step, form, setForm, onAutoNext }) {
+export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup = false }) {
   const key = step.key;
 
   if (key === 'intro') {
@@ -144,9 +144,9 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
           <div className="relative rounded-2xl overflow-hidden shadow-xl border-2" style={{ borderColor: '#E5E7EB' }}>
             <div className="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-transparent to-transparent z-10" />
           <img
-              src="soulmatePortrait2.png"
+            src="/soulmatePortrait2.png"
             alt="Soulmate introduction"
-              className="w-full h-48 sm:h-56 object-cover"
+            className="w-full h-48 sm:h-56 object-cover"
           />
           </div>
         </div>
@@ -1141,14 +1141,44 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
 
   if (key === 'promoCode') {
     return (
-      <div className="space-y-2">
-        <p style={{ color: 'rgba(212, 163, 75, 0.8)' }}>Your one-time promo code:</p>
-        <div className="text-2xl font-bold tracking-wide">GURULINK93</div>
+      <div className="space-y-4 text-center">
+        <div className="space-y-3">
+          <h2 className="text-xl font-bold" style={{ color: '#1A2336' }}>
+            You get an exclusive one-time promo code for a 93% discount
+          </h2>
+          <div className="rounded-xl border-2 p-6 mx-auto max-w-md" style={{ 
+            backgroundColor: '#FFF7EB', 
+            borderColor: '#D4A34B' 
+          }}>
+            <p className="text-sm mb-3 font-semibold" style={{ color: '#1A2336' }}>
+              Your Promo Code:
+            </p>
+            <div className="text-3xl font-black tracking-wider mb-4" style={{ color: '#D4A34B' }}>
+              SOULMATEGURULINK93
+            </div>
+            <button
+              onClick={() => onAutoNext && onAutoNext()}
+              className="btn text-base px-8 py-3 font-bold w-full"
+              style={{
+                backgroundColor: '#D4A34B',
+                color: '#1A2336',
+              }}
+            >
+              Continue
+            </button>
+          </div>
+          <p className="text-xs" style={{ color: '#6B7280' }}>
+            Use this code at checkout to get 93% off your first month
+          </p>
+        </div>
       </div>
     );
   }
 
   if (key === 'email') {
+    // If coming from signup (URL: /register/quiz), email should be read-only
+    // isFromSignup is passed as prop from App.jsx based on URL path
+    
     return (
       <div className="space-y-3">
         <p className="text-sm" style={{ color: '#4B5563' }}>Where should we send your sketch?</p>
@@ -1159,13 +1189,26 @@ export default function QuizStep({ step, form, setForm, onAutoNext }) {
             className="w-full px-4 py-3 rounded-xl border text-sm"
             placeholder="you@example.com"
             value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            onChange={(e) => {
+              // Only allow editing if not from signup
+              if (!isFromSignup) {
+                setForm({ ...form, email: e.target.value });
+              }
+            }}
+            disabled={isFromSignup}
+            readOnly={isFromSignup}
             style={{
-              backgroundColor: '#F8FAFC',
-              borderColor: '#E5E7EB',
-              color: '#1A2336'
+              backgroundColor: isFromSignup ? '#F3F4F6' : '#F8FAFC',
+              borderColor: isFromSignup ? '#D1D5DB' : '#E5E7EB',
+              color: isFromSignup ? '#6B7280' : '#1A2336',
+              cursor: isFromSignup ? 'not-allowed' : 'text',
             }}
           />
+          {isFromSignup && (
+            <p className="text-xs mt-1" style={{ color: '#6B7280' }}>
+              Email from your signup cannot be changed
+            </p>
+          )}
         </div>
       </div>
     );

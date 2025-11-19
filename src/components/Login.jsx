@@ -1,14 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import { signup, emailLogin, verifyLoginToken, createPaymentIntent } from '../lib/api.js';
-import { detectCurrency, getPricing } from '../utils/currency.js';
+import { emailLogin, verifyLoginToken, checkAccountExists, signup } from '../lib/api.js';
 import { setUser } from '../lib/auth.js';
-import PaymentDialog from './PaymentDialog.jsx';
-
-const publishableKey = import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY || '';
-const stripePromise = publishableKey ? loadStripe(publishableKey) : null;
 
 export default function Login({ isRegister = false }) {
   const navigate = useNavigate();
@@ -25,7 +18,6 @@ export default function Login({ isRegister = false }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [paymentState, setPaymentState] = useState(null);
 
   // Check for login token in URL
   useEffect(() => {
@@ -34,6 +26,121 @@ export default function Login({ isRegister = false }) {
       handleTokenLogin(token);
     }
   }, [searchParams, isRegister]);
+
+  // Handle payment success from Stripe Checkout
+  useEffect(() => {
+    const sessionId = searchParams.get('session_id');
+    const paymentSuccess = searchParams.get('payment');
+    
+    if (sessionId && paymentSuccess === 'success' && !isRegister) {
+      handlePaymentSuccess(sessionId);
+    }
+  }, [searchParams, isRegister]);
+
+  const handlePaymentSuccess = async (sessionId) => {
+    setLoading(true);
+    setError('');
+    setMessage('');
+    
+    try {
+      // Get user data from localStorage (stored before checkout)
+      const pendingSignup = localStorage.getItem('pendingSignup');
+      if (!pendingSignup) {
+        setError('Unable to find payment details. Please contact support with your payment confirmation.');
+        setLoading(false);
+        return;
+      }
+
+      const { email, name, birthDate } = JSON.parse(pendingSignup);
+      
+      // Get quiz data from localStorage (saved when quiz was completed)
+      // Also check all localStorage keys to find quiz data
+      let quizDataStr = localStorage.getItem('quizData');
+      let quizData = null;
+      
+      // If not found, try to find it in other possible keys
+      if (!quizDataStr) {
+        console.log('[Login] Quiz data not found in "quizData" key, checking other keys...');
+        // Check if there's quiz data stored with a different key
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.toLowerCase().includes('quiz')) {
+            console.log(`[Login] Found potential quiz data in key: ${key}`);
+            quizDataStr = localStorage.getItem(key);
+            break;
+          }
+        }
+      }
+      
+      if (quizDataStr) {
+        try {
+          quizData = JSON.parse(quizDataStr);
+          
+          // Update email in quiz data to match payment email
+          if (quizData.answers) {
+            quizData.email = email.trim().toLowerCase();
+            // Ensure birth details are set
+            if (!quizData.birthDetails && quizData.answers) {
+              quizData.birthDetails = {
+                date: quizData.answers.birthDate || null,
+                time: quizData.answers.birthTime || null,
+                city: quizData.answers.birthCity || null,
+              };
+            }
+          }
+          
+          console.log('[Login] ✅ Quiz data found in localStorage:', {
+            hasAnswers: !!quizData.answers,
+            hasBirthDetails: !!quizData.birthDetails,
+            email: quizData.email,
+            answerKeys: quizData.answers ? Object.keys(quizData.answers) : [],
+            answerCount: quizData.answers ? Object.keys(quizData.answers).length : 0,
+          });
+        } catch (e) {
+          console.error('[Login] Failed to parse quiz data from localStorage:', e);
+        }
+      } else {
+        console.warn('[Login] ⚠️ No quiz data found in localStorage');
+        console.warn('[Login] Available localStorage keys:', Object.keys(localStorage));
+      }
+
+      // Create account with payment session and quiz data
+      console.log('[Login] Sending registration request:', {
+        email,
+        hasQuizData: !!quizData,
+        hasAnswers: !!quizData?.answers,
+        quizDataSize: quizData ? JSON.stringify(quizData).length : 0,
+      });
+      
+      const result = await signup({
+        email,
+        name,
+        birthDate,
+        sessionId,
+        quizData, // Send quiz data so backend can save it and generate everything
+      });
+
+      // Only clear localStorage data after successful registration AND if quiz data was sent
+      localStorage.removeItem('pendingSignup');
+      // Don't clear quizData yet - keep it in case we need to retry
+      // Only clear it after we confirm generation succeeded
+      if (result.ok && quizData) {
+        console.log('[Login] ✅ Registration successful, quiz data was sent. Keeping quizData in localStorage for now.');
+        // We'll clear it later after confirming generation worked
+      }
+
+      if (result.ok) {
+        setMessage('Payment successful! Please check your email for your secure login link.');
+        // User will receive login link via email
+      } else {
+        setError('Account creation failed. Please contact support.');
+      }
+    } catch (err) {
+      setError(err.message || 'Payment succeeded but account setup failed. Please contact support.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleTokenLogin = async (token) => {
     setLoading(true);
@@ -96,6 +203,24 @@ export default function Login({ isRegister = false }) {
           return;
         }
 
+        // Check if account already exists
+        const cleanedEmail = formData.email.trim().toLowerCase();
+        try {
+          const accountCheck = await checkAccountExists(cleanedEmail);
+          if (accountCheck.exists) {
+            setError('An account with this email already exists. Please sign in instead.');
+            setLoading(false);
+            // Redirect to login page after 2 seconds
+            setTimeout(() => {
+              navigate('/login');
+            }, 2000);
+            return;
+          }
+        } catch (err) {
+          console.error('Failed to check account existence:', err);
+          // Continue with signup if check fails (don't block user)
+        }
+
         // Format birth date
         let birthDate = null;
         if (formData.birthDay && formData.birthMonth && formData.birthYear) {
@@ -105,36 +230,14 @@ export default function Login({ isRegister = false }) {
           const year = formData.birthYear;
           birthDate = `${year}-${month}-${day}`;
         }
-        if (!stripePromise) {
-          setError('Stripe is not configured. Please try again later.');
-          setLoading(false);
-          return;
-        }
 
-        const cleanedEmail = formData.email.trim();
-        const currency = detectCurrency();
-        const pricing = getPricing(currency);
-        const paymentInit = await createPaymentIntent({
-          email: cleanedEmail,
-          name: formData.name?.trim() || null,
-          birthDate,
-          currency,
-        });
+        // Store signup email in localStorage so quiz can auto-fill it
+        const signupEmail = formData.email.trim().toLowerCase();
+        localStorage.setItem('signupEmail', signupEmail);
+        console.log('[Login] Signup email stored for quiz auto-fill:', signupEmail);
 
-        setPaymentState({
-          clientSecret: paymentInit.clientSecret,
-          paymentIntentId: paymentInit.paymentIntentId,
-          registrationPayload: {
-            email: cleanedEmail,
-            name: formData.name?.trim() || null,
-            birthDate,
-            paymentIntentId: paymentInit.paymentIntentId,
-          },
-          amountLabel: paymentInit.displayAmount || pricing.trial.formatted,
-          currencyLabel: paymentInit.currency || currency,
-          email: cleanedEmail,
-        });
-        setLoading(false);
+        // Navigate to quiz with register path to indicate coming from signup
+        navigate('/register/quiz');
         return;
       } else {
         if (!formData.email) {
@@ -155,10 +258,6 @@ export default function Login({ isRegister = false }) {
           return;
         }
       }
-      // For registration, go to quiz
-      if (isRegister) {
-        navigate('/quiz');
-      }
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
@@ -166,38 +265,6 @@ export default function Login({ isRegister = false }) {
     }
   };
 
-  const handlePaymentSuccess = async (confirmedPaymentId) => {
-    if (!paymentState) return;
-    setLoading(true);
-    setError('');
-    try {
-      const result = await signup({
-        ...paymentState.registrationPayload,
-        paymentIntentId: confirmedPaymentId || paymentState.paymentIntentId,
-      });
-
-      if (result.ok) {
-        if (result.horoscope) {
-          localStorage.setItem('initialHoroscope', JSON.stringify(result.horoscope));
-        }
-        setPaymentState(null);
-        setMessage('Payment successful! Please check your inbox for your secure login link.');
-        setTimeout(() => {
-          navigate('/login');
-        }, 1800);
-        return;
-      }
-      setError('Registration failed after payment. Please contact support.');
-    } catch (err) {
-      setError(err.message || 'Unable to finalize registration.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCancelPayment = () => {
-    setPaymentState(null);
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#F5F5F5' }}>
@@ -433,20 +500,6 @@ export default function Login({ isRegister = false }) {
         </div>
       </div>
 
-      {paymentState?.clientSecret && stripePromise && (
-        <Elements
-          stripe={stripePromise}
-          options={{ clientSecret: paymentState.clientSecret, appearance: { theme: 'flat' } }}
-        >
-          <PaymentDialog
-            amountLabel={paymentState.amountLabel}
-            currencyLabel={paymentState.currencyLabel}
-            email={paymentState.email}
-            onCancel={handleCancelPayment}
-            onSuccess={handlePaymentSuccess}
-          />
-        </Elements>
-      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Calendar, Sparkles, Home, Briefcase, Activity, Smile, Plane, Clover, ChevronDown, ChevronUp, Lightbulb, Heart, User, Settings, CreditCard, HelpCircle, FileText, Shield, LogOut } from 'lucide-react';
-import { getNatalChart, getDailyHoroscope, getTomorrowHoroscope, getMonthlyHoroscope, getUserSoulmateSketch, updateSoulmateSketchSpeedOption } from '../lib/api.js';
+import { getNatalChart, getDailyHoroscope, getTomorrowHoroscope, getMonthlyHoroscope, getUserSoulmateSketch, updateSoulmateSketchSpeedOption, sendSketchReadyEmail, getSubscription } from '../lib/api.js';
 import { getUser } from '../lib/auth.js';
 
 const HOROSCOPE_SECTIONS_CONFIG = [
@@ -28,8 +28,29 @@ export default function Dashboard() {
   const [expandedSections, setExpandedSections] = useState({});
   const [showSoulmateSketch, setShowSoulmateSketch] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [sketchTimer, setSketchTimer] = useState(null); // Timer state: null = not started, number = seconds remaining
+  const [sketchTimerActive, setSketchTimerActive] = useState(false);
+  const [showPaymentDetails, setShowPaymentDetails] = useState(false);
+  const [subscriptionData, setSubscriptionData] = useState(null);
+  const [loadingSubscription, setLoadingSubscription] = useState(false);
 
   const hasCompletedQuiz = Boolean(data.soulmateSketch?.hasSketch);
+
+  // Load subscription/payment details
+  const loadSubscriptionDetails = async () => {
+    setLoadingSubscription(true);
+    try {
+      const data = await getSubscription();
+      setSubscriptionData(data);
+      setShowPaymentDetails(true);
+    } catch (error) {
+      console.error('Failed to load subscription details:', error);
+      setSubscriptionData({ hasSubscription: false, error: error.message });
+      setShowPaymentDetails(true);
+    } finally {
+      setLoadingSubscription(false);
+    }
+  };
 
   // Pre-generate all horoscopes in the background
   const preGenerateAllHoroscopes = async () => {
@@ -47,7 +68,7 @@ export default function Dashboard() {
     }
   };
 
-  const loadSoulmateSketch = async ({ force = false, silent = false } = {}) => {
+  const loadSoulmateSketch = useCallback(async ({ force = false, silent = false } = {}) => {
     if (!force && data.soulmateSketch !== null) return; // Already loaded (null means no sketch)
     if (!silent) setLoading(true);
     let sketch = null;
@@ -62,7 +83,7 @@ export default function Dashboard() {
     } finally {
       if (!silent) setLoading(false);
     }
-  };
+  }, [data.soulmateSketch]);
 
   useEffect(() => {
     const currentUser = getUser();
@@ -125,6 +146,46 @@ export default function Dashboard() {
       navigate('/quiz');
     }
   }, [data.soulmateSketch, hasCompletedQuiz, navigate]);
+
+  // Timer countdown effect
+  useEffect(() => {
+    if (!sketchTimerActive || sketchTimer === null || sketchTimer <= 0) return;
+
+    const interval = setInterval(() => {
+      setSketchTimer((prev) => {
+        const newTime = prev - 1;
+        if (newTime <= 0) {
+          setSketchTimerActive(false);
+          // Timer finished - show sketch and send email
+          (async () => {
+            try {
+              // Load and show sketch
+              const sketch = await loadSoulmateSketch({ force: true, silent: true });
+              const result = sketch || data.soulmateSketch;
+              if (result?.hasSketch && result?.imageUrl) {
+                setShowSoulmateSketch(true);
+              }
+
+              // Send email notification
+              if (user?.email) {
+                try {
+                  await sendSketchReadyEmail(user.email);
+                } catch (err) {
+                  console.error('Failed to send sketch ready email:', err);
+                }
+              }
+            } catch (error) {
+              console.error('Failed to load sketch after timer:', error);
+            }
+          })();
+          return 0;
+        }
+        return newTime;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [sketchTimerActive, sketchTimer, user?.email, loadSoulmateSketch, data.soulmateSketch]);
 
   const loadHoroscope = async (type = 'today') => {
     if (!hasCompletedQuiz) {
@@ -315,7 +376,7 @@ export default function Dashboard() {
                         <button
                           onClick={() => {
                             setShowProfileDropdown(false);
-                            // Navigate to payment details
+                            loadSubscriptionDetails();
                           }}
                           className="w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-gray-50 transition-colors"
                           style={{ color: '#1A2336' }}
@@ -876,33 +937,46 @@ export default function Dashboard() {
                         <p className="text-base sm:text-lg mb-6" style={{ color: '#666', lineHeight: '1.8' }}>
                           See your soulmate through a personalized sketch and explore the romantic potential destined for you.
                         </p>
-                        <button
-                          onClick={async () => {
-                            // Load soulmate sketch and show it
-                            setLoading(true);
-                            try {
-                              const sketch = await loadSoulmateSketch({ force: true, silent: true });
-                              const result = sketch || data.soulmateSketch;
-                              if (result?.hasSketch && result?.imageUrl) {
-                                setShowSoulmateSketch(true);
-                              } else {
-                                navigate('/quiz');
-                              }
-                            } catch (error) {
-                              console.error('Failed to load soulmate sketch:', error);
-                              navigate('/quiz');
-                            } finally {
-                              setLoading(false);
-                            }
-                          }}
-                          className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg transition-all hover:shadow-lg"
-                          style={{
-                            backgroundColor: '#D4A34B',
-                            color: '#1A2336',
-                          }}
-                        >
-                          Access Soulmate Sketch Reading
-                        </button>
+                        {sketchTimer === null ? (
+                          <button
+                            onClick={() => {
+                              // Start 10 second timer
+                              setSketchTimer(10);
+                              setSketchTimerActive(true);
+                            }}
+                            className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg transition-all hover:shadow-lg"
+                            style={{
+                              backgroundColor: '#D4A34B',
+                              color: '#1A2336',
+                            }}
+                          >
+                            Access Soulmate Sketch Reading
+                          </button>
+                        ) : sketchTimer > 0 ? (
+                          <div className="space-y-4">
+                            <div className="p-6 rounded-xl border" style={{ borderColor: 'rgba(212, 163, 75, 0.3)', backgroundColor: '#FFF8F2' }}>
+                              <p className="text-base sm:text-lg mb-4" style={{ color: '#1A2336', lineHeight: '1.8' }}>
+                                Your personalized sketch and reading from GuruLink will be delivered within 24 hours. Our artists take this time to carefully analyze your details and craft a precise, meaningful portrait and interpretation. We appreciate your patience while we create something truly special for you!
+                              </p>
+                              <div className="text-center">
+                                <div className="text-4xl font-black mb-2" style={{ color: '#D4A34B' }}>
+                                  {sketchTimer}
+                                </div>
+                                <p className="text-sm" style={{ color: '#666' }}>
+                                  {sketchTimer === 1 ? 'second remaining' : 'seconds remaining'}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            <div className="p-6 rounded-xl border border-green-200 bg-green-50">
+                              <p className="text-base font-semibold mb-4" style={{ color: '#166534' }}>
+                                ✓ Your sketch is ready!
+                              </p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -916,6 +990,151 @@ export default function Dashboard() {
 
         </div>
       </div>
+
+      {/* Payment Details Modal */}
+      {showPaymentDetails && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowPaymentDetails(false)}>
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6 border-b flex items-center justify-between">
+              <h2 className="text-2xl font-bold" style={{ color: '#1A2336' }}>Payment Details</h2>
+              <button
+                onClick={() => setShowPaymentDetails(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="p-6">
+              {loadingSubscription ? (
+                <div className="text-center py-8">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-t-transparent" style={{ borderColor: '#D4A34B' }} />
+                  <p className="mt-4" style={{ color: '#666' }}>Loading payment details...</p>
+                </div>
+              ) : subscriptionData?.hasSubscription ? (
+                <div className="space-y-6">
+                  {/* Subscription Status */}
+                  <div className="rounded-lg border p-4" style={{ borderColor: '#E5E7EB', backgroundColor: '#F8FAFC' }}>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-semibold" style={{ color: '#1A2336' }}>Subscription Status</h3>
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        subscriptionData.subscription.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {subscriptionData.subscription.status.charAt(0).toUpperCase() + subscriptionData.subscription.status.slice(1)}
+                      </span>
+                    </div>
+                    
+                    {subscriptionData.subscription.items.map((item, idx) => (
+                      <div key={idx} className="mb-2">
+                        <p className="text-sm" style={{ color: '#666' }}>
+                          <span className="font-semibold" style={{ color: '#1A2336' }}>
+                            {new Intl.NumberFormat('en-GB', { style: 'currency', currency: item.currency.toUpperCase() }).format(item.amount)}
+                          </span>
+                          {' '}per {item.intervalCount === 1 ? item.interval : `${item.intervalCount} ${item.interval}s`}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Payment Method */}
+                  {subscriptionData.paymentMethod && (
+                    <div className="rounded-lg border p-4" style={{ borderColor: '#E5E7EB', backgroundColor: '#F8FAFC' }}>
+                      <h3 className="font-semibold mb-3" style={{ color: '#1A2336' }}>Payment Method</h3>
+                      {subscriptionData.paymentMethod.card ? (
+                        <div className="flex items-center gap-3">
+                          <CreditCard size={24} style={{ color: '#666' }} />
+                          <div>
+                            <p className="font-medium" style={{ color: '#1A2336' }}>
+                              {subscriptionData.paymentMethod.card.brand.charAt(0).toUpperCase() + subscriptionData.paymentMethod.card.brand.slice(1)} •••• {subscriptionData.paymentMethod.card.last4}
+                            </p>
+                            <p className="text-sm" style={{ color: '#666' }}>
+                              Expires {subscriptionData.paymentMethod.card.expMonth}/{subscriptionData.paymentMethod.card.expYear}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-sm" style={{ color: '#666' }}>No payment method on file</p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Billing Period */}
+                  <div className="rounded-lg border p-4" style={{ borderColor: '#E5E7EB', backgroundColor: '#F8FAFC' }}>
+                    <h3 className="font-semibold mb-3" style={{ color: '#1A2336' }}>Billing Period</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span style={{ color: '#666' }}>Current Period Start:</span>
+                        <span style={{ color: '#1A2336' }}>
+                          {new Date(subscriptionData.subscription.currentPeriodStart).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: '#666' }}>Current Period End:</span>
+                        <span style={{ color: '#1A2336' }}>
+                          {new Date(subscriptionData.subscription.currentPeriodEnd).toLocaleDateString()}
+                        </span>
+                      </div>
+                      {subscriptionData.subscription.cancelAtPeriodEnd && (
+                        <div className="mt-2 p-2 rounded bg-yellow-50 border border-yellow-200">
+                          <p className="text-sm text-yellow-800">
+                            Subscription will cancel at the end of the current period.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Recent Invoices */}
+                  {subscriptionData.invoices && subscriptionData.invoices.length > 0 && (
+                    <div className="rounded-lg border p-4" style={{ borderColor: '#E5E7EB', backgroundColor: '#F8FAFC' }}>
+                      <h3 className="font-semibold mb-3" style={{ color: '#1A2336' }}>Recent Invoices</h3>
+                      <div className="space-y-2">
+                        {subscriptionData.invoices.map((invoice) => (
+                          <div key={invoice.id} className="flex items-center justify-between p-2 rounded border" style={{ borderColor: '#E5E7EB' }}>
+                            <div>
+                              <p className="text-sm font-medium" style={{ color: '#1A2336' }}>
+                                {new Intl.NumberFormat('en-GB', { style: 'currency', currency: invoice.currency.toUpperCase() }).format(invoice.amount)}
+                              </p>
+                              <p className="text-xs" style={{ color: '#666' }}>
+                                {new Date(invoice.created).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className={`text-xs px-2 py-1 rounded ${
+                                invoice.paid ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                              }`}>
+                                {invoice.paid ? 'Paid' : invoice.status}
+                              </span>
+                              {invoice.hostedInvoiceUrl && (
+                                <a
+                                  href={invoice.hostedInvoiceUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-blue-600 hover:underline"
+                                >
+                                  View
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <CreditCard size={48} className="mx-auto mb-4" style={{ color: '#999' }} />
+                  <p className="text-lg font-semibold mb-2" style={{ color: '#1A2336' }}>No Subscription Found</p>
+                  <p className="text-sm" style={{ color: '#666' }}>
+                    {subscriptionData?.error || subscriptionData?.message || 'You don\'t have an active subscription.'}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

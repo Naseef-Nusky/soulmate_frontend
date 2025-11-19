@@ -29,8 +29,8 @@ const faqs = [
     ),
   },
   {
-    q: 'Can I ask astrologers personal questions on GuruLink?',
-    a: 'Yes! GuruLink connects you with experienced astrologers who can answer personal or detailed questions. Whether you need clarity on your birth chart, life choices, or palm reading, our experts offer customized insights just for you.',
+    q: 'What kind of astrology insights can I get on GuruLink?',
+    a: 'GuruLink provides comprehensive astrology insights including personalized birth chart interpretations, daily horoscopes, compatibility readings, and detailed astrological reports tailored to your unique profile.',
   },
 ];
 

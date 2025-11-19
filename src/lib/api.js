@@ -83,6 +83,19 @@ export async function createPaymentIntent(payload) {
   return res.json();
 }
 
+export async function createCheckoutSession(payload) {
+  const res = await fetch(withBase('/api/payments/create-checkout-session'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Unable to start checkout' }));
+    throw new Error(error.error || 'Unable to start checkout');
+  }
+  return res.json();
+}
+
 export async function emailLogin(email) {
   const res = await fetch(withBase('/api/auth/login'), {
     method: 'POST',
@@ -215,6 +228,22 @@ export async function updateProfile(profileData) {
   return res.json();
 }
 
+// Subscription/Payment APIs
+export async function getSubscription() {
+  const token = localStorage.getItem('token');
+  const res = await fetch(withBase('/api/auth/subscription'), {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Failed to get subscription' }));
+    throw new Error(error.error || 'Failed to get subscription');
+  }
+  return res.json();
+}
+
 // Translation API (server-side Google Cloud Translation proxy)
 export async function translateTexts({ texts, target, source }) {
   const res = await fetch(withBase('/api/translate'), {
@@ -251,6 +280,19 @@ export async function sendHoroscopeLoginEmail(email) {
   if (!res.ok) {
     const error = await res.json().catch(() => ({ error: 'Failed to send login email' }));
     throw new Error(error.error || 'Failed to send login email');
+  }
+  return res.json();
+}
+
+export async function checkAccountExists(email) {
+  const res = await fetch(withBase('/api/auth/check-account'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Failed to check account' }));
+    throw new Error(error.error || 'Failed to check account');
   }
   return res.json();
 }

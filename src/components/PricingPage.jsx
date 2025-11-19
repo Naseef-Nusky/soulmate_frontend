@@ -47,7 +47,7 @@ export default function PricingPage() {
             </div>
             <ul className="space-y-4 mb-8">
               {[
-                'Unlock personalized palmistry insights and uncover the secrets of your destiny',
+                'Unlock personalized astrology insights and uncover the secrets of your destiny',
                 'Access a variety of astrological reports for deeper self-understanding',
                 'Get compatibility readings to enhance your relationships',
                 'Enjoy a risk-free 7-day trial at a fraction of the cost',
@@ -92,9 +92,9 @@ export default function PricingPage() {
             <ul className="space-y-4 mb-8">
               {[
                 'Everything included in the trial',
-                '1:1 live chats with professional astrologers for personalized guidance',
                 'Daily horoscopes crafted just for you',
                 'Ongoing access to premium astrological insights and tools',
+                'Personalized birth chart interpretations',
               ].map((feature, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <Check size={20} style={{ color: '#D4A34B', flexShrink: 0, marginTop: '2px' }} />

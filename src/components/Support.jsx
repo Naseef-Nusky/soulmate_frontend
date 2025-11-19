@@ -8,7 +8,7 @@ export default function Support() {
           <p className="text-xs uppercase tracking-wide" style={{ color: '#D4A34B' }}>GuruLink Support</p>
           <h1 className="text-3xl sm:text-4xl font-bold">Get help from GuruLink support</h1>
           <p className="text-sm sm:text-base" style={{ color: '#4B5563' }}>
-            Our dedicated support team is here to assist you with any questions or concerns regarding our spiritual guidance services. Whether you need help with your subscription, have questions about your birth chart readings, need assistance with palm reading analysis, or require technical support, we&apos;re here to help 24/7.
+            Our dedicated support team is here to assist you with any questions or concerns regarding our spiritual guidance services. Whether you need help with your subscription, have questions about your birth chart readings, or require technical support, we&apos;re here to help 24/7.
           </p>
         </div>
 
@@ -43,7 +43,7 @@ export default function Support() {
               <li>Technical troubleshooting</li>
               <li>Spiritual guidance services support</li>
               <li>Birth chart interpretation help</li>
-              <li>Palm reading analysis queries</li>
+              <li>Astrology reading queries</li>
               <li>Account management</li>
               <li>Refund requests</li>
               <li>Feature guidance</li>

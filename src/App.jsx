@@ -5,7 +5,9 @@ import ProgressBar from './components/ProgressBar.jsx';
 import QuizStep from './components/QuizStep.jsx';
 import ResultView from './components/ResultView.jsx';
 import PreGenerationLanding from './components/PreGenerationLanding.jsx';
-import { submitQuiz, requestGeneration, getJobStatus, getResult, sendSketchReadyEmail } from './lib/api.js';
+import { submitQuiz, requestGeneration, getJobStatus, getResult, sendSketchReadyEmail, checkAccountExists } from './lib/api.js';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { getUser } from './lib/auth.js';
 
 const STEPS = [
   { key: 'intro', title: 'Ready to discover your soulmate fate?' },
@@ -33,13 +35,19 @@ const STEPS = [
   { key: 'preparing', title: 'Preparing Insights' },
   { key: 'portraitReady', title: 'Portrait Ready' },
   { key: 'email', title: 'Send Results' },
+  { key: 'promoCode', title: 'Exclusive Promo Code' },
   { key: 'preGenerationLanding', title: 'Get Your Sketch' },
-  { key: 'promoCode', title: 'Your Promo Code' },
 ];
 
 // Export as QuizApp for routing
 export default function QuizApp() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const [step, setStep] = useState(0);
+  
+  // Check if coming from signup based on URL path
+  const isFromSignup = location.pathname === '/register/quiz';
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [job, setJob] = useState({ id: null, status: null, resultId: null });
@@ -68,9 +76,50 @@ export default function QuizApp() {
     email: '',
   });
 
-  // Reset form when returning to intro step
+  // Check for payment success on mount and restore quiz data
   useEffect(() => {
-    if (step === 0) {
+    const sessionId = searchParams.get('session_id');
+    const paymentSuccess = searchParams.get('payment');
+    
+    if (sessionId && paymentSuccess === 'success') {
+      // Payment was successful - restore quiz data from localStorage and jump to PreGenerationLanding
+      const quizDataStr = localStorage.getItem('quizData');
+      if (quizDataStr) {
+        try {
+          const quizData = JSON.parse(quizDataStr);
+          if (quizData.answers) {
+            // Restore form state from quiz data
+            setForm({
+              ...quizData.answers,
+              warningAcknowledged: quizData.answers.warningAcknowledged || false,
+            });
+            if (quizData.email) {
+              setSubmittedEmail(quizData.email);
+            }
+            console.log('[QuizApp] Quiz data restored from localStorage after payment success');
+          }
+        } catch (e) {
+          console.error('[QuizApp] Failed to parse quiz data from localStorage:', e);
+        }
+      }
+      
+      // Jump to PreGenerationLanding step (index 36)
+      const preGenStepIndex = STEPS.findIndex(s => s.key === 'preGenerationLanding');
+      if (preGenStepIndex !== -1) {
+        setStep(preGenStepIndex);
+        console.log('[QuizApp] Jumped to PreGenerationLanding step after payment success');
+      }
+    }
+  }, [searchParams]);
+
+  // Reset form when returning to intro step (but not if payment was successful)
+  useEffect(() => {
+    const sessionId = searchParams.get('session_id');
+    const paymentSuccess = searchParams.get('payment');
+    const isPaymentSuccess = sessionId && paymentSuccess === 'success';
+    
+    // Don't reset form if payment was successful - we want to preserve quiz data
+    if (step === 0 && !isPaymentSuccess) {
       setForm({
         gender: '',
         genderConfirm: '',
@@ -95,7 +144,32 @@ export default function QuizApp() {
         email: '',
       });
     }
-  }, [step]);
+  }, [step, searchParams]);
+
+  // Auto-fill email when email step is reached (ONLY if coming from signup)
+  useEffect(() => {
+    const emailStepIndex = STEPS.findIndex(s => s.key === 'email');
+    if (step === emailStepIndex) {
+      // ONLY auto-fill email if coming from signup process
+      if (isFromSignup) {
+        const signupEmail = localStorage.getItem('signupEmail');
+        if (signupEmail) {
+          const emailToFill = signupEmail.trim().toLowerCase();
+          setForm(prev => ({ ...prev, email: emailToFill }));
+          console.log('[QuizApp] ✅ User came from signup (URL: /register/quiz) - email auto-filled and locked:', emailToFill);
+        } else {
+          console.warn('[QuizApp] ⚠️ Coming from signup but no signupEmail found in localStorage');
+        }
+      } else {
+        // Coming directly to quiz - do NOT pre-fill email, user must type it
+        console.log('[QuizApp] User came directly to quiz - email field will be empty and editable');
+        // Clear any existing email if user navigated directly
+        if (form.email && !localStorage.getItem('signupEmail')) {
+          setForm(prev => ({ ...prev, email: '' }));
+        }
+      }
+    }
+  }, [step, isFromSignup]);
 
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
@@ -105,6 +179,18 @@ export default function QuizApp() {
     setResult(null);
     setSubmittedEmail(form.email);
     try {
+      // Check if account already exists
+      let accountExists = false;
+      if (form.email) {
+        try {
+          const checkResult = await checkAccountExists(form.email);
+          accountExists = checkResult.exists || false;
+        } catch (err) {
+          console.error('Failed to check account existence:', err);
+          // Continue with flow if check fails
+        }
+      }
+
       const payload = {
         answers: { ...form },
         birthDetails: {
@@ -114,16 +200,50 @@ export default function QuizApp() {
         },
         email: form.email || null,
       };
+      
+      // Save complete quiz data to localStorage for use after payment
+      localStorage.setItem('quizData', JSON.stringify({
+        answers: { ...form },
+        birthDetails: {
+          date: form.birthDate,
+          time: form.birthTime || null,
+          city: form.birthCity || null,
+        },
+        email: form.email || null,
+        timestamp: new Date().toISOString(),
+      }));
+      
+      // Clear signupEmail after quiz submission (it's now saved in quizData)
+      if (localStorage.getItem('signupEmail')) {
+        localStorage.removeItem('signupEmail');
+        console.log('[QuizApp] Signup email cleared after quiz submission');
+      }
+      
       const res = await submitQuiz(payload);
       setResult(res);
       setJob({ id: null, status: null, resultId: null });
-      setStep(STEPS.length);
 
-      if (form.email) {
-        try {
-          await sendSketchReadyEmail(form.email);
-        } catch (err) {
-          console.error('Failed to send sketch email', err);
+      // If account exists, skip PreGenerationLanding and redirect to login
+      if (accountExists) {
+        setStep(STEPS.length);
+        if (form.email) {
+          try {
+            await sendSketchReadyEmail(form.email);
+          } catch (err) {
+            console.error('Failed to send sketch email', err);
+          }
+        }
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        // Account doesn't exist, show PreGenerationLanding page
+        const preGenStepIndex = STEPS.findIndex(s => s.key === 'preGenerationLanding');
+        if (preGenStepIndex !== -1) {
+          setStep(preGenStepIndex);
+        } else {
+          setStep(STEPS.length);
         }
       }
     } catch (e) {
@@ -224,6 +344,7 @@ export default function QuizApp() {
           email={form.email}
           name={form.name || form.fullName || ''}
           birthDate={form.birthDate || null}
+          formData={form} // Pass full form data so quiz data can be reconstructed
           loading={loading}
         />
       </div>
@@ -316,6 +437,7 @@ export default function QuizApp() {
                 form={form}
                 setForm={setForm}
                 onAutoNext={() => setStep((s) => Math.min(s + 1, STEPS.length - 1))}
+                isFromSignup={isFromSignup}
               />
             </motion.div>
           </AnimatePresence>
@@ -335,20 +457,15 @@ export default function QuizApp() {
             'portraitReady',
             'email',
           ]);
+          // Hide external button for promoCode since it has its own Continue button
+          if (key === 'promoCode') {
+            return null;
+          }
           if (continueKeys.has(key)) {
             return (
               <div className="mt-8 flex justify-center">
                 <button className="btn px-8 py-3" onClick={() => next()} disabled={isNextDisabled}>
                   Continue
-                </button>
-              </div>
-            );
-          }
-          if (key === 'promoCode') {
-            return (
-              <div className="mt-8 flex justify-center">
-                <button className="btn px-8 py-3" onClick={() => setStep(STEPS.length)} disabled={loading}>
-                  See Results
                 </button>
               </div>
             );

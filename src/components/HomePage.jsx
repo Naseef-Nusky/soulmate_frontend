@@ -85,17 +85,6 @@ export default function HomePage() {
               </div>
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(212, 163, 75, 0.1)' }}>
-                  <MessageCircle size={24} style={{ color: '#D4A34B' }} />
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2" style={{ color: '#1A2336' }}>Professional Astrologer Support</h3>
-                  <p className="text-sm sm:text-base" style={{ color: '#666' }}>
-                    Get connected with skilled astrologers who offer personalized advice and deep insights to help you overcome challenges and seize life's opportunities.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(212, 163, 75, 0.1)' }}>
                   <Heart size={24} style={{ color: '#D4A34B' }} />
                 </div>
                 <div>
@@ -112,10 +101,10 @@ export default function HomePage() {
         {/* Feature Cards */}
         <div className="grid md:grid-cols-4 gap-6">
           {[
-            { icon: Users, title: 'One-on-One Astrologer Sessions', desc: '' },
             { icon: Sparkles, title: 'Tailored Astrological Insights', desc: '' },
-            { icon: Heart, title: 'Tailored Astrological Insights', desc: '' },
+            { icon: Heart, title: 'Compatibility Analysis', desc: '' },
             { icon: Globe, title: 'Detailed Birth Chart Interpretation', desc: '' },
+            { icon: Shield, title: 'Secure & Private', desc: '' },
           ].map((feature, i) => (
             <div 
               key={i}
@@ -148,7 +137,7 @@ export default function HomePage() {
         <div className="grid md:grid-cols-3 gap-8">
           {[
             { value: '96%', label: 'Users recommend GuruLink Spiritual Guidance', icon: Star },
-            { value: '750k', label: 'Palmistry readings completed', icon: Star },
+            { value: '750k', label: 'Astrology readings completed', icon: Star },
             { value: '4.8/5', label: 'Stars satisfaction score', icon: Star },
           ].map((stat, i) => (
             <div 
@@ -220,7 +209,7 @@ export default function HomePage() {
             {
               icon: Users,
               title: '',
-              desc: 'GuruLink also connects you directly with experienced astrologers who offer customized guidance based on your birth chart and individual life path.',
+              desc: 'GuruLink provides personalized astrology insights and guidance based on your birth chart and individual life path.',
             },
           ].map((item, i) => (
             <div 
@@ -283,7 +272,7 @@ export default function HomePage() {
               {[
                 { name: 'Anika R.', text: 'The birth chart reading gave me so much clarity about my career and life direction. Truly eye-opening!', date: '1 week ago' },
                 { name: 'Michael L.', text: 'I was amazed by how detailed my personalized horoscope was. It felt like it truly understood me!', date: '1 week ago' },
-                { name: 'Priya S.', text: 'The astrologer I spoke with was so kind and insightful. The guidance I received changed how I view my relationships.', date: '1 week ago' },
+                { name: 'Priya S.', text: 'The personalized astrology insights were so detailed and insightful. The guidance I received changed how I view my relationships.', date: '1 week ago' },
                 { name: 'Jonathan K.', text: 'I love how accurate the predictions are. Every reading feels personal and deeply meaningful.', date: '1 week ago' },
                 { name: 'Emily D.', text: 'GuruLink has become my daily companion. The astrology insights keep me grounded and inspired every morning.', date: '1 week ago' },
               ].map((testimonial, i) => (
@@ -331,8 +320,8 @@ export default function HomePage() {
           </div>
           <ul className="space-y-4 mb-8 max-w-2xl mx-auto">
             {[
-              'Get detailed palmistry insights made just for you',
-              'Chat live with professional astrologers',
+              'Get detailed astrology insights made just for you',
+              'Access personalized birth chart readings',
               'Enjoy daily horoscopes that inspire and guide you',
               'After your 7-day trial ($1.00), your subscription continues at $29.99/month.',
             ].map((item, i) => (

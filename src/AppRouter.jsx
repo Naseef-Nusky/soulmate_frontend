@@ -31,6 +31,7 @@ export default function AppRouter() {
         <Route path="/" element={<HomePage />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/quiz" element={<QuizApp />} />
+        <Route path="/register/quiz" element={<QuizApp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Login isRegister={true} />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -46,6 +47,7 @@ export default function AppRouter() {
     </BrowserRouter>
   );
 }
+
 
 
 

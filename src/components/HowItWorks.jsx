@@ -16,7 +16,7 @@ export default function HowItWorks() {
               title: 'Receive Your Personalized Readings', 
               desc: '' 
             },
-            { step: 4, title: 'Begin One-on-One Sessions with Astrologers', desc: '' },
+            { step: 4, title: 'Access Your Daily Astrology Insights', desc: '' },
           ].map((item, i) => (
             <div key={i} className="text-center">
               <div 

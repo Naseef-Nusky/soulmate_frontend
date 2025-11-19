@@ -51,18 +51,6 @@ export default function ResultView({ result, onRestart, email }) {
         </div>
       )}
 
-      {/* Palmistry Insights */}
-      <div className="rounded-3xl shadow-2xl border p-6 sm:p-8" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-        <h3 className="text-xl sm:text-2xl font-bold mb-4" style={{ color: '#1A2336' }}>Palmistry Insights</h3>
-        <div className="prose max-w-none" style={{ color: '#4B5563' }}>
-          <p className="text-sm sm:text-base leading-relaxed">
-            Based on your astrological profile and life path indicators, your palmistry reading reveals strong intuitive abilities and a natural gift for understanding others. Your life line suggests a journey filled with meaningful connections, while your heart line indicates deep emotional capacity and the ability to form lasting bonds. The patterns in your palm align with your {result.astrology?.element || 'elemental'} nature, showing a harmonious balance between your inner desires and external expressions.
-          </p>
-          <p className="text-sm sm:text-base leading-relaxed mt-4">
-            Your destiny line shows clear markers for transformative relationships that will significantly impact your life path. The intersection points suggest key moments where your soulmate connection will manifest, aligning with the cosmic timing revealed in your birth chart.
-          </p>
-        </div>
-      </div>
 
       {/* Compatibility Reading */}
       <div className="rounded-3xl shadow-2xl border p-6 sm:p-8" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
