@@ -164,9 +164,6 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
           
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mt-6">
             <div className="flex-1 text-center md:text-left">
-              <p className="text-sm uppercase tracking-wide mb-2" style={{ color: '#D4A34B' }}>
-                Secure Stripe Checkout · 564,000+ Happy Members
-              </p>
               <div className="mb-4" style={{ color: '#4B5563' }}>
                 Unlock your life path with a detailed soulmate sketch and personalized compatibility reading.
               </div>
@@ -320,10 +317,6 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
                     >
                       {processingCheckout ? 'Processing...' : `Start 7-Day Trial - ${pricing.trial.formatted}`}
                     </button>
-                    
-                    <p className="text-center text-xs" style={{ color: '#666' }}>
-                      SECURED BY STRIPE · {pricing.currency}
-                    </p>
                   </>
                 )}
               </div>
@@ -415,7 +408,7 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
                 {isPaymentSuccess ? 'Payment Successful!' : 'Your Soulmate Sketch Awaits'}
               </div>
               <div className="text-sm opacity-90">
-                {isPaymentSuccess ? 'Click below to access your sketch' : 'Join 1+ million users who found their match'}
+                {isPaymentSuccess ? 'Click below to access your sketch' : 'Join 750+ users who found their match'}
               </div>
             </div>
             <button 

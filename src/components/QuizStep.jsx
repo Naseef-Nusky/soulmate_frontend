@@ -159,8 +159,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
             <p className="text-[10px] mt-1" style={{ color: '#4B5563' }}>Users say the sketch captured their soulmate.</p>
           </div>
           <div className="rounded-2xl p-4 shadow-sm border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>1,000+</div>
-            <div className="text-xs font-semibold" style={{ color: '#1A2336' }}>Happy Customers</div>
+            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>Thousands of</div>
+            <div className="text-xs font-semibold" style={{ color: '#1A2336' }}>happy customers</div>
             <p className="text-[10px] mt-1" style={{ color: '#4B5563' }}>Real people discovering their true connection.</p>
           </div>
         </div>

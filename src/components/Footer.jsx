@@ -120,7 +120,6 @@ export default function Footer() {
           <div>
             <h3 className="text-sm sm:text-base font-bold mb-4">Customer Support</h3>
             <ul className="space-y-2 text-xs sm:text-sm">
-              <li><a href="#" className="hover:opacity-70 transition-opacity">How to Cancel</a></li>
               <li><Link to="/support" className="hover:opacity-70 transition-opacity">Customer Support 24/7/365</Link></li>
             </ul>
           </div>
@@ -136,7 +135,6 @@ export default function Footer() {
           <div>
             <h3 className="text-sm sm:text-base font-bold mb-4">About Us</h3>
             <ul className="space-y-2 text-xs sm:text-sm">
-              <li><a href="#" className="hover:opacity-70 transition-opacity">Help Center</a></li>
               <li><Link to="/pricing" className="hover:opacity-70 transition-opacity">Pricing</Link></li>
             </ul>
           </div>

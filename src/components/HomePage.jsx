@@ -323,7 +323,7 @@ export default function HomePage() {
               'Get detailed astrology insights made just for you',
               'Access personalized birth chart readings',
               'Enjoy daily horoscopes that inspire and guide you',
-              'After your 7-day trial ($1.00), your subscription continues at $29.99/month.',
+              'After your 7-day trial (£1.00), your subscription continues at £29.99/month.',
             ].map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <Check size={20} style={{ color: '#D4A34B', flexShrink: 0, marginTop: '2px' }} />
