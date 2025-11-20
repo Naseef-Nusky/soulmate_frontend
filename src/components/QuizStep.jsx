@@ -152,16 +152,16 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
         </div>
 
         {/* Stats Cards with gold theme - reduced size */}
-        <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
-          <div className="rounded-2xl p-4 shadow-sm border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>86%</div>
-            <div className="text-xs font-semibold" style={{ color: '#1A2336' }}>Accuracy Rate</div>
-            <p className="text-[10px] mt-1" style={{ color: '#4B5563' }}>Users say the sketch captured their soulmate.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-sm mx-auto">
+          <div className="rounded-2xl p-3 sm:p-4 shadow-sm border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
+            <div className="text-xl sm:text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>86%</div>
+            <div className="text-[11px] sm:text-xs font-semibold" style={{ color: '#1A2336' }}>Accuracy Rate</div>
+            <p className="text-[10px] leading-snug mt-1" style={{ color: '#4B5563' }}>Users say the sketch captured their soulmate.</p>
           </div>
-          <div className="rounded-2xl p-4 shadow-sm border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>Thousands of</div>
-            <div className="text-xs font-semibold" style={{ color: '#1A2336' }}>happy customers</div>
-            <p className="text-[10px] mt-1" style={{ color: '#4B5563' }}>Real people discovering their true connection.</p>
+          <div className="rounded-2xl p-3 sm:p-4 shadow-sm border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
+            <div className="text-base sm:text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>Thousands of</div>
+            <div className="text-[11px] sm:text-xs font-semibold" style={{ color: '#1A2336' }}>happy customers</div>
+            <p className="text-[10px] leading-snug mt-1" style={{ color: '#4B5563' }}>Real people discovering their true connection.</p>
           </div>
         </div>
 
@@ -174,13 +174,13 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
         
         {/* Legal Text - reduced spacing */}
         <div className="pt-2 space-y-1">
-          <p className="text-[10px] leading-tight" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>
+          <p className="text-[10px] leading-tight text-center sm:text-left" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>
             By continuing to use this service, you acknowledge and accept our <Link className="underline transition-colors font-semibold hover:opacity-80" to="/terms" style={{ color: '#D4A34B' }}>Terms of Service</Link> and <Link className="underline transition-colors font-semibold hover:opacity-80" to="/privacy" style={{ color: '#D4A34B' }}>Privacy Policy</Link>.
           </p>
-          <p className="text-[10px] leading-tight" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>
+          <p className="text-[10px] leading-tight text-center sm:text-left" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>
             If you have any questions, please <Link className="underline transition-colors font-semibold hover:opacity-80" to="/support" style={{ color: '#D4A34B' }}>contact our support team</Link>.
           </p>
-          <p className="text-[10px] font-medium" style={{ color: 'rgba(212, 163, 75, 0.6)' }}>All content provided is for entertainment purposes only.</p>
+          <p className="text-[10px] font-medium text-center sm:text-left" style={{ color: 'rgba(212, 163, 75, 0.6)' }}>All content provided is for entertainment purposes only.</p>
         </div>
       </div>
     );
@@ -191,7 +191,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
       <div className="space-y-6">
         <div className="text-center space-y-2">
           <h2 className="text-2xl sm:text-3xl font-black" style={{ color: '#1A2336' }}>
-            Over 1 Million People Have Found Their Soulmate with GuruLink
+            Thousands of People Have Found Their Soulmate with GuruLink
           </h2>
           <p style={{ color: '#4B5563' }}>Join more than a thousand people each day discovering the face of their true connection 💞</p>
         </div>
@@ -223,7 +223,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
             <div className="text-sm" style={{ color: '#4B5563' }}>people found their soulmate today</div>
           </div>
           <div className="rounded-3xl p-5 border-2 shadow-md hover:shadow-lg transition-all duration-300" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>1M+</div>
+            <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>Thousands</div>
             <div className="text-sm" style={{ color: '#4B5563' }}>people trust GuruLink across the world</div>
           </div>
         </div>
