@@ -174,13 +174,13 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
         
         {/* Legal Text - reduced spacing */}
         <div className="pt-2 space-y-1">
-          <p className="text-[10px] leading-tight text-center sm:text-left" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>
+          <p className="text-[10px] leading-tight text-center" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>
             By continuing to use this service, you acknowledge and accept our <Link className="underline transition-colors font-semibold hover:opacity-80" to="/terms" style={{ color: '#D4A34B' }}>Terms of Service</Link> and <Link className="underline transition-colors font-semibold hover:opacity-80" to="/privacy" style={{ color: '#D4A34B' }}>Privacy Policy</Link>.
           </p>
-          <p className="text-[10px] leading-tight text-center sm:text-left" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>
+          <p className="text-[10px] leading-tight text-center" style={{ color: 'rgba(212, 163, 75, 0.7)' }}>
             If you have any questions, please <Link className="underline transition-colors font-semibold hover:opacity-80" to="/support" style={{ color: '#D4A34B' }}>contact our support team</Link>.
           </p>
-          <p className="text-[10px] font-medium text-center sm:text-left" style={{ color: 'rgba(212, 163, 75, 0.6)' }}>All content provided is for entertainment purposes only.</p>
+          <p className="text-[10px] font-medium text-center" style={{ color: 'rgba(212, 163, 75, 0.6)' }}>All content provided is for entertainment purposes only.</p>
         </div>
       </div>
     );
