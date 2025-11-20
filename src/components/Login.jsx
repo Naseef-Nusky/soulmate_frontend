@@ -18,6 +18,35 @@ export default function Login({ isRegister = false }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const today = new Date();
+  const maxBirthDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+  const minBirthDate = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate());
+  const maxBirthDateStr = maxBirthDate.toISOString().split('T')[0];
+  const minBirthDateStr = minBirthDate.toISOString().split('T')[0];
+
+  const birthInputValue =
+    formData.birthYear && formData.birthMonth && formData.birthDay
+      ? `${formData.birthYear}-${formData.birthMonth.padStart(2, '0')}-${formData.birthDay.padStart(2, '0')}`
+      : '';
+
+  const handleBirthDateChange = (value) => {
+    if (!value) {
+      setFormData((prev) => ({
+        ...prev,
+        birthDay: '',
+        birthMonth: '',
+        birthYear: '',
+      }));
+      return;
+    }
+    const [year, month, day] = value.split('-');
+    setFormData((prev) => ({
+      ...prev,
+      birthDay: day,
+      birthMonth: month,
+      birthYear: year,
+    }));
+  };
 
   // Check for login token in URL
   useEffect(() => {
@@ -203,6 +232,46 @@ export default function Login({ isRegister = false }) {
           return;
         }
 
+        // Validate birth date & age
+        const dayNum = parseInt(formData.birthDay, 10);
+        const monthNum = parseInt(formData.birthMonth, 10);
+        const yearNum = parseInt(formData.birthYear, 10);
+
+        if (
+          Number.isNaN(dayNum) ||
+          Number.isNaN(monthNum) ||
+          Number.isNaN(yearNum) ||
+          dayNum < 1 ||
+          dayNum > 31 ||
+          monthNum < 1 ||
+          monthNum > 12 ||
+          yearNum < 1900
+        ) {
+          setError('Please enter a valid birth date');
+          setLoading(false);
+          return;
+        }
+
+        const birthDateObj = new Date(yearNum, monthNum - 1, dayNum);
+        const isValidDate =
+          birthDateObj.getFullYear() === yearNum &&
+          birthDateObj.getMonth() === monthNum - 1 &&
+          birthDateObj.getDate() === dayNum;
+
+        if (!isValidDate) {
+          setError('Please enter a valid birth date');
+          setLoading(false);
+          return;
+        }
+
+        const today = new Date();
+        const cutoff = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        if (birthDateObj > cutoff) {
+          setError('You must be at least 18 years old to sign up');
+          setLoading(false);
+          return;
+        }
+
         // Check if account already exists
         const cleanedEmail = formData.email.trim().toLowerCase();
         try {
@@ -362,59 +431,20 @@ export default function Login({ isRegister = false }) {
                   <label className="block text-sm font-semibold mb-2" style={{ color: '#1A2336' }}>
                     Birth Date
                   </label>
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <input
-                      type="text"
+                      type="date"
                       required
-                      maxLength={2}
-                      value={formData.birthDay}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 2);
-                        setFormData({ ...formData, birthDay: value });
-                      }}
-                      className="w-full sm:w-20 px-4 py-3 rounded-lg border text-center"
-                      style={{ 
+                      value={birthInputValue}
+                      onChange={(e) => handleBirthDateChange(e.target.value)}
+                      min={minBirthDateStr}
+                      max={maxBirthDateStr}
+                      className="w-full px-4 py-3 rounded-lg border"
+                      style={{
                         borderColor: 'rgba(212, 163, 75, 0.3)',
                         backgroundColor: '#F9F9F9',
                         color: '#1A2336'
                       }}
-                      placeholder="dd"
-                    />
-                    <span className="hidden sm:flex items-center text-lg font-bold" style={{ color: '#666' }}>/</span>
-                    <input
-                      type="text"
-                      required
-                      maxLength={2}
-                      value={formData.birthMonth}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 2);
-                        setFormData({ ...formData, birthMonth: value });
-                      }}
-                      className="w-full sm:w-20 px-4 py-3 rounded-lg border text-center"
-                      style={{ 
-                        borderColor: 'rgba(212, 163, 75, 0.3)',
-                        backgroundColor: '#F9F9F9',
-                        color: '#1A2336'
-                      }}
-                      placeholder="mm"
-                    />
-                    <span className="hidden sm:flex items-center text-lg font-bold" style={{ color: '#666' }}>/</span>
-                    <input
-                      type="text"
-                      required
-                      maxLength={4}
-                      value={formData.birthYear}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 4);
-                        setFormData({ ...formData, birthYear: value });
-                      }}
-                      className="w-full sm:w-24 px-4 py-3 rounded-lg border text-center"
-                      style={{ 
-                        borderColor: 'rgba(212, 163, 75, 0.3)',
-                        backgroundColor: '#F9F9F9',
-                        color: '#1A2336'
-                      }}
-                      placeholder="yyyy"
                     />
                   </div>
                 </div>
