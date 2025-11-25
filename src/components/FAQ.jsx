@@ -70,6 +70,8 @@ export default function FAQ() {
                       backgroundColor: open ? 'rgba(212, 163, 75, 0.05)' : 'transparent',
                       color: '#1A2336'
                     }}
+                    aria-expanded={open}
+                    aria-controls={`faq-answer-${i}`}
                   >
                     <span className="text-sm sm:text-base font-semibold">{item.q}</span>
                     <ChevronDown 
@@ -78,11 +80,14 @@ export default function FAQ() {
                       className={`transition-transform ${open ? 'rotate-180' : ''}`}
                     />
                   </button>
-                  {open && (
-                    <div className="px-4 pb-4 text-sm sm:text-base" style={{ color: '#666' }}>
-                      {item.a}
-                    </div>
-                  )}
+                  <div
+                    id={`faq-answer-${i}`}
+                    className={`px-4 pb-4 text-sm sm:text-base transition-all duration-300 ${open ? 'block' : 'hidden'}`}
+                    style={{ color: '#666' }}
+                    aria-hidden={!open}
+                  >
+                    {item.a}
+                  </div>
                 </div>
               );
             })}

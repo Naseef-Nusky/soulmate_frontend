@@ -1,0 +1,14 @@
+{
+  "appId": "com.gurulink.app",
+  "appName": "GuruLink",
+  "webDir": "dist",
+  "server": {
+    "cleartext": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#F5F5F5"
+    }
+  }
+}

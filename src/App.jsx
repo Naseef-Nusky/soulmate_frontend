@@ -383,7 +383,7 @@ export default function QuizApp() {
               alt="GuruLink" 
               className="h-10 w-10 object-contain"
             />
-            <div className="text-2xl font-black" style={{ color: '#1A2336' }}>
+            <div className="text-2xl font-black" style={{ color: '#1A2336' }} data-notranslate>
               GuruLink<span style={{ color: '#D4A34B' }}>.app</span>
             </div>
           </div>

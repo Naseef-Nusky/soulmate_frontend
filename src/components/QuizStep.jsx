@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Smile, CheckCircle } from 'lucide-react';
+import { translateTexts } from '../lib/api.js';
 
 function CheckboxGroup({ options, values, onChange }) {
   function toggle(val) {
@@ -136,9 +137,176 @@ function Preparing({ onDone }) {
 export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup = false }) {
   const key = step.key;
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const state = window.__GuruLinkTranslationState;
+    if (state?.lang && state.lang !== 'en') {
+      setTimeout(() => {
+        window.__GuruLinkTranslationState?.reapply?.();
+      }, 100);
+    }
+  }, [key]);
+
+  // Listen for language changes from footer
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const handleLanguageChange = () => {
+      const state = window.__GuruLinkTranslationState;
+      if (state?.lang && state.lang !== 'en') {
+        // Reapply translation when language changes
+        setTimeout(() => {
+          window.__GuruLinkTranslationState?.reapply?.();
+        }, 200);
+      }
+    };
+
+    // Listen for the custom language change event
+    window.addEventListener('gurulink:language-applied', handleLanguageChange);
+    
+    return () => {
+      window.removeEventListener('gurulink:language-applied', handleLanguageChange);
+    };
+  }, []);
+
   if (key === 'intro') {
+    // Language change handler (same as Footer)
+    const applyTranslation = async (langCode, { silent = false } = {}) => {
+      try {
+        const root = document.getElementById('root');
+        if (!root) {
+          if (!silent) alert('Unable to access page root for translation.');
+          return;
+        }
+
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+          acceptNode: (node) => {
+            if (!node.nodeValue) return NodeFilter.FILTER_REJECT;
+            const text = node.nodeValue.trim();
+            if (text.length < 2) return NodeFilter.FILTER_REJECT;
+            const p = node.parentElement;
+            if (!p) return NodeFilter.FILTER_REJECT;
+            const tag = p.tagName?.toLowerCase();
+            if (['script', 'style', 'noscript', 'select', 'option'].includes(tag)) return NodeFilter.FILTER_REJECT;
+            let el = p;
+            while (el) {
+              if (el.classList?.contains('notranslate') || el.hasAttribute?.('data-notranslate')) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              el = el.parentElement;
+            }
+            return NodeFilter.FILTER_ACCEPT;
+          }
+        });
+
+        const nodes = [];
+        let n;
+        const maxNodes = 400;
+        while ((n = walker.nextNode()) && nodes.length < maxNodes) {
+          nodes.push(n);
+        }
+
+        if (nodes.length === 0) {
+          if (!silent) alert('Nothing to translate on this view.');
+          return;
+        }
+
+        const preserveMap = new Map([
+          ['GuruLink.app', '__BRAND_GURULINK_APP__'],
+          ['GuruLink™', '__BRAND_GURULINK_TM__'],
+          ['GuruLink', '__BRAND_GURULINK__'],
+        ]);
+        const texts = nodes.map(node => {
+          let out = node.nodeValue;
+          preserveMap.forEach((token, key) => {
+            out = out.split(key).join(token);
+          });
+          return out;
+        });
+
+        const { translations } = await translateTexts({ texts, target: langCode });
+        if (!Array.isArray(translations) || translations.length !== nodes.length) {
+          if (!silent) alert('Translation service returned an unexpected response.');
+          return;
+        }
+
+        for (let i = 0; i < nodes.length; i++) {
+          let v = translations[i];
+          preserveMap.forEach((token, key) => {
+            v = v.split(token).join(key);
+          });
+          nodes[i].nodeValue = v;
+        }
+
+        if (typeof window !== 'undefined') {
+          window.__GuruLinkTranslationState = {
+            lang: langCode,
+            reapply: () => applyTranslation(langCode, { silent: true })
+          };
+          window.dispatchEvent(new CustomEvent('gurulink:language-applied', { detail: { lang: langCode } }));
+        }
+      } catch (err) {
+        console.error('Translate fallback error:', err);
+        if (!silent) alert('Automatic translation is unavailable. Please try again later.');
+      }
+    };
+
+    const handleLanguageChange = (langCode) => {
+      if (langCode === 'en') {
+        if (typeof window !== 'undefined') {
+          window.__GuruLinkTranslationState = null;
+        }
+        window.location.reload();
+        return;
+      }
+      applyTranslation(langCode);
+    };
+
+    // Get current language from state
+    const currentLang = typeof window !== 'undefined' && window.__GuruLinkTranslationState?.lang ? window.__GuruLinkTranslationState.lang : 'en';
+
     return (
        <div className="space-y-4 text-center">
+        {/* Language Dropdown - Top Right (same as Footer) */}
+        <div className="flex justify-end mb-2">
+          <select 
+            className="px-3 py-2 rounded-lg text-xs sm:text-sm"
+            style={{ backgroundColor: '#FFFFFF', color: '#1A2336', border: '1px solid #E5E7EB' }}
+            value={currentLang}
+            onChange={(e) => handleLanguageChange(e.target.value)}
+          >
+            <option value="en">English</option>
+            <option value="ar">عربية</option>
+            <option value="da">Dansk</option>
+            <option value="de">Deutsch</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="hu">Magyar</option>
+            <option value="it">Italiano</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="nl">Nederlands</option>
+            <option value="no">Norsk</option>
+            <option value="pl">Polski</option>
+            <option value="pt">Português</option>
+            <option value="ro">Română</option>
+            <option value="sv">Svenska</option>
+            <option value="tr">Türkçe</option>
+            <option value="el">Ελληνικά</option>
+            <option value="bg">Български</option>
+            <option value="cs">Čeština</option>
+            <option value="et">Eesti</option>
+            <option value="fi">Suomi</option>
+            <option value="hr">Hrvatski</option>
+            <option value="lt">Lietuvių</option>
+            <option value="lv">Latviešu</option>
+            <option value="ru">Русский</option>
+            <option value="sk">Slovenčina</option>
+            <option value="uk">Українська</option>
+            <option value="zh">中文</option>
+          </select>
+        </div>
+
         {/* Hero Image with gold gradient overlay */}
         <div className="relative mx-auto max-w-lg">
           <div className="relative rounded-2xl overflow-hidden shadow-xl border-2" style={{ borderColor: '#E5E7EB' }}>
@@ -191,7 +359,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
       <div className="space-y-6">
         <div className="text-center space-y-2">
           <h2 className="text-2xl sm:text-3xl font-black" style={{ color: '#1A2336' }}>
-            Thousands of People Have Found Their Soulmate with GuruLink
+            Thousands of People Have Found Their Soulmate with <span data-notranslate>GuruLink</span>
           </h2>
           <p style={{ color: '#4B5563' }}>Join more than a thousand people each day discovering the face of their true connection 💞</p>
         </div>
@@ -206,7 +374,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
               </div>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: '#4B5563' }}>
-              “I was amazed by how real it felt! The sketch looked just like the person I met weeks later. GuruLink helped me believe in love again and trust the universe’s timing.”
+              “I was amazed by how real it felt! The sketch looked just like the person I met weeks later. <span data-notranslate>GuruLink</span> helped me believe in love again and trust the universe's timing.”
             </p>
             <div className="flex gap-1" aria-label="5 out of 5 stars">
               {[...Array(5)].map((_, i) => (
@@ -224,7 +392,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
           </div>
           <div className="rounded-3xl p-5 border-2 shadow-md hover:shadow-lg transition-all duration-300" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
             <div className="text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>Thousands</div>
-            <div className="text-sm" style={{ color: '#4B5563' }}>people trust GuruLink across the world</div>
+            <div className="text-sm" style={{ color: '#4B5563' }}>people trust <span data-notranslate>GuruLink</span> across the world</div>
           </div>
         </div>
         
@@ -352,10 +520,12 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
 
   if (key === 'ethnicity') {
     const options = [
-      { label: 'Caucasian/White', emoji: '🧒', img: '/ethnicity/caucasian.png' },
-      { label: 'Hispanic/Latino', emoji: '🧑‍🦱', img: '/ethnicity/latino.png' },
-      { label: 'African/African-American', emoji: '🧑🏿', img: '/ethnicity/african.png' },
+      { label: 'Caucasian / White', emoji: '🧒', img: '/ethnicity/caucasian.png' },
+      { label: 'Hispanic / Latino', emoji: '🧑‍🦱', img: '/ethnicity/latino.png' },
+      { label: 'African / African-American', emoji: '🧑🏿', img: '/ethnicity/african.png' },
       { label: 'Asian', emoji: '🧑🏻', img: '/ethnicity/asian.png' },
+      { label: 'Caribbean', emoji: '🧑🏽', img: '/ethnicity/caribbean.png' },
+      { label: 'Mixed Race', emoji: '👨‍👩‍👧', img: '/ethnicity/mixed.png' },
       { label: 'No preference', emoji: '🫥', img: '/ethnicity/any.png' },
     ];
     return (
@@ -546,6 +716,13 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
   }
 
   if (key === 'birth') {
+    // Date validation: minimum 18 years old, maximum 100 years old (same as signup page)
+    const today = new Date();
+    const maxBirthDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    const minBirthDate = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate());
+    const maxBirthDateStr = maxBirthDate.toISOString().split('T')[0];
+    const minBirthDateStr = minBirthDate.toISOString().split('T')[0];
+
     return (
       <div className="space-y-4 text-center sm:text-left">
         <p className="text-sm sm:text-base" style={{ color: '#4B5563' }}>It helps us create your natal chart and identify key planetary positions.</p>
@@ -556,6 +733,8 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
             className="w-full px-4 py-3 rounded-xl border text-sm"
             value={form.birthDate}
             onChange={(e) => setForm({ ...form, birthDate: e.target.value })}
+            min={minBirthDateStr}
+            max={maxBirthDateStr}
             style={{
               backgroundColor: '#F8FAFC',
               borderColor: '#E5E7EB',

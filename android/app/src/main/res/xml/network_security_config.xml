@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow HTTPS connections to api.gurulink.app with full certificate trust -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">api.gurulink.app</domain>
+        <domain includeSubdomains="true">gurulink.app</domain>
+        <trust-anchors>
+            <!-- Trust system certificates (standard CA certificates) -->
+            <certificates src="system" />
+            <!-- Trust user added certificates (for development/testing) -->
+            <certificates src="user" />
+        </trust-anchors>
+    </domain-config>
+    
+    <!-- Allow HTTP (cleartext) for localhost and Android emulator (10.0.2.2) -->
+    <!-- This is needed for local development testing -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain>localhost</domain>
+        <domain>127.0.0.1</domain>
+        <domain>10.0.2.2</domain>
+        <!-- Allow local IP addresses (192.168.x.x, 10.x.x.x, etc.) for physical device testing -->
+        <domain includeSubdomains="true">192.168.0.0</domain>
+        <domain includeSubdomains="true">192.168.1.0</domain>
+        <domain includeSubdomains="true">10.0.0.0</domain>
+    </domain-config>
+    
+    <!-- Base configuration: allow all HTTPS by default with system certificates -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Trust system certificates for all HTTPS connections -->
+            <certificates src="system" />
+            <!-- Trust user added certificates (for development/testing) -->
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
+

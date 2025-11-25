@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { translateTexts } from '../lib/api.js';
 
@@ -8,87 +8,95 @@ export default function Footer() {
 
   // No Google Website Widget: server-side translation only
 
+  const applyTranslation = useCallback(async (langCode, { silent = false } = {}) => {
+    try {
+      const root = document.getElementById('root');
+      if (!root) {
+        if (!silent) alert('Unable to access page root for translation.');
+        return;
+      }
+
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode: (node) => {
+          if (!node.nodeValue) return NodeFilter.FILTER_REJECT;
+          const text = node.nodeValue.trim();
+          if (text.length < 2) return NodeFilter.FILTER_REJECT;
+          const p = node.parentElement;
+          if (!p) return NodeFilter.FILTER_REJECT;
+          const tag = p.tagName?.toLowerCase();
+          if (['script', 'style', 'noscript', 'select', 'option'].includes(tag)) return NodeFilter.FILTER_REJECT;
+          let el = p;
+          while (el) {
+            if (el.classList?.contains('notranslate') || el.hasAttribute?.('data-notranslate')) {
+              return NodeFilter.FILTER_REJECT;
+            }
+            el = el.parentElement;
+          }
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+
+      const nodes = [];
+      let n;
+      const maxNodes = 400;
+      while ((n = walker.nextNode()) && nodes.length < maxNodes) {
+        nodes.push(n);
+      }
+
+      if (nodes.length === 0) {
+        if (!silent) alert('Nothing to translate on this view.');
+        return;
+      }
+
+      const preserveMap = new Map([
+        ['GuruLink.app', '__BRAND_GURULINK_APP__'],
+        ['GuruLink™', '__BRAND_GURULINK_TM__'],
+        ['GuruLink', '__BRAND_GURULINK__'],
+      ]);
+      const texts = nodes.map(node => {
+        let out = node.nodeValue;
+        preserveMap.forEach((token, key) => {
+          out = out.split(key).join(token);
+        });
+        return out;
+      });
+
+      const { translations } = await translateTexts({ texts, target: langCode });
+      if (!Array.isArray(translations) || translations.length !== nodes.length) {
+        if (!silent) alert('Translation service returned an unexpected response.');
+        return;
+      }
+
+      for (let i = 0; i < nodes.length; i++) {
+        let v = translations[i];
+        preserveMap.forEach((token, key) => {
+          v = v.split(token).join(key);
+        });
+        nodes[i].nodeValue = v;
+      }
+
+      if (typeof window !== 'undefined') {
+        window.__GuruLinkTranslationState = {
+          lang: langCode,
+          reapply: () => applyTranslation(langCode, { silent: true })
+        };
+        window.dispatchEvent(new CustomEvent('gurulink:language-applied', { detail: { lang: langCode } }));
+      }
+    } catch (err) {
+      console.error('Translate fallback error:', err);
+      if (!silent) alert('Automatic translation is unavailable. Please try again later.');
+    }
+  }, []);
+
   const handleLanguageChange = (langCode) => {
     if (langCode === 'en') {
-      // Reload to original English content
+      if (typeof window !== 'undefined') {
+        window.__GuruLinkTranslationState = null;
+      }
       window.location.reload();
       return;
     }
-
-    // Use server-side Google Cloud Translation API to translate visible text nodes
-    (async () => {
-      try {
-        const root = document.getElementById('root');
-        if (!root) return alert('Unable to access page root for translation.');
-
-        // Collect visible text nodes
-        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-          acceptNode: (node) => {
-            if (!node.nodeValue) return NodeFilter.FILTER_REJECT;
-            const text = node.nodeValue.trim();
-            // skip very short texts and whitespace-only
-            if (text.length < 2) return NodeFilter.FILTER_REJECT;
-            // skip text inside script/style/noscript
-            const p = node.parentElement;
-            if (!p) return NodeFilter.FILTER_REJECT;
-            const tag = p.tagName?.toLowerCase();
-            if (['script', 'style', 'noscript', 'select', 'option'].includes(tag)) return NodeFilter.FILTER_REJECT;
-            // skip anything inside .notranslate or [data-notranslate]
-            let el = p;
-            while (el) {
-              if (el.classList?.contains('notranslate') || el.hasAttribute?.('data-notranslate')) {
-                return NodeFilter.FILTER_REJECT;
-              }
-              el = el.parentElement;
-            }
-            return NodeFilter.FILTER_ACCEPT;
-          }
-        });
-
-        const nodes = [];
-        let n;
-        const maxNodes = 300; // safety cap
-        while ((n = walker.nextNode()) && nodes.length < maxNodes) {
-          nodes.push(n);
-        }
-
-        if (nodes.length === 0) {
-          return alert('Nothing to translate on this view.');
-        }
-
-        // Preserve brand tokens in-text during translation
-        const preserveMap = new Map([
-          ['GuruLink.app', '__BRAND_GURULINK_APP__'],
-          ['GuruLink™', '__BRAND_GURULINK_TM__'],
-          ['GuruLink', '__BRAND_GURULINK__'],
-        ]);
-        const originalTexts = nodes.map(node => node.nodeValue);
-        const texts = originalTexts.map(t => {
-          let out = t;
-          preserveMap.forEach((token, key) => {
-            out = out.split(key).join(token);
-          });
-          return out;
-        });
-        const { translations } = await translateTexts({ texts, target: langCode });
-        if (!Array.isArray(translations) || translations.length !== nodes.length) {
-          return alert('Translation service returned an unexpected response.');
-        }
-
-        // Apply translations in-place
-        for (let i = 0; i < nodes.length; i++) {
-          let v = translations[i];
-          // Restore brand tokens
-          preserveMap.forEach((token, key) => {
-            v = v.split(token).join(key);
-          });
-          nodes[i].nodeValue = v;
-        }
-      } catch (err) {
-        console.error('Translate fallback error:', err);
-        alert('Automatic translation is unavailable. Please try again later.');
-      }
-    })();
+    applyTranslation(langCode);
   };
 
   return (
@@ -121,6 +129,7 @@ export default function Footer() {
             <h3 className="text-sm sm:text-base font-bold mb-4">Customer Support</h3>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li><Link to="/support" className="hover:opacity-70 transition-opacity">Customer Support 24/7/365</Link></li>
+              <li><Link to="/cancel-subscription" className="hover:opacity-70 transition-opacity">How to Cancel</Link></li>
             </ul>
           </div>
           <div>

@@ -99,6 +99,19 @@ export default function Support() {
               Refund Policy
             </Link>
           </div>
+          <div className="mt-6">
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+              style={{
+                backgroundColor: '#1A2336',
+                color: '#F5F5F5',
+                boxShadow: '0 10px 15px -3px rgba(26, 35, 54, 0.3)'
+              }}
+            >
+              Return to Home
+            </Link>
+          </div>
         </div>
       </div>
     </div>
