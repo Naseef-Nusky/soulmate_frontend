@@ -50,11 +50,10 @@ workflows:
     publishing:
       email:
         recipients:
-          - "$CM_BUILD_INITIATOR_EMAIL"
+          - "${CM_BUILD_INITIATOR_EMAIL:-default@example.com}"
         notify:
           success: true
           failure: true
-        skip_if_no_recipients: true
 
   ios_workflow:
     name: iOS Release
@@ -107,8 +106,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - "$CM_BUILD_INITIATOR_EMAIL"
+          - "${CM_BUILD_INITIATOR_EMAIL:-default@example.com}"
         notify:
           success: true
           failure: true
-        skip_if_no_recipients: true
