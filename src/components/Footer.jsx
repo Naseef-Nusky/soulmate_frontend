@@ -1,102 +1,23 @@
-import { useCallback, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { translateTexts } from '../lib/api.js';
+import { changeLanguage, getCurrentLanguage } from '../lib/translation.js';
 
 export default function Footer() {
-  const translateElementRef = useRef(null);
-  const [showCustomDropdown, setShowCustomDropdown] = useState(true); // kept for future UI toggles
+  const [currentLang, setCurrentLang] = useState(getCurrentLanguage());
 
-  // No Google Website Widget: server-side translation only
-
-  const applyTranslation = useCallback(async (langCode, { silent = false } = {}) => {
-    try {
-      const root = document.getElementById('root');
-      if (!root) {
-        if (!silent) alert('Unable to access page root for translation.');
-        return;
-      }
-
-      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-        acceptNode: (node) => {
-          if (!node.nodeValue) return NodeFilter.FILTER_REJECT;
-          const text = node.nodeValue.trim();
-          if (text.length < 2) return NodeFilter.FILTER_REJECT;
-          const p = node.parentElement;
-          if (!p) return NodeFilter.FILTER_REJECT;
-          const tag = p.tagName?.toLowerCase();
-          if (['script', 'style', 'noscript', 'select', 'option'].includes(tag)) return NodeFilter.FILTER_REJECT;
-          let el = p;
-          while (el) {
-            if (el.classList?.contains('notranslate') || el.hasAttribute?.('data-notranslate')) {
-              return NodeFilter.FILTER_REJECT;
-            }
-            el = el.parentElement;
-          }
-          return NodeFilter.FILTER_ACCEPT;
-        }
-      });
-
-      const nodes = [];
-      let n;
-      const maxNodes = 400;
-      while ((n = walker.nextNode()) && nodes.length < maxNodes) {
-        nodes.push(n);
-      }
-
-      if (nodes.length === 0) {
-        if (!silent) alert('Nothing to translate on this view.');
-        return;
-      }
-
-      const preserveMap = new Map([
-        ['GuruLink.app', '__BRAND_GURULINK_APP__'],
-        ['GuruLink™', '__BRAND_GURULINK_TM__'],
-        ['GuruLink', '__BRAND_GURULINK__'],
-      ]);
-      const texts = nodes.map(node => {
-        let out = node.nodeValue;
-        preserveMap.forEach((token, key) => {
-          out = out.split(key).join(token);
-        });
-        return out;
-      });
-
-      const { translations } = await translateTexts({ texts, target: langCode });
-      if (!Array.isArray(translations) || translations.length !== nodes.length) {
-        if (!silent) alert('Translation service returned an unexpected response.');
-        return;
-      }
-
-      for (let i = 0; i < nodes.length; i++) {
-        let v = translations[i];
-        preserveMap.forEach((token, key) => {
-          v = v.split(token).join(key);
-        });
-        nodes[i].nodeValue = v;
-      }
-
-      if (typeof window !== 'undefined') {
-        window.__GuruLinkTranslationState = {
-          lang: langCode,
-          reapply: () => applyTranslation(langCode, { silent: true })
-        };
-        window.dispatchEvent(new CustomEvent('gurulink:language-applied', { detail: { lang: langCode } }));
-      }
-    } catch (err) {
-      console.error('Translate fallback error:', err);
-      if (!silent) alert('Automatic translation is unavailable. Please try again later.');
-    }
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handler = (event) => {
+      const lang = event.detail?.lang || getCurrentLanguage();
+      setCurrentLang(lang);
+    };
+    window.addEventListener('gurulink:language-applied', handler);
+    return () => window.removeEventListener('gurulink:language-applied', handler);
   }, []);
 
   const handleLanguageChange = (langCode) => {
-    if (langCode === 'en') {
-      if (typeof window !== 'undefined') {
-        window.__GuruLinkTranslationState = null;
-      }
-      window.location.reload();
-      return;
-    }
-    applyTranslation(langCode);
+    setCurrentLang(langCode);
+    changeLanguage(langCode);
   };
 
   return (
@@ -162,7 +83,7 @@ export default function Footer() {
               <select 
                 className="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm w-full"
                 style={{ backgroundColor: '#0F172A', color: '#F5F5F5', border: '1px solid rgba(212, 163, 75, 0.4)' }}
-                defaultValue="en"
+                value={currentLang}
                 onChange={(e) => handleLanguageChange(e.target.value)}
               >
                 <option value="en">English</option>

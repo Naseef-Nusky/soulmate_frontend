@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Smile, CheckCircle } from 'lucide-react';
-import { translateTexts } from '../lib/api.js';
+import { changeLanguage, getCurrentLanguage } from '../lib/translation.js';
 
 function CheckboxGroup({ options, values, onChange }) {
   function toggle(val) {
@@ -136,6 +136,7 @@ function Preparing({ onDone }) {
 
 export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup = false }) {
   const key = step.key;
+  const [currentLang, setCurrentLang] = useState(getCurrentLanguage());
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -169,101 +170,21 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleLangEvent = (event) => {
+      const lang = event.detail?.lang || getCurrentLanguage();
+      setCurrentLang(lang);
+    };
+    window.addEventListener('gurulink:language-applied', handleLangEvent);
+    return () => window.removeEventListener('gurulink:language-applied', handleLangEvent);
+  }, []);
+
   if (key === 'intro') {
-    // Language change handler (same as Footer)
-    const applyTranslation = async (langCode, { silent = false } = {}) => {
-      try {
-        const root = document.getElementById('root');
-        if (!root) {
-          if (!silent) alert('Unable to access page root for translation.');
-          return;
-        }
-
-        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-          acceptNode: (node) => {
-            if (!node.nodeValue) return NodeFilter.FILTER_REJECT;
-            const text = node.nodeValue.trim();
-            if (text.length < 2) return NodeFilter.FILTER_REJECT;
-            const p = node.parentElement;
-            if (!p) return NodeFilter.FILTER_REJECT;
-            const tag = p.tagName?.toLowerCase();
-            if (['script', 'style', 'noscript', 'select', 'option'].includes(tag)) return NodeFilter.FILTER_REJECT;
-            let el = p;
-            while (el) {
-              if (el.classList?.contains('notranslate') || el.hasAttribute?.('data-notranslate')) {
-                return NodeFilter.FILTER_REJECT;
-              }
-              el = el.parentElement;
-            }
-            return NodeFilter.FILTER_ACCEPT;
-          }
-        });
-
-        const nodes = [];
-        let n;
-        const maxNodes = 400;
-        while ((n = walker.nextNode()) && nodes.length < maxNodes) {
-          nodes.push(n);
-        }
-
-        if (nodes.length === 0) {
-          if (!silent) alert('Nothing to translate on this view.');
-          return;
-        }
-
-        const preserveMap = new Map([
-          ['GuruLink.app', '__BRAND_GURULINK_APP__'],
-          ['GuruLink™', '__BRAND_GURULINK_TM__'],
-          ['GuruLink', '__BRAND_GURULINK__'],
-        ]);
-        const texts = nodes.map(node => {
-          let out = node.nodeValue;
-          preserveMap.forEach((token, key) => {
-            out = out.split(key).join(token);
-          });
-          return out;
-        });
-
-        const { translations } = await translateTexts({ texts, target: langCode });
-        if (!Array.isArray(translations) || translations.length !== nodes.length) {
-          if (!silent) alert('Translation service returned an unexpected response.');
-          return;
-        }
-
-        for (let i = 0; i < nodes.length; i++) {
-          let v = translations[i];
-          preserveMap.forEach((token, key) => {
-            v = v.split(token).join(key);
-          });
-          nodes[i].nodeValue = v;
-        }
-
-        if (typeof window !== 'undefined') {
-          window.__GuruLinkTranslationState = {
-            lang: langCode,
-            reapply: () => applyTranslation(langCode, { silent: true })
-          };
-          window.dispatchEvent(new CustomEvent('gurulink:language-applied', { detail: { lang: langCode } }));
-        }
-      } catch (err) {
-        console.error('Translate fallback error:', err);
-        if (!silent) alert('Automatic translation is unavailable. Please try again later.');
-      }
-    };
-
     const handleLanguageChange = (langCode) => {
-      if (langCode === 'en') {
-        if (typeof window !== 'undefined') {
-          window.__GuruLinkTranslationState = null;
-        }
-        window.location.reload();
-        return;
-      }
-      applyTranslation(langCode);
+      setCurrentLang(langCode);
+      changeLanguage(langCode);
     };
-
-    // Get current language from state
-    const currentLang = typeof window !== 'undefined' && window.__GuruLinkTranslationState?.lang ? window.__GuruLinkTranslationState.lang : 'en';
 
     return (
        <div className="space-y-4 text-center">
