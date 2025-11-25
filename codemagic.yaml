@@ -50,7 +50,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - "$CM_BUILD_INITIATOR_EMAIL"
+          - "${CM_BUILD_INITIATOR_EMAIL:-default@example.com}"
         notify:
           success: true
           failure: true
@@ -106,9 +106,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - "$CM_BUILD_INITIATOR_EMAIL"
+          - "${CM_BUILD_INITIATOR_EMAIL:-default@example.com}"
         notify:
           success: true
           failure: true
-
-
