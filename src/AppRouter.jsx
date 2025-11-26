@@ -20,6 +20,24 @@ function ScrollToTop() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Re-apply translation when route changes if a language is selected
+    if (typeof window !== 'undefined' && window.__GuruLinkTranslationState?.lang) {
+      const lang = window.__GuruLinkTranslationState.lang;
+      if (lang !== 'en') {
+        // Wait for page to render, then reapply translation
+        setTimeout(() => {
+          if (window.__GuruLinkTranslationState?.reapply) {
+            window.__GuruLinkTranslationState.reapply();
+          } else {
+            // Fallback: import and apply translation directly
+            import('./lib/translation.js').then(({ applyTranslation }) => {
+              applyTranslation(lang, { silent: true });
+            });
+          }
+        }, 500);
+      }
+    }
   }, [pathname]);
 
   return null;

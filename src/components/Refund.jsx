@@ -1,6 +1,35 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export default function Refund() {
+  const navigate = useNavigate();
+
+  // Re-apply translation when component mounts or language changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.__GuruLinkTranslationState?.lang) {
+      const lang = window.__GuruLinkTranslationState.lang;
+      if (lang !== 'en') {
+        setTimeout(() => {
+          if (window.__GuruLinkTranslationState?.reapply) {
+            window.__GuruLinkTranslationState.reapply();
+          }
+        }, 300);
+      }
+    }
+
+    const handleLanguageChange = () => {
+      if (window.__GuruLinkTranslationState?.lang && window.__GuruLinkTranslationState.lang !== 'en') {
+        setTimeout(() => {
+          if (window.__GuruLinkTranslationState?.reapply) {
+            window.__GuruLinkTranslationState.reapply();
+          }
+        }, 200);
+      }
+    };
+
+    window.addEventListener('gurulink:language-applied', handleLanguageChange);
+    return () => window.removeEventListener('gurulink:language-applied', handleLanguageChange);
+  }, []);
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F5F5F5' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-left" style={{ color: '#1A2336' }}>
@@ -76,9 +105,13 @@ export default function Refund() {
         </section>
 
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg font-semibold" style={{ backgroundColor: '#1A2336', color: '#F5F5F5' }}>
-            Return to Home
-          </Link>
+          <button 
+            onClick={() => navigate(-1)} 
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-lg font-semibold" 
+            style={{ backgroundColor: '#1A2336', color: '#F5F5F5' }}
+          >
+            Back
+          </button>
         </div>
       </div>
     </div>

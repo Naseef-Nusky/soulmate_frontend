@@ -1,6 +1,6 @@
 import { translateTexts } from './api.js';
 
-const MAX_NODES = 400;
+const MAX_NODES = 1000; // Increased for long pages like Terms
 const preserveEntries = [
   ['GuruLink.app', '__BRAND_GURULINK_APP__'],
   ['GuruLink™', '__BRAND_GURULINK_TM__'],
@@ -11,7 +11,16 @@ const createPreserveMap = () => new Map(preserveEntries);
 
 export function getCurrentLanguage() {
   if (typeof window === 'undefined') return 'en';
-  return window.__GuruLinkTranslationState?.lang || 'en';
+  // Check window state first, then localStorage
+  if (window.__GuruLinkTranslationState?.lang) {
+    return window.__GuruLinkTranslationState.lang;
+  }
+  // Try to restore from localStorage
+  const savedLang = localStorage.getItem('gurulink_language');
+  if (savedLang && savedLang !== 'en') {
+    return savedLang;
+  }
+  return 'en';
 }
 
 function collectTranslatableNodes(root) {
@@ -64,6 +73,11 @@ export async function applyTranslation(langCode, { silent = false } = {}) {
     if (!silent) alert('Nothing to translate on this view.');
     return;
   }
+  
+  // Log for debugging
+  if (!silent || import.meta.env.DEV) {
+    console.log(`[Translation] Collecting ${nodes.length} nodes for translation to ${langCode}`);
+  }
 
   const preserveMap = createPreserveMap();
   const texts = nodes.map(node => {
@@ -92,6 +106,12 @@ export async function applyTranslation(langCode, { silent = false } = {}) {
     lang: langCode,
     reapply: () => applyTranslation(langCode, { silent: true })
   };
+  
+  // Save language preference to localStorage
+  if (typeof window !== 'undefined' && window.localStorage) {
+    localStorage.setItem('gurulink_language', langCode);
+  }
+  
   window.dispatchEvent(new CustomEvent('gurulink:language-applied', { detail: { lang: langCode } }));
 }
 
@@ -99,6 +119,10 @@ export function changeLanguage(langCode) {
   if (langCode === 'en') {
     if (typeof window !== 'undefined') {
       window.__GuruLinkTranslationState = null;
+      // Remove saved language preference
+      if (window.localStorage) {
+        localStorage.removeItem('gurulink_language');
+      }
       window.dispatchEvent(new CustomEvent('gurulink:language-applied', { detail: { lang: 'en' } }));
       window.location.reload();
     }

@@ -7,15 +7,15 @@ workflows:
       android_signing:
         - keystore_credentials
       groups:
-        - keystore_credentials # Define in Codemagic UI: store_file, store_password, key_alias, key_password
+        - keystore_credentials
       vars:
         PACKAGE_NAME: "com.gurulink.app"
         NODE_VERSION: "18.20.3"
-        CAPACITOR_ANDROID_VERSION: "7.0.0"
     cache:
       cache_paths:
         - ~/.npm
         - android/.gradle
+        - node_modules
     triggering:
       events:
         - push
@@ -40,17 +40,26 @@ workflows:
       - name: Build Android release APK
         script: |
           cd android
-          ./gradlew clean assembleRelease -Pandroid.injected.signing.store.file=$CM_KEYSTORE_PATH \
+          ./gradlew clean assembleRelease \
+            -Pandroid.injected.signing.store.file=$CM_KEYSTORE_PATH \
+            -Pandroid.injected.signing.store.password=$CM_KEYSTORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$CM_KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$CM_KEY_PASSWORD
+      - name: Build Android release AAB
+        script: |
+          cd android
+          ./gradlew clean bundleRelease \
+            -Pandroid.injected.signing.store.file=$CM_KEYSTORE_PATH \
             -Pandroid.injected.signing.store.password=$CM_KEYSTORE_PASSWORD \
             -Pandroid.injected.signing.key.alias=$CM_KEY_ALIAS \
             -Pandroid.injected.signing.key.password=$CM_KEY_PASSWORD
     artifacts:
-      - android/app/build/outputs/**/*.apk
-      - android/app/build/outputs/**/*.aab
+      - android/app/build/outputs/apk/release/*.apk
+      - android/app/build/outputs/bundle/release/*.aab
     publishing:
       email:
         recipients:
-          - "${CM_BUILD_INITIATOR_EMAIL:-default@example.com}"
+          - "builds@gurulink.app"
         notify:
           success: true
           failure: true
@@ -64,16 +73,28 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.gurulink.app
       groups:
-        - ios_credentials # Provide APP_STORE_CONNECT_*, CERTIFICATES, PROFILES in Codemagic UI
+        - ios_credentials
       vars:
         XCODE_SCHEME: "App"
-        XCODE_PROJECT: "ios/App/App.xcodeproj"
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         NODE_VERSION: "18.20.3"
     cache:
       cache_paths:
         - ~/.npm
         - ~/Library/Caches/CocoaPods
+        - node_modules
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: master
+          include: true
+          source: true
     scripts:
+      - name: Set Node version
+        script: |
+          echo "Using Node $NODE_VERSION"
+          node --version
       - name: Install dependencies
         script: |
           npm install
@@ -83,21 +104,23 @@ workflows:
       - name: Sync Capacitor iOS
         script: |
           npx cap sync ios
-      - name: Install CocoaPods
+      - name: Install CocoaPods dependencies
         script: |
           cd ios/App
           pod install
-      - name: Build IPA
+      - name: Build and archive iOS app
         script: |
           xcodebuild \
             -workspace ios/App/App.xcworkspace \
             -scheme "$XCODE_SCHEME" \
             -configuration Release \
-            -archivePath $CM_BUILD_DIR/ios/App.xcarchive \
+            -archivePath $CM_BUILD_DIR/App.xcarchive \
             archive
+      - name: Export IPA
+        script: |
           xcodebuild \
             -exportArchive \
-            -archivePath $CM_BUILD_DIR/ios/App.xcarchive \
+            -archivePath $CM_BUILD_DIR/App.xcarchive \
             -exportOptionsPlist ios/App/exportOptions.plist \
             -exportPath $CM_BUILD_DIR/ios/export
     artifacts:
@@ -106,7 +129,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - "${CM_BUILD_INITIATOR_EMAIL:-default@example.com}"
+          - "builds@gurulink.app"
         notify:
           success: true
           failure: true

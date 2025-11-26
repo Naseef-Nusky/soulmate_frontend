@@ -1,6 +1,57 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { applyTranslation } from '../lib/translation.js';
 
 export default function Terms() {
+  const navigate = useNavigate();
+
+  // Re-apply translation when component mounts or language changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Apply translation on mount - immediate
+    const state = window.__GuruLinkTranslationState;
+    if (state?.lang && state.lang !== 'en') {
+      // Use requestAnimationFrame for immediate execution after DOM is ready
+      requestAnimationFrame(() => {
+        applyTranslation(state.lang, { silent: true }).catch((error) => {
+          console.error('Terms page translation error on mount:', error);
+        });
+      });
+    }
+
+    // Listen for language changes - translate immediately
+    const handleLanguageChange = (event) => {
+      const lang = event?.detail?.lang || window.__GuruLinkTranslationState?.lang;
+      
+      if (!lang || lang === 'en') {
+        if (lang === 'en') {
+          window.location.reload();
+        }
+        return;
+      }
+
+      // Translate immediately - use requestAnimationFrame for next frame
+      // The global translation from changeLanguage() should already translate everything,
+      // but we force a refresh to ensure Terms page content is included
+      requestAnimationFrame(() => {
+        applyTranslation(lang, { silent: true })
+          .then(() => {
+            console.log('Terms page translation completed for language:', lang);
+          })
+          .catch((error) => {
+            console.error('Terms page translation error:', error);
+            // Try once more after a brief delay
+            setTimeout(() => {
+              applyTranslation(lang, { silent: true }).catch(console.error);
+            }, 500);
+          });
+      });
+    };
+
+    window.addEventListener('gurulink:language-applied', handleLanguageChange);
+    return () => window.removeEventListener('gurulink:language-applied', handleLanguageChange);
+  }, []);
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F5F5F5' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-left" style={{ color: '#1A2336' }}>
@@ -308,9 +359,13 @@ export default function Terms() {
         </section>
 
         <div className="text-center">
-          <Link to="/" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg font-semibold" style={{ backgroundColor: '#1A2336', color: '#F5F5F5' }}>
-            Return to Home
-          </Link>
+          <button 
+            onClick={() => navigate(-1)} 
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-lg font-semibold" 
+            style={{ backgroundColor: '#1A2336', color: '#F5F5F5' }}
+          >
+            Back
+          </button>
         </div>
       </div>
     </div>

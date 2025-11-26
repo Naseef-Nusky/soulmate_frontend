@@ -1,8 +1,36 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { sendCancellationVerificationCode, verifyCodeAndCancel } from '../lib/api.js';
 
 export default function CancellationPortal() {
+  const navigate = useNavigate();
+
+  // Re-apply translation when component mounts or language changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.__GuruLinkTranslationState?.lang) {
+      const lang = window.__GuruLinkTranslationState.lang;
+      if (lang !== 'en') {
+        setTimeout(() => {
+          if (window.__GuruLinkTranslationState?.reapply) {
+            window.__GuruLinkTranslationState.reapply();
+          }
+        }, 300);
+      }
+    }
+
+    const handleLanguageChange = () => {
+      if (window.__GuruLinkTranslationState?.lang && window.__GuruLinkTranslationState.lang !== 'en') {
+        setTimeout(() => {
+          if (window.__GuruLinkTranslationState?.reapply) {
+            window.__GuruLinkTranslationState.reapply();
+          }
+        }, 200);
+      }
+    };
+
+    window.addEventListener('gurulink:language-applied', handleLanguageChange);
+    return () => window.removeEventListener('gurulink:language-applied', handleLanguageChange);
+  }, []);
   const [step, setStep] = useState('email'); // 'email', 'verify', 'success'
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -101,17 +129,19 @@ export default function CancellationPortal() {
               A confirmation email has been sent to <strong>{email}</strong>.
             </p>
             <div className="pt-4 border-t" style={{ borderColor: '#E5E7EB' }}>
-              <Link 
-                to="/" 
+              <button
+                onClick={() => navigate(-1)}
                 className="inline-block px-6 py-3 rounded-xl font-bold text-base transition-all duration-300 transform hover:scale-105"
                 style={{
                   backgroundColor: '#D4A34B',
                   color: '#1A2336',
-                  boxShadow: '0 4px 6px -1px rgba(212, 163, 75, 0.3)'
+                  boxShadow: '0 4px 6px -1px rgba(212, 163, 75, 0.3)',
+                  border: 'none',
+                  cursor: 'pointer'
                 }}
               >
-                Return to Home
-              </Link>
+                Back
+              </button>
             </div>
           </div>
         </div>

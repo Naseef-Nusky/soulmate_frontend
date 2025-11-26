@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { emailLogin, verifyLoginToken, checkAccountExists, signup } from '../lib/api.js';
 import { setUser } from '../lib/auth.js';
+import { applyTranslation } from '../lib/translation.js';
 
 export default function Login({ isRegister = false }) {
   const navigate = useNavigate();
@@ -65,6 +66,32 @@ export default function Login({ isRegister = false }) {
       handlePaymentSuccess(sessionId);
     }
   }, [searchParams, isRegister]);
+
+  // Re-apply translation when component mounts or language changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Apply translation on mount
+    const state = window.__GuruLinkTranslationState;
+    if (state?.lang && state.lang !== 'en') {
+      setTimeout(() => {
+        applyTranslation(state.lang, { silent: true });
+      }, 500);
+    }
+
+    // Listen for language changes
+    const handleLanguageChange = (event) => {
+      const lang = event?.detail?.lang || window.__GuruLinkTranslationState?.lang;
+      if (lang && lang !== 'en') {
+        setTimeout(() => {
+          applyTranslation(lang, { silent: true });
+        }, 400);
+      }
+    };
+
+    window.addEventListener('gurulink:language-applied', handleLanguageChange);
+    return () => window.removeEventListener('gurulink:language-applied', handleLanguageChange);
+  }, []);
 
   const handlePaymentSuccess = async (sessionId) => {
     setLoading(true);
@@ -342,7 +369,7 @@ export default function Login({ isRegister = false }) {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <img src="/logoicon.png" alt="GuruLink" className="h-10 w-10 object-contain" />
-            <div className="text-3xl font-black" style={{ color: '#1A2336' }}>
+            <div className="text-3xl font-black" style={{ color: '#1A2336' }} data-notranslate>
               GuruLink<span style={{ color: '#D4A34B' }}>.app</span>
             </div>
           </div>
@@ -485,7 +512,7 @@ export default function Login({ isRegister = false }) {
                   style={{ accentColor: '#D4A34B' }}
                 />
                 <label className="text-sm" style={{ color: '#666' }}>
-                  I have read and agree to GuruLink's{' '}
+                  I have read and agree to <span data-notranslate>GuruLink</span>'s{' '}
                   <Link to="/terms" className="underline" style={{ color: '#D4A34B' }}>Terms &amp; Conditions</Link>
                   {' '}and{' '}
                   <Link to="/privacy" className="underline" style={{ color: '#D4A34B' }}>Privacy Policy</Link>.
@@ -520,13 +547,13 @@ export default function Login({ isRegister = false }) {
         </div>
 
         <div className="mt-6 text-center">
-          <Link
-            to="/"
+          <button
+            onClick={() => navigate(-1)}
             className="text-sm"
-            style={{ color: '#666' }}
+            style={{ color: '#666', background: 'none', border: 'none', cursor: 'pointer' }}
           >
-            ← Back to Home
-          </Link>
+            ← Back
+          </button>
         </div>
       </div>
 
