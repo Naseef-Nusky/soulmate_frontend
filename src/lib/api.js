@@ -70,6 +70,22 @@ const getApiBase = () => {
     }
   }
   
+  // For production web deployment (not localhost, not Capacitor), use full API URL
+  // This ensures translation and other APIs work when frontend and backend are on different domains
+  if (import.meta.env.MODE === 'production' && typeof window !== 'undefined' && window.location) {
+    const isProductionWeb = 
+      window.location.hostname !== 'localhost' &&
+      window.location.hostname !== '127.0.0.1' &&
+      !isCapacitor &&
+      (window.location.protocol === 'https:' || window.location.protocol === 'http:');
+    
+    if (isProductionWeb) {
+      const apiUrl = 'https://api.gurulink.app';
+      console.log('[API] Production web deployment detected, using:', apiUrl);
+      return apiUrl;
+    }
+  }
+  
   // If no explicit base URL, use relative paths (works with same-domain proxy)
   // This prevents protocol mismatches (http vs https)
   // For local web development, this will use Vite's proxy to localhost:4000
