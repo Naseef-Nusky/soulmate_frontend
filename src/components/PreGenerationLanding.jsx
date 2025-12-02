@@ -303,7 +303,7 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
 
                     <div className="text-center">
                       <p className="text-sm mb-2" style={{ color: '#4B5563' }}>
-                        Start your 7-day trial for {pricing.trial.formatted}, then {pricing.monthly.formatted}/month
+                        Start your 7-day trial for $1.00, then $29.99/month
                       </p>
                       <p className="text-xs mb-4" style={{ color: '#666' }}>
                         Cancel anytime. Your sketch will be ready instantly after payment.
@@ -315,7 +315,7 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
                       disabled={processingCheckout || loading}
                       className="w-full rounded-lg bg-[#1A2336] px-6 py-4 font-bold text-white transition hover:bg-[#D4A34B] hover:text-[#1A2336] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {processingCheckout ? 'Processing...' : `Start 7-Day Trial - ${pricing.trial.formatted}`}
+                      {processingCheckout ? 'Processing...' : 'Start 7-Day Trial - $1.00'}
                     </button>
                   </>
                 )}
