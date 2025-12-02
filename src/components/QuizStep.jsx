@@ -243,7 +243,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
         {/* Stats Cards with gold theme - reduced size */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-sm mx-auto">
           <div className="rounded-2xl p-3 sm:p-4 shadow-sm border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
-            <div className="text-xl sm:text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>86%</div>
+            <div className="text-xl sm:text-2xl font-black mb-1" style={{ color: '#D4A34B' }}>Exceptional</div>
             <div className="text-[11px] sm:text-xs font-semibold" style={{ color: '#1A2336' }}>Accuracy Rate</div>
             <p className="text-[10px] leading-snug mt-1" style={{ color: '#4B5563' }}>Users say the sketch captured their soulmate.</p>
           </div>
@@ -257,7 +257,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
         {/* CTA Button */}
         <div className="pt-2">
           <button className="btn text-base px-6 py-3 font-black" onClick={() => onAutoNext && onAutoNext()}>
-            Begin Your Journey ✨
+            Tap to begin your journey✨
           </button>
         </div>
         

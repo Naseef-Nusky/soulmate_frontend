@@ -72,7 +72,7 @@ export default function CancelSubscription() {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Example:</h2>
             <div className="space-y-2 text-sm sm:text-base" style={{ color: '#4B5563' }}>
-              <p>If you buy a monthly subscription on January 1st for £29.99 and cancel on July 1st:</p>
+              <p>If you buy a monthly subscription on January 1st for $29.99 and cancel on July 1st:</p>
               <ul className="space-y-2 list-disc list-inside ml-4">
                 <li>You will still have access until July 31st (the end of your current billing cycle).</li>
                 <li>You will not be charged again on August 1st.</li>

@@ -44,7 +44,7 @@ export default function Refund() {
         <section className="bg-white rounded-2xl shadow-sm border p-6 sm:p-8 space-y-8" style={{ borderColor: '#E5E7EB' }}>
           <div className="space-y-3">
             <h2 className="text-xl font-semibold">Refund Eligibility for Trial Plans</h2>
-            <p className="text-sm" style={{ color: '#4B5563' }}>The following trial offers (£1.00, £3.99, £6.99, £9.99) may be refunded in full within 30 days if all of the conditions below are met:</p>
+            <p className="text-sm" style={{ color: '#4B5563' }}>The following trial offers ($1., $3.99, $6.99, $9.99) may be refunded in full within 30 days if all of the conditions below are met:</p>
             <ul className="list-disc pl-6 space-y-2 text-sm" style={{ color: '#4B5563' }}>
               <li>You are using a GuruLink trial for the very first time</li>
               <li>No previous trial refund has been granted to your account or any account linked to you</li>

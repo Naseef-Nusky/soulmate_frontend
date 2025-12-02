@@ -40,9 +40,9 @@ const EXCHANGE_RATES = {
   LKR: 305.0, // Sri Lankan Rupees
 };
 
-const BASE_CURRENCY = 'GBP';
+const BASE_CURRENCY = 'USD';
 
-// Base prices in GBP (match Stripe products)
+// Base prices in USD (match Stripe products)
 const BASE_TRIAL_PRICE = 1.0;      // GuruLink 7-Day Trial
 const BASE_MONTHLY_PRICE = 29.99;  // GuruLink Monthly Plan
 const BASE_TOTAL_PRICE = 15.0;     // Reference list price before discount

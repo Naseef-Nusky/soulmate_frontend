@@ -11,11 +11,11 @@ const faqs = [
     q: 'Is GuruLink free?',
     a: (
       <>
-        GuruLink operates on a subscription model. Your 7-day trial is available for £1.00* and includes full access to all features.
+        GuruLink operates on a subscription model. Your 7-day trial is available for $1.* and includes full access to all features.
         <br /><br />
         You may cancel anytime during the trial with no further charges.
         <br /><br />
-        If you continue, your subscription will automatically renew at the monthly rate of £29.99*.
+        If you continue, your subscription will automatically renew at the monthly rate of $29.99*.
         <br /><br />
         All pricing and renewal details will be shown clearly during signup.
       </>

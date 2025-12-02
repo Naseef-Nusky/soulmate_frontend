@@ -10,7 +10,7 @@ import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { getUser } from './lib/auth.js';
 
 const STEPS = [
-  { key: 'intro', title: 'Ready to discover your soulmate fate?' },
+  { key: 'intro', title: 'Ready to see what your future soulmate could look like?' },
   { key: 'socialProof', title: 'Why GuruLink' },
   { key: 'gender1', title: 'Your Gender' },
   { key: 'gender2', title: 'Confirm Gender' },
