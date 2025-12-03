@@ -38,20 +38,9 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
   
 
 	const [openFaq, setOpenFaq] = useState(null);
-	const [currency, setCurrencyState] = useState(() => detectCurrency());
-  const [countryCode, setCountryCode] = useState(() => {
-    if (typeof window === 'undefined') return 'US';
-    const saved = localStorage.getItem('gurulink_country');
-    if (saved) return saved;
-    try {
-      const locale = navigator.language || navigator.userLanguage || 'en-US';
-      const parts = locale.split('-');
-      return parts[1]?.toUpperCase() || 'US';
-    } catch {
-      return 'US';
-    }
-  });
-	const pricing = getPricing(currency);
+	const [currency] = useState('USD');
+  const [countryCode] = useState('US');
+	const pricing = getPricing('USD');
   const paymentSectionRef = useRef(null);
   const [paymentError, setPaymentError] = useState('');
   const [processingCheckout, setProcessingCheckout] = useState(false);
@@ -61,23 +50,6 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
       paymentSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
-
-  const handleCurrencyChange = (newCurrency) => {
-    setCurrencyState(newCurrency);
-    try {
-      setCurrency(newCurrency);
-    } catch {
-      // ignore
-    }
-  };
-
-  const handleCountryChange = (newCountry) => {
-    setCountryCode(newCountry);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('gurulink_country', newCountry);
-    }
-  };
-
 
   const handleStartCheckout = async () => {
     if (!email || !email.trim()) {
@@ -164,8 +136,8 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
         name: name?.trim() || null,
         birthDate,
         quizData, // Send quiz data so backend can save it before payment
-        currency,
-        country: countryCode,
+        currency: 'USD',
+        country: 'US',
       });
 
       console.log('[PreGenerationLanding] ✅ Checkout session created, quiz data sent to backend');
