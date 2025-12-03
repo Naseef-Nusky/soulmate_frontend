@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Star, Check, Lock, ChevronDown } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { detectCurrency, getPricing } from '../utils/currency.js';
+import { detectCurrency, getPricing, getCurrencyInfo, setCurrency } from '../utils/currency.js';
 import { createCheckoutSession } from '../lib/api.js';
 import Footer from './Footer';
 
@@ -38,7 +38,19 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
   
 
 	const [openFaq, setOpenFaq] = useState(null);
-	const [currency] = useState(() => detectCurrency());
+	const [currency, setCurrencyState] = useState(() => detectCurrency());
+  const [countryCode, setCountryCode] = useState(() => {
+    if (typeof window === 'undefined') return 'US';
+    const saved = localStorage.getItem('gurulink_country');
+    if (saved) return saved;
+    try {
+      const locale = navigator.language || navigator.userLanguage || 'en-US';
+      const parts = locale.split('-');
+      return parts[1]?.toUpperCase() || 'US';
+    } catch {
+      return 'US';
+    }
+  });
 	const pricing = getPricing(currency);
   const paymentSectionRef = useRef(null);
   const [paymentError, setPaymentError] = useState('');
@@ -47,6 +59,22 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
   const handleScrollToPayment = () => {
     if (paymentSectionRef.current) {
       paymentSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleCurrencyChange = (newCurrency) => {
+    setCurrencyState(newCurrency);
+    try {
+      setCurrency(newCurrency);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleCountryChange = (newCountry) => {
+    setCountryCode(newCountry);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('gurulink_country', newCountry);
     }
   };
 
@@ -136,6 +164,8 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
         name: name?.trim() || null,
         birthDate,
         quizData, // Send quiz data so backend can save it before payment
+        currency,
+        country: countryCode,
       });
 
       console.log('[PreGenerationLanding] ✅ Checkout session created, quiz data sent to backend');
@@ -303,7 +333,10 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
 
                     <div className="text-center">
                       <p className="text-sm mb-2" style={{ color: '#4B5563' }}>
-                        Start your 7-day trial for $1.00, then $29.99/month
+                        Start your 7-day trial for {pricing.trial.formatted}, then {pricing.monthly.formatted}/month
+                      </p>
+                      <p className="text-xs mb-1" style={{ color: '#666' }}>
+                        Prices shown in your local currency based on your region.
                       </p>
                       <p className="text-xs mb-4" style={{ color: '#666' }}>
                         Cancel anytime. Your sketch will be ready instantly after payment.
@@ -315,7 +348,9 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
                       disabled={processingCheckout || loading}
                       className="w-full rounded-lg bg-[#1A2336] px-6 py-4 font-bold text-white transition hover:bg-[#D4A34B] hover:text-[#1A2336] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {processingCheckout ? 'Processing...' : 'Start 7-Day Trial - $1.00'}
+                      {processingCheckout
+                        ? 'Processing...'
+                        : `Start 7-Day Trial - ${pricing.trial.formatted}`}
                     </button>
                   </>
                 )}
