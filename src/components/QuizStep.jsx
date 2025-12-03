@@ -291,7 +291,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
                 <div className="text-sm font-semibold" style={{ color: '#1A2336' }}>Emily Harper</div>
-                <div className="text-xs" style={{ color: '#666' }}>October 15, 2024</div>
+                <div className="text-xs" style={{ color: '#666' }}>October 15, 2025</div>
               </div>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: '#4B5563' }}>
