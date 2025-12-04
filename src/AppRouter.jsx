@@ -7,6 +7,7 @@ import Login from './components/Login.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import SoulmatePage from './components/SoulmatePage.jsx';
 import Profile from './components/Profile.jsx';
+import Settings from './components/Settings.jsx';
 import Terms from './components/Terms.jsx';
 import Privacy from './components/Privacy.jsx';
 import Cookies from './components/Cookies.jsx';
@@ -82,6 +83,7 @@ export default function AppRouter() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/soulmate" element={<SoulmatePage />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/cookies" element={<Cookies />} />

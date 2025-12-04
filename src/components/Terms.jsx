@@ -104,7 +104,7 @@ export default function Terms() {
           <div className="space-y-3">
             <h2 className="text-xl font-semibold">2. Introduction</h2>
             <p className="text-sm" style={{ color: '#4B5563' }}>
-              Guru Link provides spiritual guidance services, including astrology-based interpretations, palm readings, personal insight tools, and advisor consultations. These services are designed for entertainment, personal reflection, and educational use only. They are not scientifically verified or guaranteed to produce specific results.
+              Guru Link provides spiritual guidance services, including astrology-based interpretations, personal insight tools, and advisor consultations. These services are designed for entertainment, personal reflection, and educational use only. They are not scientifically verified or guaranteed to produce specific results.
             </p>
             <p className="text-sm mt-3" style={{ color: '#4B5563' }}>
               Your continued use of the Platform indicates your acceptance of these Terms.
@@ -230,7 +230,7 @@ export default function Terms() {
           <div className="space-y-3">
             <h2 className="text-xl font-semibold">9. User-Submitted Content</h2>
             <p className="text-sm" style={{ color: '#4B5563' }}>
-              By providing information, messages, images (including palm photos), or other materials to the Service, you grant Guru Link a non-exclusive, worldwide, royalty-free license to:
+              By providing information, messages, images, or other materials to the Service, you grant Guru Link a non-exclusive, worldwide, royalty-free license to:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-sm" style={{ color: '#4B5563' }}>
               <li>Store,</li>

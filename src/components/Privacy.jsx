@@ -72,7 +72,6 @@ export default function Privacy() {
               <li>Account information (such as your name, email address, age, and gender)</li>
               <li>Your spiritual objectives and personal preferences</li>
               <li>Birth details needed for astrology-related features</li>
-              <li>Palm images for palm reading functionality</li>
               <li>Messages or information submitted to our support team</li>
             </ul>
             <p className="text-sm font-medium mt-4" style={{ color: '#4B5563' }}>Information We Automatically Collect</p>

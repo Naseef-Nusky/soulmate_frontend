@@ -46,6 +46,25 @@ export default function Dashboard() {
 
   const hasCompletedQuiz = Boolean(data.soulmateSketch?.hasSketch);
 
+  // Re-apply translation when language changes (ensures tab labels and headings update)
+  useEffect(() => {
+    const handleLanguageChange = (event) => {
+      const lang = event.detail?.lang || window.__GuruLinkTranslationState?.lang || 'en';
+      if (lang && lang !== 'en') {
+        setTimeout(() => {
+          try {
+            window.__GuruLinkTranslationState?.reapply?.();
+          } catch (err) {
+            console.warn('[Dashboard] Failed to reapply translation:', err?.message || err);
+          }
+        }, 200);
+      }
+    };
+
+    window.addEventListener('gurulink:language-applied', handleLanguageChange);
+    return () => window.removeEventListener('gurulink:language-applied', handleLanguageChange);
+  }, []);
+
   // Load subscription/payment details
   const loadSubscriptionDetails = async () => {
     setLoadingSubscription(true);
@@ -380,7 +399,7 @@ export default function Dashboard() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
               <img src="/logoicon.png" alt="GuruLink" className="h-8 w-8 object-contain" />
-              <div className="text-2xl font-black" style={{ color: '#1A2336' }}>
+              <div className="text-2xl font-black" style={{ color: '#1A2336' }} data-notranslate>
                 GuruLink<span style={{ color: '#D4A34B' }}>.app</span>
               </div>
             </div>
@@ -431,7 +450,7 @@ export default function Dashboard() {
                         <button
                           onClick={() => {
                             setShowProfileDropdown(false);
-                            // Navigate to settings
+                            navigate('/settings');
                           }}
                           className="w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-gray-50 transition-colors"
                           style={{ color: '#1A2336' }}
@@ -453,7 +472,8 @@ export default function Dashboard() {
                         <button
                           onClick={() => {
                             setShowProfileDropdown(false);
-                            // Navigate to help center
+                            // Navigate to Help Center (Support page)
+                            navigate('/support');
                           }}
                           className="w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-gray-50 transition-colors"
                           style={{ color: '#1A2336' }}
@@ -952,7 +972,8 @@ export default function Dashboard() {
                   <button
                     onClick={() => {
                       setShowSoulmateSketch(false);
-                      setAutoShowTriggered(false);
+                      // Mark as handled so auto-open logic doesn't immediately reopen it
+                      setAutoShowTriggered(true);
                     }}
                     className="mb-6 px-4 py-2 rounded-lg font-semibold transition-all flex items-center gap-2"
                     style={{ backgroundColor: 'rgba(212, 163, 75, 0.1)', color: '#1A2336' }}
