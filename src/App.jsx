@@ -120,6 +120,15 @@ export default function QuizApp() {
     
     // Don't reset form if payment was successful - we want to preserve quiz data
     if (step === 0 && !isPaymentSuccess) {
+      // Clear old quiz data from localStorage when starting a fresh quiz
+      // This prevents old data from being mixed with new selections
+      const oldQuizData = localStorage.getItem('quizData');
+      if (oldQuizData) {
+        console.log('[QuizApp] 🧹 Clearing old quiz data from localStorage - starting fresh quiz');
+        localStorage.removeItem('quizData');
+      }
+      
+      // Reset form to empty state
       setForm({
         gender: '',
         genderConfirm: '',
@@ -143,6 +152,7 @@ export default function QuizApp() {
         warningAcknowledged: false,
         email: '',
       });
+      console.log('[QuizApp] ✅ Form reset to empty state - ready for new quiz');
     }
   }, [step, searchParams]);
 
@@ -191,27 +201,59 @@ export default function QuizApp() {
         }
       }
 
+      // IMPORTANT: Clear any old quiz data from localStorage before creating new snapshot
+      // This ensures we don't accidentally use old cached data
+      const oldQuizData = localStorage.getItem('quizData');
+      if (oldQuizData) {
+        console.log('[QuizApp] 🧹 Clearing old quiz data before submission to prevent cache issues');
+        localStorage.removeItem('quizData');
+      }
+      
+      // Create a deep copy of form to ensure we capture exact values at submission time
+      // Since we're using functional state updates, form should have the latest values
+      const formSnapshot = JSON.parse(JSON.stringify(form));
+      
+      // Log ageRange specifically for debugging
+      console.log('[QuizApp] ===== AGE RANGE DEBUG =====');
+      console.log('[QuizApp] form.ageRange (from state):', JSON.stringify(form.ageRange || 'N/A'));
+      console.log('[QuizApp] formSnapshot.ageRange (being sent):', JSON.stringify(formSnapshot.ageRange || 'N/A'));
+      console.log('[QuizApp] ===========================');
+      
+      // Log what we're about to send
+      console.log('[QuizApp] ===== SUBMITTING QUIZ =====');
+      console.log('[QuizApp] Selected answers being sent:');
+      Object.entries(formSnapshot).forEach(([key, value]) => {
+        if (key !== 'email' && key !== 'birthDate' && key !== 'birthTime' && key !== 'birthCity' && key !== 'warningAcknowledged') {
+          const displayValue = Array.isArray(value) ? value.join(', ') : (value || 'N/A');
+          console.log(`[QuizApp]   ${key}: ${JSON.stringify(displayValue)}`);
+        }
+      });
+      console.log('[QuizApp] ===========================');
+      
       const payload = {
-        answers: { ...form },
+        answers: formSnapshot,
         birthDetails: {
-          date: form.birthDate,
-          time: form.birthTime || null,
-          city: form.birthCity || null,
+          date: formSnapshot.birthDate,
+          time: formSnapshot.birthTime || null,
+          city: formSnapshot.birthCity || null,
         },
-        email: form.email || null,
+        email: formSnapshot.email || null,
       };
       
       // Save complete quiz data to localStorage for use after payment
-      localStorage.setItem('quizData', JSON.stringify({
-        answers: { ...form },
+      // IMPORTANT: Use formSnapshot (the exact values being sent) not form (which might be stale)
+      const quizDataToStore = {
+        answers: formSnapshot,
         birthDetails: {
-          date: form.birthDate,
-          time: form.birthTime || null,
-          city: form.birthCity || null,
+          date: formSnapshot.birthDate,
+          time: formSnapshot.birthTime || null,
+          city: formSnapshot.birthCity || null,
         },
-        email: form.email || null,
+        email: formSnapshot.email || null,
         timestamp: new Date().toISOString(),
-      }));
+      };
+      console.log('[QuizApp] Saving to localStorage - ageRange:', JSON.stringify(formSnapshot.ageRange || 'N/A'));
+      localStorage.setItem('quizData', JSON.stringify(quizDataToStore));
       
       // Clear signupEmail after quiz submission (it's now saved in quizData)
       if (localStorage.getItem('signupEmail')) {

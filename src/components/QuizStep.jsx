@@ -363,7 +363,16 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
-              onClick={() => { setForm({ ...form, [field]: opt.label }); onAutoNext && onAutoNext(); }}
+              onClick={() => { 
+                const selectedValue = opt.label;
+                console.log(`[QuizStep] Selected ${field}:`, JSON.stringify(selectedValue));
+                setForm((prevForm) => {
+                  const updated = { ...prevForm, [field]: selectedValue };
+                  console.log(`[QuizStep] Updated ${field} in state:`, JSON.stringify(updated[field]));
+                  return updated;
+                });
+                onAutoNext && onAutoNext();
+              }}
             >
               <div className={`flex ${isConfirm ? 'items-center justify-center' : 'flex-col items-stretch gap-3'}`}>
                 {!isConfirm && (
@@ -400,12 +409,14 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
       <div className="space-y-4 text-center sm:text-left">
         <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>Ideal age range for your soulmate?</h3>
         <div className="grid grid-cols-2 gap-3">
-          {options.map((o) => (
+          {options.map((o, index) => {
+            const isSelected = form.ageRange === o.label;
+            return (
             <button
-              key={o.label}
+              key={`ageRange-${index}-${o.label}`}
               type="button"
-              className={`w-full py-4 rounded-2xl border-2 text-sm font-bold transition-all duration-300 ${form.ageRange === o.label ? 'scale-[1.02]' : ''}`}
-              style={form.ageRange === o.label ? {
+              className={`w-full py-4 rounded-2xl border-2 text-sm font-bold transition-all duration-300 ${isSelected ? 'scale-[1.02]' : ''}`}
+              style={isSelected ? {
                 backgroundColor: '#D4A34B',
                 color: '#1A2336',
                 borderColor: '#D4A34B',
@@ -429,11 +440,28 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
-              onClick={() => { setForm({ ...form, ageRange: o.label }); onAutoNext && onAutoNext(); }}
+              onClick={() => { 
+                const selectedAgeRange = o.label;
+                console.log('[QuizStep] ===== AGE RANGE SELECTION =====');
+                console.log('[QuizStep] Clicked ageRange option:', JSON.stringify(selectedAgeRange));
+                console.log('[QuizStep] Current form.ageRange before update:', JSON.stringify(form.ageRange || 'N/A'));
+                setForm((prevForm) => {
+                  const updated = { ...prevForm, ageRange: selectedAgeRange };
+                  console.log('[QuizStep] Updated ageRange in state:', JSON.stringify(updated.ageRange));
+                  console.log('[QuizStep] Verification - ageRange matches selected:', updated.ageRange === selectedAgeRange);
+                  console.log('[QuizStep] =========================================');
+                  return updated;
+                });
+                // Small delay to ensure state update completes before auto-next
+                setTimeout(() => {
+                  onAutoNext && onAutoNext();
+                }, 50);
+              }}
             >
               <span className="mr-2" aria-hidden>{o.emoji}</span>{o.label}
             </button>
-          ))}
+            );
+          })}
         </div>
       </div>
     );
@@ -443,7 +471,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
     const options = [
       { label: 'Caucasian / White', emoji: '🧒', img: '/ethnicity/caucasian.png' },
       { label: 'Hispanic / Latino', emoji: '🧑‍🦱', img: '/ethnicity/latino.png' },
-      { label: 'African / African-American', emoji: '🧑🏿', img: '/ethnicity/african.png' },
+      { label: 'African / African-American', emoji: '🧑🏿', img: '/ethnicity/african.png' }, // Note: spaces around slash are required
       { label: 'Asian', emoji: '🧑🏻', img: '/ethnicity/asian.png' },
       { label: 'Caribbean', emoji: '🧑🏽', img: '/ethnicity/caribbean.png' },
       { label: 'Mixed Race', emoji: '👨‍👩‍👧', img: '/ethnicity/mixed.png' },
@@ -453,12 +481,14 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
       <div className="space-y-4 text-center sm:text-left">
         <h3 className="text-lg sm:text-xl font-bold mb-4" style={{ color: '#D4A34B' }}>Do you have a preferred ethnic background for your sketch?</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {options.map((o) => (
-            <button
-              key={o.label}
+          {options.map((o, index) => {
+            const isSelected = form.ethnicity === o.label;
+            return (
+              <button
+              key={`ethnicity-${index}-${o.label}`}
               type="button"
-              className={`w-full py-4 rounded-2xl border-2 text-sm font-bold transition-all duration-300 ${form.ethnicity === o.label ? 'scale-[1.02]' : ''}`}
-              style={form.ethnicity === o.label ? {
+              className={`w-full py-4 rounded-2xl border-2 text-sm font-bold transition-all duration-300 ${isSelected ? 'scale-[1.02]' : ''}`}
+              style={isSelected ? {
                 backgroundColor: '#D4A34B',
                 color: '#1A2336',
                 borderColor: '#D4A34B',
@@ -469,20 +499,20 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                 borderColor: '#E5E7EB'
               }}
               onMouseEnter={(e) => {
-                if (form.ethnicity !== o.label) {
+                if (!isSelected) {
                   e.currentTarget.style.borderColor = '#D4A34B';
                   e.currentTarget.style.backgroundColor = '#FFF7EB';
                   e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
                 }
               }}
               onMouseLeave={(e) => {
-                if (form.ethnicity !== o.label) {
+                if (!isSelected) {
                   e.currentTarget.style.borderColor = '#E5E7EB';
                   e.currentTarget.style.backgroundColor = '#F8FAFC';
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
-              onClick={() => { setForm({ ...form, ethnicity: o.label }); onAutoNext && onAutoNext(); }}
+              onClick={() => { setForm((prevForm) => ({ ...prevForm, ethnicity: o.label })); onAutoNext && onAutoNext(); }}
             >
               {o.label === 'No preference' ? (
                 <Smile size={20} className="inline-block mr-2 align-middle text-yellow-600" />
@@ -495,8 +525,9 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                 />
               ) : null}
               <span className="mr-2" aria-hidden>{o.emoji}</span>{o.label}
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </div>
     );
@@ -545,7 +576,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
-              onClick={() => { setForm({ ...form, appearanceImportance: o.label }); onAutoNext && onAutoNext(); }}
+              onClick={() => { setForm((prevForm) => ({ ...prevForm, appearanceImportance: o.label })); onAutoNext && onAutoNext(); }}
             >
               <span
                 className={`${(idx === 0 || idx === options.length - 1) ? 'text-3xl' : 'text-2xl'}`}
@@ -571,7 +602,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
     ];
     function toggle(label) {
       // single-select: always keep only the chosen label
-      setForm({ ...form, keyTraits: [label] });
+      setForm((prevForm) => ({ ...prevForm, keyTraits: [label] }));
       onAutoNext && onAutoNext();
     }
     return (
@@ -653,7 +684,13 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
             type="date"
             className="w-full px-4 py-3 rounded-xl border text-sm"
             value={form.birthDate}
-            onChange={(e) => setForm({ ...form, birthDate: e.target.value })}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setForm((prevForm) => {
+                const updated = { ...prevForm, birthDate: newValue };
+                return updated;
+              });
+            }}
             min={minBirthDateStr}
             max={maxBirthDateStr}
             style={{
@@ -678,40 +715,43 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
       <div className="space-y-2">
         <label className="label">Which element matches you?</label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {options.map((o) => (
-            <button
-              key={o.label}
-              type="button"
-              className={`w-full py-4 rounded-2xl border-2 text-sm font-bold transition-all duration-300 ${form.element === o.label ? 'scale-[1.02]' : ''}`}
-              style={form.element === o.label ? {
-                backgroundColor: '#D4A34B',
-                color: '#1A2336',
-                borderColor: '#D4A34B',
-                boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.5)'
-              } : {
-                backgroundColor: '#F8FAFC',
-                color: '#1A2336',
-                borderColor: '#E5E7EB'
-              }}
-              onMouseEnter={(e) => {
-                if (form.element !== o.label) {
-                  e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = '#FFF7EB';
-                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (form.element !== o.label) {
-                  e.currentTarget.style.borderColor = '#E5E7EB';
-                  e.currentTarget.style.backgroundColor = '#F8FAFC';
-                  e.currentTarget.style.boxShadow = 'none';
-                }
-              }}
-              onClick={() => { setForm({ ...form, element: o.label }); onAutoNext && onAutoNext(); }}
-            >
-              <span className="mr-2" aria-hidden>{o.emoji}</span>{o.label}
-            </button>
-          ))}
+          {options.map((o, index) => {
+            const isSelected = form.element === o.label;
+            return (
+              <button
+                key={`element-${index}-${o.label}`}
+                type="button"
+                className={`w-full py-4 rounded-2xl border-2 text-sm font-bold transition-all duration-300 ${isSelected ? 'scale-[1.02]' : ''}`}
+                style={isSelected ? {
+                  backgroundColor: '#D4A34B',
+                  color: '#1A2336',
+                  borderColor: '#D4A34B',
+                  boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.5)'
+                } : {
+                  backgroundColor: '#F8FAFC',
+                  color: '#1A2336',
+                  borderColor: '#E5E7EB'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.borderColor = '#D4A34B';
+                    e.currentTarget.style.backgroundColor = '#FFF7EB';
+                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.borderColor = '#E5E7EB';
+                    e.currentTarget.style.backgroundColor = '#F8FAFC';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }
+                }}
+                onClick={() => { setForm((prevForm) => ({ ...prevForm, element: o.label })); onAutoNext && onAutoNext(); }}
+              >
+                <span className="mr-2" aria-hidden>{o.emoji}</span>{o.label}
+              </button>
+            );
+          })}
         </div>
       </div>
     );
@@ -726,40 +766,43 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
     return (
       <div className="space-y-2 text-center sm:text-left">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {options.map((o) => (
-            <button
-              key={o.label}
-              type="button"
-              className={`w-full py-4 rounded-2xl border-2 text-sm font-bold transition-all duration-300 ${form.decisionMaking === o.label ? 'scale-[1.02]' : ''}`}
-              style={form.decisionMaking === o.label ? {
-                backgroundColor: '#D4A34B',
-                color: '#1A2336',
-                borderColor: '#D4A34B',
-                boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.5)'
-              } : {
-                backgroundColor: '#F8FAFC',
-                color: '#1A2336',
-                borderColor: '#E5E7EB'
-              }}
-              onMouseEnter={(e) => {
-                if (form.decisionMaking !== o.label) {
-                  e.currentTarget.style.borderColor = '#D4A34B';
-                  e.currentTarget.style.backgroundColor = '#FFF7EB';
-                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (form.decisionMaking !== o.label) {
-                  e.currentTarget.style.borderColor = '#E5E7EB';
-                  e.currentTarget.style.backgroundColor = '#F8FAFC';
-                  e.currentTarget.style.boxShadow = 'none';
-                }
-              }}
-              onClick={() => { setForm({ ...form, decisionMaking: o.label }); onAutoNext && onAutoNext(); }}
-            >
-              <span className="mr-2" aria-hidden>{o.emoji}</span>{o.label}
-            </button>
-          ))}
+          {options.map((o, index) => {
+            const isSelected = form.decisionMaking === o.label;
+            return (
+              <button
+                key={`decisionMaking-${index}-${o.label}`}
+                type="button"
+                className={`w-full py-4 rounded-2xl border-2 text-sm font-bold transition-all duration-300 ${isSelected ? 'scale-[1.02]' : ''}`}
+                style={isSelected ? {
+                  backgroundColor: '#D4A34B',
+                  color: '#1A2336',
+                  borderColor: '#D4A34B',
+                  boxShadow: '0 10px 15px -3px rgba(212, 163, 75, 0.5)'
+                } : {
+                  backgroundColor: '#F8FAFC',
+                  color: '#1A2336',
+                  borderColor: '#E5E7EB'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.borderColor = '#D4A34B';
+                    e.currentTarget.style.backgroundColor = '#FFF7EB';
+                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(212, 163, 75, 0.2)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.borderColor = '#E5E7EB';
+                    e.currentTarget.style.backgroundColor = '#F8FAFC';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }
+                }}
+                onClick={() => { setForm((prevForm) => ({ ...prevForm, decisionMaking: o.label })); onAutoNext && onAutoNext(); }}
+              >
+                <span className="mr-2" aria-hidden>{o.emoji}</span>{o.label}
+              </button>
+            );
+          })}
         </div>
       </div>
     );
@@ -821,7 +864,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
-              onClick={() => { setForm({ ...form, challenge: o.label }); onAutoNext && onAutoNext(); }}
+              onClick={() => { setForm((prevForm) => ({ ...prevForm, challenge: o.label })); onAutoNext && onAutoNext(); }}
             >
               {o.img ? (
                 <img
@@ -889,7 +932,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
-              onClick={() => { setForm({ ...form, redFlag: o.label }); onAutoNext && onAutoNext(); }}
+              onClick={() => { setForm((prevForm) => ({ ...prevForm, redFlag: o.label })); onAutoNext && onAutoNext(); }}
             >
               <span className="text-xl" aria-hidden>{o.emoji}</span>
               <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
@@ -937,7 +980,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
-              onClick={() => { setForm({ ...form, partnerPreference: o.label }); onAutoNext && onAutoNext(); }}
+              onClick={() => { setForm((prevForm) => ({ ...prevForm, partnerPreference: o.label })); onAutoNext && onAutoNext(); }}
             >
               <span className="text-xl" aria-hidden>{o.emoji}</span>
               <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
@@ -988,7 +1031,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
-              onClick={() => { setForm({ ...form, relationshipDynamic: o.label }); onAutoNext && onAutoNext(); }}
+              onClick={() => { setForm((prevForm) => ({ ...prevForm, relationshipDynamic: o.label })); onAutoNext && onAutoNext(); }}
             >
               <span className="text-xl" aria-hidden>{o.emoji}</span>
               <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
@@ -1039,7 +1082,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
-              onClick={() => { setForm({ ...form, loveLanguage: o.label }); onAutoNext && onAutoNext(); }}
+              onClick={() => { setForm((prevForm) => ({ ...prevForm, loveLanguage: o.label })); onAutoNext && onAutoNext(); }}
             >
               <span className="text-xl" aria-hidden>{o.emoji}</span>
               <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
@@ -1092,7 +1135,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
-              onClick={() => { setForm({ ...form, idealConnection: o.label }); onAutoNext && onAutoNext(); }}
+              onClick={() => { setForm((prevForm) => ({ ...prevForm, idealConnection: o.label })); onAutoNext && onAutoNext(); }}
             >
               <span className="text-xl" aria-hidden>{o.emoji}</span>
               <span className="flex-1 text-sm" style={{ color: '#1A2336' }}>{o.label}</span>
@@ -1145,7 +1188,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
                   e.currentTarget.style.boxShadow = 'none';
                 }
               }}
-              onClick={() => { setForm({ ...form, relationshipFear: o.label }); onAutoNext && onAutoNext(); }}
+              onClick={() => { setForm((prevForm) => ({ ...prevForm, relationshipFear: o.label })); onAutoNext && onAutoNext(); }}
             >
               <span className={`${o.label === 'Being vulnerable' ? 'text-2xl' : 'text-xl'}`} aria-hidden>{o.emoji}</span>
               <span className="flex-1 text-sm font-medium" style={{ color: '#1A2336' }}>{o.label}</span>
@@ -1170,7 +1213,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
     function toggle(label) {
       const exists = form.lifeGoals.includes(label);
       const next = exists ? form.lifeGoals.filter((t) => t !== label) : [...form.lifeGoals, label];
-      setForm({ ...form, lifeGoals: next });
+      setForm((prevForm) => ({ ...prevForm, lifeGoals: next }));
     }
 
     return (
@@ -1298,7 +1341,7 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
             onChange={(e) => {
               // Only allow editing if not from signup
               if (!isFromSignup) {
-                setForm({ ...form, email: e.target.value });
+                setForm((prevForm) => ({ ...prevForm, email: e.target.value }));
               }
             }}
             disabled={isFromSignup}
