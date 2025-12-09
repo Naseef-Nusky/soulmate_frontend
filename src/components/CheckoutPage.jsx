@@ -292,9 +292,17 @@ export default function CheckoutPage() {
     const paymentQuerySuccess = searchParams.get('payment') === 'success';
     const paymentQuerySubId = searchParams.get('subscription_id') || completedSubscriptionId;
 
-    if ((paymentCompleted && completedSubscriptionId) || (paymentQuerySuccess && paymentQuerySubId)) {
+    // If URL explicitly says payment success, redirect
+    if (paymentQuerySuccess && paymentQuerySubId) {
       navigate(`/login?subscription_id=${paymentQuerySubId}&payment=success`, { replace: true });
       return;
+    }
+
+    // If a previous payment set the flags but we are back without success param,
+    // clear them so checkout can load normally.
+    if (paymentCompleted && completedSubscriptionId) {
+      localStorage.removeItem('paymentCompleted');
+      localStorage.removeItem('completedSubscriptionId');
     }
 
     // Get data from URL params or localStorage
