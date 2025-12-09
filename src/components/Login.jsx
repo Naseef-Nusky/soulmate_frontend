@@ -57,13 +57,18 @@ export default function Login({ isRegister = false }) {
     }
   }, [searchParams, isRegister]);
 
-  // Handle payment success from Stripe Checkout
+  // Handle payment success from Stripe Checkout or Custom Checkout
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
+    const subscriptionId = searchParams.get('subscription_id');
     const paymentSuccess = searchParams.get('payment');
     
-    if (sessionId && paymentSuccess === 'success' && !isRegister) {
-      handlePaymentSuccess(sessionId);
+    if (paymentSuccess === 'success' && !isRegister) {
+      if (sessionId) {
+        handlePaymentSuccess(sessionId);
+      } else if (subscriptionId) {
+        handlePaymentSuccess(null, subscriptionId);
+      }
     }
   }, [searchParams, isRegister]);
 
@@ -93,7 +98,7 @@ export default function Login({ isRegister = false }) {
     return () => window.removeEventListener('gurulink:language-applied', handleLanguageChange);
   }, []);
 
-  const handlePaymentSuccess = async (sessionId) => {
+  const handlePaymentSuccess = async (sessionId, subscriptionId = null) => {
     setLoading(true);
     setError('');
     setMessage('');
@@ -172,7 +177,8 @@ export default function Login({ isRegister = false }) {
         email,
         name,
         birthDate,
-        sessionId,
+        sessionId: sessionId || undefined,
+        subscriptionId: subscriptionId || undefined,
         quizData, // Send quiz data so backend can save it and generate everything
       });
 
@@ -189,10 +195,34 @@ export default function Login({ isRegister = false }) {
         setMessage('Payment successful! Please check your email for your secure login link.');
         // User will receive login link via email
       } else {
-        setError('Account creation failed. Please contact support.');
+        // Check if error is about payment not completed
+        if (result.error && result.error.includes('Payment has not been completed')) {
+          setError('Payment was not completed. Please return to the checkout page to complete your payment.');
+          // Optionally redirect back to checkout after a delay
+          setTimeout(() => {
+            const pendingSignup = JSON.parse(localStorage.getItem('pendingSignup') || '{}');
+            if (pendingSignup.email) {
+              navigate(`/checkout?email=${encodeURIComponent(pendingSignup.email)}`);
+            }
+          }, 3000);
+        } else {
+          setError(result.error || 'Account creation failed. Please contact support.');
+        }
       }
     } catch (err) {
-      setError(err.message || 'Payment succeeded but account setup failed. Please contact support.');
+      // Check if error is about payment not completed
+      if (err.message && err.message.includes('Payment has not been completed')) {
+        setError('Payment was not completed. Please return to the checkout page to complete your payment.');
+        // Redirect back to checkout
+        setTimeout(() => {
+          const pendingSignup = JSON.parse(localStorage.getItem('pendingSignup') || '{}');
+          if (pendingSignup.email) {
+            navigate(`/checkout?email=${encodeURIComponent(pendingSignup.email)}`);
+          }
+        }, 3000);
+      } else {
+        setError(err.message || 'Payment succeeded but account setup failed. Please contact support.');
+      }
     } finally {
       setLoading(false);
     }

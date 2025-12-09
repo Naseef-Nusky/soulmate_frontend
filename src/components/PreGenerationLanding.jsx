@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Star, Check, Lock, ChevronDown } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { detectCurrency, getPricing, getCurrencyInfo, setCurrency } from '../utils/currency.js';
-import { createCheckoutSession } from '../lib/api.js';
+import { createCheckoutSession, createSubscription, checkAccountExists } from '../lib/api.js';
 import Footer from './Footer';
 
 export default function PreGenerationLanding({ onSubmit, email, name, birthDate, formData, loading = false }) {
@@ -61,6 +61,15 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
     setPaymentError('');
 
     try {
+      // Check if account already exists before proceeding with payment
+      const cleanedEmail = email.trim().toLowerCase();
+      const accountCheck = await checkAccountExists(cleanedEmail);
+      
+      if (accountCheck.exists) {
+        setPaymentError('An account with this email already exists. Please log in instead.');
+        setProcessingCheckout(false);
+        return;
+      }
       // Get quiz data from localStorage (saved when quiz was completed)
       let quizDataStr = localStorage.getItem('quizData');
       let quizData = null;
@@ -130,20 +139,9 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
         birthDate,
       }));
 
-      // Create checkout session and save quiz data to database
-      const { url } = await createCheckoutSession({
-        email: email.trim(),
-        name: name?.trim() || null,
-        birthDate,
-        quizData, // Send quiz data so backend can save it before payment
-        currency: 'USD',
-        country: 'US',
-      });
-
-      console.log('[PreGenerationLanding] ✅ Checkout session created, quiz data sent to backend');
-
-      // Redirect to Stripe Checkout
-      window.location.href = url;
+      // Navigate to custom checkout page
+      // The checkout page will create the subscription and handle payment
+      navigate(`/checkout?email=${encodeURIComponent(email.trim())}${name ? `&name=${encodeURIComponent(name.trim())}` : ''}${birthDate ? `&birthDate=${encodeURIComponent(birthDate)}` : ''}`);
     } catch (err) {
       setPaymentError(err.message || 'Unable to start checkout. Please try again.');
       setProcessingCheckout(false);

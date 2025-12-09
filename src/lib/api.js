@@ -416,6 +416,19 @@ export async function createCheckoutSession(payload) {
   return res.json();
 }
 
+export async function createSubscription(payload) {
+  const res = await fetch(withBase('/api/payments/create-subscription'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Unable to create subscription' }));
+    throw new Error(error.error || 'Unable to create subscription');
+  }
+  return res.json();
+}
+
 export async function emailLogin(email) {
   const url = withBase('/api/auth/login');
   return fetchWithErrorHandling(url, {

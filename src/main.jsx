@@ -5,6 +5,16 @@ import { initApi } from './lib/api.js';
 import { applyTranslation, getCurrentLanguage } from './lib/translation.js';
 import './styles.css';
 
+// Silence console output in production builds (browser only)
+if (typeof window !== 'undefined' && import.meta.env.PROD) {
+  const noop = () => {};
+  window.console.log = noop;
+  window.console.warn = noop;
+  window.console.error = noop;
+  window.console.info = noop;
+  window.console.debug = noop;
+}
+
 // Initialize API configuration and test connectivity
 initApi();
 
