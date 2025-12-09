@@ -685,20 +685,31 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
             className="w-full px-4 py-3 rounded-xl border text-sm"
             value={form.birthDate}
             onChange={(e) => {
-              const newValue = e.target.value;
-              setForm((prevForm) => {
-                const updated = { ...prevForm, birthDate: newValue };
-                return updated;
-              });
+              // Only allow editing if not from signup
+              if (!isFromSignup) {
+                const newValue = e.target.value;
+                setForm((prevForm) => {
+                  const updated = { ...prevForm, birthDate: newValue };
+                  return updated;
+                });
+              }
             }}
+            disabled={isFromSignup}
+            readOnly={isFromSignup}
             min={minBirthDateStr}
             max={maxBirthDateStr}
             style={{
-              backgroundColor: '#F8FAFC',
-              borderColor: '#E5E7EB',
-              color: '#1A2336'
+              backgroundColor: isFromSignup ? '#F3F4F6' : '#F8FAFC',
+              borderColor: isFromSignup ? '#D1D5DB' : '#E5E7EB',
+              color: isFromSignup ? '#6B7280' : '#1A2336',
+              cursor: isFromSignup ? 'not-allowed' : 'text',
             }}
           />
+          {isFromSignup && (
+            <p className="text-xs mt-1" style={{ color: '#6B7280' }}>
+              Birth date from your signup cannot be changed
+            </p>
+          )}
         </div>
       </div>
     );

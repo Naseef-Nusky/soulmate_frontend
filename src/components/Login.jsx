@@ -362,6 +362,12 @@ export default function Login({ isRegister = false }) {
         localStorage.setItem('signupEmail', signupEmail);
         console.log('[Login] Signup email stored for quiz auto-fill:', signupEmail);
 
+        // Store signup birth date in localStorage so quiz can auto-fill it
+        if (birthDate) {
+          localStorage.setItem('signupBirthDate', birthDate);
+          console.log('[Login] Signup birth date stored for quiz auto-fill:', birthDate);
+        }
+
         // Navigate to quiz with register path to indicate coming from signup
         navigate('/register/quiz');
         return;

@@ -181,6 +181,30 @@ export default function QuizApp() {
     }
   }, [step, isFromSignup]);
 
+  // Auto-fill birth date when birth step is reached (ONLY if coming from signup)
+  useEffect(() => {
+    const birthStepIndex = STEPS.findIndex(s => s.key === 'birth');
+    if (step === birthStepIndex) {
+      // ONLY auto-fill birth date if coming from signup process
+      if (isFromSignup) {
+        const signupBirthDate = localStorage.getItem('signupBirthDate');
+        if (signupBirthDate) {
+          setForm(prev => ({ ...prev, birthDate: signupBirthDate }));
+          console.log('[QuizApp] ✅ User came from signup (URL: /register/quiz) - birth date auto-filled:', signupBirthDate);
+        } else {
+          console.warn('[QuizApp] ⚠️ Coming from signup but no signupBirthDate found in localStorage');
+        }
+      } else {
+        // Coming directly to quiz - do NOT pre-fill birth date, user must type it
+        console.log('[QuizApp] User came directly to quiz - birth date field will be empty and editable');
+        // Clear any existing birth date if user navigated directly
+        if (form.birthDate && !localStorage.getItem('signupBirthDate')) {
+          setForm(prev => ({ ...prev, birthDate: '' }));
+        }
+      }
+    }
+  }, [step, isFromSignup]);
+
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
@@ -259,6 +283,12 @@ export default function QuizApp() {
       if (localStorage.getItem('signupEmail')) {
         localStorage.removeItem('signupEmail');
         console.log('[QuizApp] Signup email cleared after quiz submission');
+      }
+
+      // Clear signupBirthDate after quiz submission (it's now saved in quizData)
+      if (localStorage.getItem('signupBirthDate')) {
+        localStorage.removeItem('signupBirthDate');
+        console.log('[QuizApp] Signup birth date cleared after quiz submission');
       }
       
       const res = await submitQuiz(payload);
