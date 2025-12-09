@@ -206,7 +206,7 @@ function CheckoutForm({ email, name, birthDate, pricing, onBack, clientSecret })
       )}
 
       <div className="rounded-lg border p-4" style={{ borderColor: '#E5E7EB', backgroundColor: '#F8FAFC' }}>
-        <PaymentElement 
+        {/* <PaymentElement 
           options={{
             layout: 'tabs',
             // Note: google_pay and apple_pay are not valid paymentMethodTypes
@@ -221,7 +221,19 @@ function CheckoutForm({ email, name, birthDate, pricing, onBack, clientSecret })
               name: 'GuruLink',
             },
           }}
-        />
+        /> */}
+        
+        <PaymentElement
+  options={{
+    layout: 'tabs',
+    wallets: {
+      applePay: 'auto',
+      googlePay: 'auto',
+    },
+    business: { name: 'GuruLink' },
+  }}
+/>
+
       </div>
 
       <div className="rounded-lg border p-4" style={{ borderColor: '#E5E7EB', backgroundColor: '#FFF8F2' }}>
