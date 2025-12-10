@@ -242,7 +242,8 @@ function CheckoutForm({ email, name, birthDate, pricing, onBack, clientSecret })
           <PaymentElement
             options={{
               layout: 'tabs',
-              paymentMethodTypes: ['card', 'link'],
+              // paymentMethodTypes is determined automatically from the PaymentIntent
+              // No need to specify it here - it causes warnings
               wallets: {
                 applePay: 'auto',
                 googlePay: 'auto',
