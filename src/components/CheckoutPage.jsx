@@ -27,6 +27,25 @@ function CheckoutForm({ email, name, birthDate, pricing, onBack, clientSecret })
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [paymentElementReady, setPaymentElementReady] = useState(false);
+
+  // Add timeout for PaymentElement loading
+  useEffect(() => {
+    if (!paymentElementReady && elements) {
+      const timeout = setTimeout(() => {
+        debugWarn('[CheckoutForm] PaymentElement taking longer than expected to load');
+        setError(prevError => {
+          // Only set timeout error if no other error is present
+          if (!prevError) {
+            return 'Payment form is taking longer than expected. Please refresh the page if it does not load.';
+          }
+          return prevError;
+        });
+      }, 10000); // 10 second timeout
+
+      return () => clearTimeout(timeout);
+    }
+  }, [paymentElementReady, elements]);
 
   const validateInputs = () => {
     if (!email || !email.trim()) return 'Email is required.';
@@ -206,34 +225,41 @@ function CheckoutForm({ email, name, birthDate, pricing, onBack, clientSecret })
       )}
 
       <div className="rounded-lg border p-4" style={{ borderColor: '#E5E7EB', backgroundColor: '#F8FAFC' }}>
-        {/* <PaymentElement 
-          options={{
-            layout: 'tabs',
-            // Note: google_pay and apple_pay are not valid paymentMethodTypes
-            // They are automatically handled through the wallets configuration below
-            paymentMethodTypes: ['card', 'link'],
-            wallets: {
-              applePay: 'auto', // Automatically show Apple Pay when available
-              googlePay: 'auto', // Automatically show Google Pay when available
-            },
-            // Enable business information for wallet payments
-            business: {
-              name: 'GuruLink',
-            },
-          }}
-        /> */}
-        
-        <PaymentElement
-  options={{
-    layout: 'tabs',
-    wallets: {
-      applePay: 'auto',
-      googlePay: 'auto',
-    },
-    business: { name: 'GuruLink' },
-  }}
-/>
-
+        {!paymentElementReady && (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4A34B] mb-2"></div>
+              <p className="text-sm" style={{ color: '#6B7280' }}>Loading payment options...</p>
+            </div>
+          </div>
+        )}
+        <div style={{ display: paymentElementReady ? 'block' : 'none' }}>
+          <PaymentElement
+            options={{
+              layout: 'tabs',
+              paymentMethodTypes: ['card', 'link'],
+              wallets: {
+                applePay: 'auto',
+                googlePay: 'auto',
+              },
+              business: {
+                name: 'GuruLink',
+              },
+            }}
+            onReady={() => {
+              debugLog('[CheckoutForm] PaymentElement ready');
+              setPaymentElementReady(true);
+            }}
+            onChange={(event) => {
+              if (event.error) {
+                debugError('[CheckoutForm] PaymentElement error:', event.error);
+                setError(event.error.message);
+              } else {
+                setError('');
+              }
+            }}
+          />
+        </div>
       </div>
 
       <div className="rounded-lg border p-4" style={{ borderColor: '#E5E7EB', backgroundColor: '#FFF8F2' }}>
@@ -258,7 +284,7 @@ function CheckoutForm({ email, name, birthDate, pricing, onBack, clientSecret })
         </button>
         <button
           type="submit"
-          disabled={!stripe || submitting || processing}
+          disabled={!stripe || !elements || !paymentElementReady || submitting || processing}
           className="flex-1 rounded-lg bg-[#1A2336] px-6 py-4 font-bold text-white transition hover:bg-[#D4A34B] hover:text-[#1A2336] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {processing ? (
@@ -342,6 +368,13 @@ export default function CheckoutPage() {
     const existingClientSecret = searchParams.get('client_secret');
 
     if (existingSubscriptionId && existingClientSecret) {
+      // Validate client secret format (should start with pi_ or seti_)
+      if (!existingClientSecret.startsWith('pi_') && !existingClientSecret.startsWith('seti_')) {
+        debugError('[CheckoutPage] Invalid client secret format:', existingClientSecret.substring(0, 20));
+        setError('Invalid payment configuration. Please start the checkout process again.');
+        setLoading(false);
+        return;
+      }
       setSubscriptionId(existingSubscriptionId);
       setClientSecret(existingClientSecret);
       localStorage.setItem('pendingSubscriptionId', existingSubscriptionId);
@@ -388,6 +421,12 @@ export default function CheckoutPage() {
           throw new Error('Invalid response from server. Please try again.');
         }
 
+        // Validate client secret format
+        if (!result.clientSecret.startsWith('pi_') && !result.clientSecret.startsWith('seti_')) {
+          debugError('[CheckoutPage] Invalid client secret format from server');
+          throw new Error('Invalid payment configuration received from server. Please try again.');
+        }
+
         setSubscriptionId(result.subscriptionId);
         setClientSecret(result.clientSecret);
         localStorage.setItem('pendingSubscriptionId', result.subscriptionId);
@@ -403,7 +442,7 @@ export default function CheckoutPage() {
     };
 
     createSubscription();
-  }, [searchParams]);
+  }, [searchParams, navigate]);
 
   const handleBack = () => {
     navigate(-1);
@@ -492,7 +531,11 @@ export default function CheckoutPage() {
               </div>
 
               {clientSecret && options ? (
-                <Elements stripe={stripePromise} options={options} key={clientSecret}>
+                <Elements 
+                  stripe={stripePromise} 
+                  options={options} 
+                  key={clientSecret}
+                >
                   <CheckoutForm 
                     email={email}
                     name={name}
@@ -506,12 +549,20 @@ export default function CheckoutPage() {
                 <div className="text-center py-8">
                   {error ? (
                     <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-                      {error}
+                      <p className="font-semibold mb-1">Payment Setup Error</p>
+                      <p>{error}</p>
+                      <button
+                        onClick={() => window.location.reload()}
+                        className="mt-3 text-sm text-red-600 underline hover:text-red-700"
+                      >
+                        Reload page
+                      </button>
                     </div>
                   ) : (
                     <div>
                       <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4A34B] mb-4"></div>
                       <p style={{ color: '#4B5563' }}>Loading payment form...</p>
+                      <p className="text-xs mt-2" style={{ color: '#9CA3AF' }}>This may take a few seconds</p>
                     </div>
                   )}
                 </div>
