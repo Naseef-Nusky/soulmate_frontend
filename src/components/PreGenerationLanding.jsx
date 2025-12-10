@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Star, Check, Lock, ChevronDown } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { detectCurrency, getPricing, getCurrencyInfo, setCurrency } from '../utils/currency.js';
-import { createCheckoutSession, createSubscription, checkAccountExists } from '../lib/api.js';
+import { createCheckoutSession, checkAccountExists } from '../lib/api.js';
 import Footer from './Footer';
 
 export default function PreGenerationLanding({ onSubmit, email, name, birthDate, formData, loading = false }) {

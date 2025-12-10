@@ -487,38 +487,6 @@ export async function createCheckoutSession(payload, retries = 2) {
   }
 }
 
-export async function createSubscription(payload, retries = 2) {
-  const url = withBase('/api/payments/create-subscription');
-  
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      const res = await fetchWithErrorHandling(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      }, (errorData) => errorData.error || 'Unable to create subscription');
-      
-      return res;
-    } catch (error) {
-      // If it's the last attempt or error is not retryable, throw
-      if (attempt === retries) {
-        // Improve error message for user
-        if (error.message?.includes('timeout') || error.message?.includes('network')) {
-          throw new Error('Network error. Please check your connection and try again.');
-        }
-        if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
-          throw new Error('Unable to connect to server. Please check your internet connection and try again.');
-        }
-        throw error;
-      }
-      
-      // Wait before retrying (exponential backoff)
-      const delay = Math.min(1000 * Math.pow(2, attempt), 5000);
-      console.log(`[API] Retrying createSubscription (attempt ${attempt + 1}/${retries + 1}) after ${delay}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-    }
-  }
-}
 
 export async function emailLogin(email) {
   const url = withBase('/api/auth/login');

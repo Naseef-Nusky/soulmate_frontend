@@ -15,7 +15,6 @@ import Refund from './components/Refund.jsx';
 import Support from './components/Support.jsx';
 import CancelSubscription from './components/CancelSubscription.jsx';
 import CancellationPortal from './components/CancellationPortal.jsx';
-import CheckoutPage from './components/CheckoutPage.jsx';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -92,7 +91,6 @@ export default function AppRouter() {
         <Route path="/support" element={<Support />} />
         <Route path="/cancel-subscription" element={<CancelSubscription />} />
         <Route path="/cancellation-portal" element={<CancellationPortal />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
