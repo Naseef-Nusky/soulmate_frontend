@@ -403,17 +403,88 @@ export async function createPaymentIntent(payload) {
   return res.json();
 }
 
-export async function createCheckoutSession(payload) {
-  const res = await fetch(withBase('/api/payments/create-checkout-session'), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({ error: 'Unable to start checkout' }));
-    throw new Error(error.error || 'Unable to start checkout');
+export async function createCheckoutSession(payload, retries = 2) {
+  const url = withBase('/api/payments/create-checkout-session');
+  const isMobile = typeof window !== 'undefined' && (
+    window.Capacitor || window.CapacitorWeb || window.capacitor ||
+    /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+  );
+  
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      // Add timeout for mobile devices (they often have slower connections)
+      const controller = new AbortController();
+      const timeoutMs = isMobile ? 45000 : 30000; // 45s for mobile, 30s for web
+      const timeoutId = setTimeout(() => {
+        controller.abort();
+        console.error('[API] Checkout session request timeout after', timeoutMs, 'ms');
+      }, timeoutMs);
+      
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+        // For mobile, ensure we're not blocked by CORS
+        mode: 'cors',
+        credentials: 'omit',
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ error: 'Unable to start checkout' }));
+        // Don't retry on client errors (4xx)
+        if (res.status >= 400 && res.status < 500) {
+          throw new Error(error.error || 'Unable to start checkout');
+        }
+        // Retry on server errors (5xx) or network issues
+        if (attempt === retries) {
+          throw new Error(error.error || 'Unable to start checkout. Please try again.');
+        }
+        // Wait before retrying
+        const delay = Math.min(1000 * Math.pow(2, attempt), 5000);
+        console.log(`[API] Retrying checkout session (attempt ${attempt + 1}/${retries + 1}) after ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      
+      const result = await res.json();
+      
+      // Validate response
+      if (!result || !result.url) {
+        throw new Error('Invalid response from server. Please try again.');
+      }
+      
+      // Ensure URL is HTTPS (Stripe requires HTTPS)
+      if (result.url && !result.url.startsWith('https://')) {
+        console.warn('[API] Checkout URL is not HTTPS:', result.url);
+        throw new Error('Security error: Checkout must use HTTPS. Please contact support.');
+      }
+      
+      return result;
+    } catch (error) {
+      // If it's the last attempt or a non-retryable error, throw
+      if (attempt === retries) {
+        // Improve error messages for mobile users
+        if (error.name === 'AbortError' || error.message?.includes('timeout')) {
+          throw new Error('Connection timeout. Please check your internet connection and try again.');
+        }
+        if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
+          throw new Error('Network error. Please check your internet connection and try again.');
+        }
+        if (error.message?.includes('CORS') || error.message?.includes('CORS')) {
+          throw new Error('Connection blocked. Please try again or contact support.');
+        }
+        throw error;
+      }
+      
+      // Wait before retrying (exponential backoff)
+      const delay = Math.min(1000 * Math.pow(2, attempt), 5000);
+      console.log(`[API] Retrying checkout session (attempt ${attempt + 1}/${retries + 1}) after ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
   }
-  return res.json();
 }
 
 export async function createSubscription(payload, retries = 2) {

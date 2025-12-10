@@ -77,7 +77,15 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
         return;
       }
       // Get quiz data from localStorage (saved when quiz was completed)
-      let quizDataStr = localStorage.getItem('quizData');
+      // Wrap in try-catch for Safari private mode compatibility
+      let quizDataStr = null;
+      try {
+        quizDataStr = localStorage.getItem('quizData');
+      } catch (storageError) {
+        console.warn('[PreGenerationLanding] localStorage not available (Safari private mode?):', storageError);
+        // Continue - we'll reconstruct from formData
+      }
+      
       let quizData = null;
       
       if (quizDataStr) {
@@ -139,14 +147,37 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
       }
 
       // Store email and user data in localStorage for after payment
-      localStorage.setItem('pendingSignup', JSON.stringify({
-        email: email.trim(),
-        name: name?.trim() || null,
-        birthDate,
-      }));
+      // Wrap in try-catch for Safari private mode compatibility
+      try {
+        localStorage.setItem('pendingSignup', JSON.stringify({
+          email: email.trim(),
+          name: name?.trim() || null,
+          birthDate,
+        }));
+      } catch (storageError) {
+        // Safari private mode or storage disabled - log but continue
+        console.warn('[PreGenerationLanding] localStorage not available:', storageError);
+        // Continue anyway - data will be passed via URL params
+      }
 
       // Use Stripe's default checkout page (hosted checkout)
       const appUrl = window.location.origin;
+      
+      // Ensure we're using HTTPS for Stripe redirects
+      const isSecure = window.location.protocol === 'https:' || 
+                       window.location.hostname === 'localhost' ||
+                       window.location.hostname === '127.0.0.1';
+      
+      if (!isSecure && window.location.protocol === 'http:') {
+        console.warn('[PreGenerationLanding] Not using HTTPS - Stripe may require HTTPS');
+      }
+      
+      console.log('[PreGenerationLanding] Creating checkout session...', {
+        email: email.trim(),
+        hasQuizData: !!quizData,
+        timestamp: new Date().toISOString(),
+      });
+
       const result = await createCheckoutSession({
         email: email.trim(),
         name: name?.trim() || null,
@@ -156,14 +187,149 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
         country: 'US',
       });
 
-      if (result && result.url) {
-        // Redirect to Stripe's hosted checkout page
-        window.location.href = result.url;
+      console.log('[PreGenerationLanding] Checkout session response:', {
+        hasResult: !!result,
+        hasUrl: !!result?.url,
+        urlLength: result?.url?.length,
+        sessionId: result?.sessionId,
+        timestamp: new Date().toISOString(),
+      });
+
+      if (!result) {
+        throw new Error('No response from server. Please try again.');
+      }
+
+      if (!result.url) {
+        console.error('[PreGenerationLanding] Missing checkout URL in response:', result);
+        throw new Error('Failed to get checkout URL. Please try again.');
+      }
+
+      // Validate URL before redirecting
+      if (!result.url.startsWith('https://')) {
+        console.error('[PreGenerationLanding] Invalid checkout URL (not HTTPS):', result.url);
+        throw new Error('Invalid checkout URL. Please contact support.');
+      }
+
+      // Log redirect attempt
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      console.log('[PreGenerationLanding] Redirecting to Stripe checkout...', {
+        url: result.url.substring(0, 100) + '...',
+        isMobile,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString(),
+      });
+
+      // Set a flag to show we're redirecting (prevents showing error if redirect is slow)
+      setProcessingCheckout(true);
+      
+      // Store the URL in case redirect fails - we can show a manual link
+      try {
+        localStorage.setItem('pendingCheckoutUrl', result.url);
+      } catch (e) {
+        // Ignore localStorage errors
+      }
+      
+      // Small delay to ensure state updates before redirect
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // For mobile devices, use a more reliable redirect method
+      if (isMobile) {
+        // On mobile, try multiple redirect methods for better compatibility
+        let redirectSuccess = false;
+        
+        try {
+          // Method 1: Standard redirect (works in most cases)
+          console.log('[PreGenerationLanding] Attempting redirect method 1: window.location.href');
+          window.location.href = result.url;
+          redirectSuccess = true;
+          
+          // If we're still here after 3 seconds, redirect might have failed
+          setTimeout(() => {
+            if (document.visibilityState === 'visible') {
+              console.warn('[PreGenerationLanding] Redirect may have failed, trying alternative...');
+              try {
+                window.location.replace(result.url);
+              } catch (e) {
+                console.error('[PreGenerationLanding] Alternative redirect also failed:', e);
+                // Show manual link option
+                setPaymentError(`Redirect failed. Please click this link to continue: ${result.url.substring(0, 50)}...`);
+                setProcessingCheckout(false);
+              }
+            }
+          }, 3000);
+        } catch (redirectError) {
+          console.error('[PreGenerationLanding] Redirect failed, trying alternative method:', redirectError);
+          // Method 2: Use replace (doesn't add to history)
+          try {
+            window.location.replace(result.url);
+            redirectSuccess = true;
+          } catch (replaceError) {
+            console.error('[PreGenerationLanding] Replace also failed, trying window.open:', replaceError);
+            // Method 3: Open in same window (last resort)
+            try {
+              const opened = window.open(result.url, '_self');
+              if (!opened) {
+                throw new Error('Browser blocked redirect');
+              }
+              redirectSuccess = true;
+            } catch (openError) {
+              console.error('[PreGenerationLanding] All redirect methods failed:', openError);
+              // Show manual link as fallback
+              setPaymentError(`Unable to redirect automatically. Please click this link to continue: ${result.url}`);
+              setProcessingCheckout(false);
+            }
+          }
+        }
       } else {
-        throw new Error('Failed to create checkout session. Please try again.');
+        // For desktop, use standard redirect
+        console.log('[PreGenerationLanding] Desktop redirect: window.location.href');
+        try {
+          window.location.href = result.url;
+        } catch (redirectError) {
+          console.error('[PreGenerationLanding] Desktop redirect failed:', redirectError);
+          setPaymentError(`Unable to redirect automatically. Please click this link to continue: ${result.url}`);
+          setProcessingCheckout(false);
+        }
       }
     } catch (err) {
-      setPaymentError(err.message || 'Unable to start checkout. Please try again.');
+      // Provide more helpful error messages for mobile users
+      let errorMessage = err.message || 'Unable to start checkout. Please try again.';
+      
+      // Detect common mobile-specific issues
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      
+      // Log comprehensive error details
+      console.error('[PreGenerationLanding] Checkout error details:', {
+        error: err,
+        errorName: err.name,
+        errorMessage: err.message,
+        errorStack: err.stack,
+        errorToString: err.toString(),
+        isMobile,
+        isSafari,
+        userAgent: navigator.userAgent,
+        location: window.location.href,
+        timestamp: new Date().toISOString(),
+      });
+      
+      if (isMobile) {
+        if (err.message?.includes('timeout') || err.message?.includes('Connection timeout')) {
+          errorMessage = 'Connection timeout. Please check your internet connection and try again. If the problem persists, try using Wi-Fi instead of mobile data.';
+        } else if (err.message?.includes('Network error') || err.message?.includes('Failed to fetch')) {
+          errorMessage = 'Network error. Please check your internet connection. If you\'re using mobile data, try switching to Wi-Fi.';
+        } else if (err.message?.includes('CORS') || err.message?.includes('blocked')) {
+          errorMessage = 'Connection blocked by browser. Please try disabling ad blockers or privacy extensions and try again.';
+        } else if (isSafari && err.message?.includes('localStorage')) {
+          errorMessage = 'Safari private mode detected. Please use regular browsing mode to complete checkout.';
+        } else if (err.message?.includes('Invalid response') || err.message?.includes('No response')) {
+          errorMessage = 'Server did not respond. Please check your internet connection and try again.';
+        } else if (err.message?.includes('Invalid checkout URL') || err.message?.includes('Failed to get checkout URL')) {
+          errorMessage = 'Failed to create checkout session. Please try again or contact support if the problem persists.';
+        }
+      }
+      
+      setPaymentError(errorMessage);
       setProcessingCheckout(false);
     }
   };
@@ -263,7 +429,21 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
             <div className="mt-4">
               {paymentError && !isPaymentSuccess && (
                 <div className="mb-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
-                  {paymentError}
+                  {paymentError.includes('https://') ? (
+                    <div>
+                      <p className="mb-2">{paymentError.split('https://')[0]}</p>
+                      <a 
+                        href={`https://${paymentError.split('https://')[1]}`}
+                        target="_self"
+                        className="text-blue-600 underline break-all font-semibold"
+                        onClick={() => setProcessingCheckout(false)}
+                      >
+                        Click here to continue to checkout
+                      </a>
+                    </div>
+                  ) : (
+                    paymentError
+                  )}
                 </div>
               )}
               
@@ -338,9 +518,14 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
                       disabled={processingCheckout || loading}
                       className="w-full rounded-lg bg-[#1A2336] px-6 py-4 font-bold text-white transition hover:bg-[#D4A34B] hover:text-[#1A2336] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {processingCheckout
-                        ? 'Processing...'
-                        : `Start 7-Day Trial - ${pricing.trial.formatted}`}
+                      {processingCheckout ? (
+                        <>
+                          <span className="inline-block mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent align-middle" />
+                          Redirecting to checkout...
+                        </>
+                      ) : (
+                        `Start 7-Day Trial - ${pricing.trial.formatted}`
+                      )}
                     </button>
                   </>
                 )}
