@@ -145,9 +145,23 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
         birthDate,
       }));
 
-      // Navigate to custom checkout page
-      // The checkout page will create the subscription and handle payment
-      navigate(`/checkout?email=${encodeURIComponent(email.trim())}${name ? `&name=${encodeURIComponent(name.trim())}` : ''}${birthDate ? `&birthDate=${encodeURIComponent(birthDate)}` : ''}`);
+      // Use Stripe's default checkout page (hosted checkout)
+      const appUrl = window.location.origin;
+      const result = await createCheckoutSession({
+        email: email.trim(),
+        name: name?.trim() || null,
+        birthDate: birthDate || null,
+        quizData,
+        currency: 'USD',
+        country: 'US',
+      });
+
+      if (result && result.url) {
+        // Redirect to Stripe's hosted checkout page
+        window.location.href = result.url;
+      } else {
+        throw new Error('Failed to create checkout session. Please try again.');
+      }
     } catch (err) {
       setPaymentError(err.message || 'Unable to start checkout. Please try again.');
       setProcessingCheckout(false);

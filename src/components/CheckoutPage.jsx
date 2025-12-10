@@ -1,3 +1,11 @@
+/**
+ * Custom Checkout Page with PaymentElement
+ * 
+ * NOTE: This custom checkout page is kept for reference/backup.
+ * The application currently uses Stripe's default hosted checkout page.
+ * To use this custom checkout, update PreGenerationLanding.jsx to navigate to /checkout
+ * instead of using createCheckoutSession.
+ */
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';

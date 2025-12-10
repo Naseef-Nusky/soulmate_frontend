@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { emailLogin, verifyLoginToken, checkAccountExists, signup } from '../lib/api.js';
+import { emailLogin, verifyLoginToken, checkAccountExists, signup, createCheckoutSession } from '../lib/api.js';
 import { setUser } from '../lib/auth.js';
 import { applyTranslation } from '../lib/translation.js';
 
@@ -197,14 +197,37 @@ export default function Login({ isRegister = false }) {
       } else {
         // Check if error is about payment not completed
         if (result.error && result.error.includes('Payment has not been completed')) {
-          setError('Payment was not completed. Please return to the checkout page to complete your payment.');
-          // Optionally redirect back to checkout after a delay
-          setTimeout(() => {
+          setError('Payment was not completed. Redirecting to checkout...');
+          // Redirect to Stripe's default checkout page
+          setTimeout(async () => {
             const pendingSignup = JSON.parse(localStorage.getItem('pendingSignup') || '{}');
             if (pendingSignup.email) {
-              navigate(`/checkout?email=${encodeURIComponent(pendingSignup.email)}`);
+              try {
+                const quizDataStr = localStorage.getItem('quizData');
+                let quizData = null;
+                if (quizDataStr) {
+                  try {
+                    quizData = JSON.parse(quizDataStr);
+                  } catch (e) {
+                    console.error('Failed to parse quiz data:', e);
+                  }
+                }
+                const checkoutResult = await createCheckoutSession({
+                  email: pendingSignup.email,
+                  name: pendingSignup.name || null,
+                  birthDate: pendingSignup.birthDate || null,
+                  quizData,
+                  currency: 'USD',
+                  country: 'US',
+                });
+                if (checkoutResult && checkoutResult.url) {
+                  window.location.href = checkoutResult.url;
+                }
+              } catch (err) {
+                setError('Failed to start checkout. Please try again.');
+              }
             }
-          }, 3000);
+          }, 2000);
         } else {
           setError(result.error || 'Account creation failed. Please contact support.');
         }
@@ -212,14 +235,37 @@ export default function Login({ isRegister = false }) {
     } catch (err) {
       // Check if error is about payment not completed
       if (err.message && err.message.includes('Payment has not been completed')) {
-        setError('Payment was not completed. Please return to the checkout page to complete your payment.');
-        // Redirect back to checkout
-        setTimeout(() => {
+        setError('Payment was not completed. Redirecting to checkout...');
+        // Redirect to Stripe's default checkout page
+        setTimeout(async () => {
           const pendingSignup = JSON.parse(localStorage.getItem('pendingSignup') || '{}');
           if (pendingSignup.email) {
-            navigate(`/checkout?email=${encodeURIComponent(pendingSignup.email)}`);
+            try {
+              const quizDataStr = localStorage.getItem('quizData');
+              let quizData = null;
+              if (quizDataStr) {
+                try {
+                  quizData = JSON.parse(quizDataStr);
+                } catch (e) {
+                  console.error('Failed to parse quiz data:', e);
+                }
+              }
+              const checkoutResult = await createCheckoutSession({
+                email: pendingSignup.email,
+                name: pendingSignup.name || null,
+                birthDate: pendingSignup.birthDate || null,
+                quizData,
+                currency: 'USD',
+                country: 'US',
+              });
+              if (checkoutResult && checkoutResult.url) {
+                window.location.href = checkoutResult.url;
+              }
+            } catch (checkoutErr) {
+              setError('Failed to start checkout. Please try again.');
+            }
           }
-        }, 3000);
+        }, 2000);
       } else {
         setError(err.message || 'Payment succeeded but account setup failed. Please contact support.');
       }
