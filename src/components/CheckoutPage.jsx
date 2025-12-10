@@ -349,10 +349,18 @@ export default function CheckoutPage() {
       return;
     }
 
-    // Create subscription
+    // Create subscription with retry logic and race condition prevention
+    let isCreating = false;
     const createSubscription = async () => {
+      // Prevent multiple simultaneous calls
+      if (isCreating) {
+        debugLog('[CheckoutPage] Subscription creation already in progress, skipping...');
+        return;
+      }
+      
+      isCreating = true;
       try {
-        const { createSubscription } = await import('../lib/api.js');
+        const { createSubscription: createSubscriptionAPI } = await import('../lib/api.js');
         
         // Get quiz data from localStorage
         const quizDataStr = localStorage.getItem('quizData');
@@ -362,11 +370,12 @@ export default function CheckoutPage() {
             quizData = JSON.parse(quizDataStr);
             quizData.email = storedEmail.trim().toLowerCase();
           } catch (e) {
-            console.error('Failed to parse quiz data:', e);
+            debugError('[CheckoutPage] Failed to parse quiz data:', e);
           }
         }
 
-        const result = await createSubscription({
+        debugLog('[CheckoutPage] Creating subscription...');
+        const result = await createSubscriptionAPI({
           email: storedEmail.trim(),
           name: storedName?.trim() || null,
           birthDate: storedBirthDate || null,
@@ -375,14 +384,21 @@ export default function CheckoutPage() {
           country: 'US',
         });
 
+        if (!result || !result.subscriptionId || !result.clientSecret) {
+          throw new Error('Invalid response from server. Please try again.');
+        }
+
         setSubscriptionId(result.subscriptionId);
         setClientSecret(result.clientSecret);
         localStorage.setItem('pendingSubscriptionId', result.subscriptionId);
+        debugLog('[CheckoutPage] ✅ Subscription created successfully');
       } catch (err) {
-        setError(err.message || 'Failed to initialize payment. Please try again.');
-        console.error('Failed to create subscription:', err);
+        const errorMessage = err.message || 'Failed to initialize payment. Please try again.';
+        setError(errorMessage);
+        debugError('[CheckoutPage] Failed to create subscription:', err);
       } finally {
         setLoading(false);
+        isCreating = false;
       }
     };
 

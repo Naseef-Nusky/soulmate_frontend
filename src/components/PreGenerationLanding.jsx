@@ -52,6 +52,12 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
   };
 
   const handleStartCheckout = async () => {
+    // Prevent multiple clicks
+    if (processingCheckout) {
+      console.log('[PreGenerationLanding] Checkout already in progress, ignoring click');
+      return;
+    }
+
     if (!email || !email.trim()) {
       setPaymentError('Please provide your email to continue.');
       return;
