@@ -230,6 +230,11 @@ function CheckoutForm({ email, name, birthDate, pricing, onBack, clientSecret })
             <div className="text-center">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4A34B] mb-2"></div>
               <p className="text-sm" style={{ color: '#6B7280' }}>Loading payment options...</p>
+              {/iPad|iPhone|iPod/.test(navigator.userAgent) && (
+                <p className="text-xs mt-2" style={{ color: '#9CA3AF' }}>
+                  Apple Pay requires Safari browser
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -245,9 +250,20 @@ function CheckoutForm({ email, name, birthDate, pricing, onBack, clientSecret })
               business: {
                 name: 'GuruLink',
               },
+              // Additional options to help Apple Pay work on iOS
+              fields: {
+                billingDetails: {
+                  email: 'never',
+                  phone: 'never',
+                },
+              },
             }}
             onReady={() => {
               debugLog('[CheckoutForm] PaymentElement ready');
+              debugLog('[CheckoutForm] User agent:', navigator.userAgent);
+              debugLog('[CheckoutForm] Is iOS:', /iPad|iPhone|iPod/.test(navigator.userAgent));
+              debugLog('[CheckoutForm] Is Safari:', /^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+              debugLog('[CheckoutForm] Is HTTPS:', window.location.protocol === 'https:');
               setPaymentElementReady(true);
             }}
             onChange={(event) => {
@@ -256,6 +272,13 @@ function CheckoutForm({ email, name, birthDate, pricing, onBack, clientSecret })
                 setError(event.error.message);
               } else {
                 setError('');
+              }
+              // Log wallet availability
+              if (event.complete) {
+                debugLog('[CheckoutForm] PaymentElement complete, available payment methods:', {
+                  hasCard: true,
+                  hasLink: true,
+                });
               }
             }}
           />
@@ -268,6 +291,11 @@ function CheckoutForm({ email, name, birthDate, pricing, onBack, clientSecret })
           <div className="text-sm" style={{ color: '#4B5563' }}>
             <p className="font-semibold mb-1" style={{ color: '#1A2336' }}>Secure Payment</p>
             <p>Your payment information is encrypted and secure. We never store your card details.</p>
+            {/iPad|iPhone|iPod/.test(navigator.userAgent) && !/^((?!chrome|android).)*safari/i.test(navigator.userAgent) && (
+              <p className="mt-2 text-xs" style={{ color: '#D4A34B' }}>
+                💡 <strong>Tip:</strong> Apple Pay is only available in Safari. Please open this page in Safari to use Apple Pay.
+              </p>
+            )}
           </div>
         </div>
       </div>
