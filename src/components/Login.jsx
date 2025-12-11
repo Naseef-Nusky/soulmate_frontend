@@ -62,6 +62,13 @@ export default function Login({ isRegister = false }) {
     const sessionId = searchParams.get('session_id');
     const subscriptionId = searchParams.get('subscription_id');
     const paymentSuccess = searchParams.get('payment');
+
+    console.log('[Login] URL params on mount:', {
+      sessionId,
+      subscriptionId,
+      paymentSuccess,
+      isRegister,
+    });
     
     if (paymentSuccess === 'success' && !isRegister) {
       if (sessionId) {
@@ -106,13 +113,22 @@ export default function Login({ isRegister = false }) {
     try {
       // Get user data from localStorage (stored before checkout)
       const pendingSignup = localStorage.getItem('pendingSignup');
-      if (!pendingSignup) {
-        setError('Unable to find payment details. Please contact support with your payment confirmation.');
-        setLoading(false);
-        return;
-      }
+      let email = null;
+      let name = null;
+      let birthDate = null;
 
-      const { email, name, birthDate } = JSON.parse(pendingSignup);
+      if (pendingSignup) {
+        const parsed = JSON.parse(pendingSignup);
+        email = parsed.email || null;
+        name = parsed.name || null;
+        birthDate = parsed.birthDate || null;
+      } else {
+        // Fallback for Safari/iOS or cross-device: let backend derive email/name from the session
+        console.warn('[Login] pendingSignup missing; attempting backend-only registration via sessionId', {
+          sessionId,
+          subscriptionId,
+        });
+      }
       
       // Get quiz data from localStorage (saved when quiz was completed)
       // Also check all localStorage keys to find quiz data
@@ -173,14 +189,25 @@ export default function Login({ isRegister = false }) {
         quizDataSize: quizData ? JSON.stringify(quizData).length : 0,
       });
       
+      console.log('[Login] Calling signup with:', {
+        emailPresent: !!email,
+        namePresent: !!name,
+        birthDatePresent: !!birthDate,
+        hasQuizData: !!quizData,
+        hasSessionId: !!sessionId,
+        hasSubscriptionId: !!subscriptionId,
+      });
+
       const result = await signup({
-        email,
-        name,
-        birthDate,
+        email: email || undefined,
+        name: name || undefined,
+        birthDate: birthDate || undefined,
         sessionId: sessionId || undefined,
         subscriptionId: subscriptionId || undefined,
         quizData, // Send quiz data so backend can save it and generate everything
       });
+
+      console.log('[Login] Signup response:', result);
 
       // Only clear localStorage data after successful registration AND if quiz data was sent
       localStorage.removeItem('pendingSignup');
