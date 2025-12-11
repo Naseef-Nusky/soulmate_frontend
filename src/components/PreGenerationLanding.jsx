@@ -69,9 +69,21 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
     try {
       // Check if account already exists before proceeding with payment
       const cleanedEmail = email.trim().toLowerCase();
-      const accountCheck = await checkAccountExists(cleanedEmail);
       
-      if (accountCheck.exists) {
+      let accountCheck;
+      try {
+        accountCheck = await checkAccountExists(cleanedEmail);
+        console.log('[PreGenerationLanding] Account check result:', {
+          exists: accountCheck?.exists,
+          email: cleanedEmail,
+        });
+      } catch (accountCheckError) {
+        console.error('[PreGenerationLanding] Account check failed:', accountCheckError);
+        // Continue with checkout even if account check fails - backend will handle it
+        accountCheck = { exists: false };
+      }
+      
+      if (accountCheck?.exists) {
         setPaymentError('An account with this email already exists. Please log in instead.');
         setProcessingCheckout(false);
         return;
@@ -140,8 +152,14 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
       }
       
       if (!quizData || !quizData.answers || Object.keys(quizData.answers).length === 0) {
-        console.error('[PreGenerationLanding] ❌ No quiz data available! Cannot proceed with payment.');
-        setPaymentError('Quiz data is required. Please complete the quiz first.');
+        console.error('[PreGenerationLanding] ❌ No quiz data available! Cannot proceed with payment.', {
+          hasQuizData: !!quizData,
+          hasAnswers: !!quizData?.answers,
+          answerCount: quizData?.answers ? Object.keys(quizData.answers).length : 0,
+          formDataKeys: formData ? Object.keys(formData) : [],
+          localStorageAvailable: typeof localStorage !== 'undefined',
+        });
+        setPaymentError('Quiz data is required. Please complete the quiz first. If you already completed it, please refresh the page and try again.');
         setProcessingCheckout(false);
         return;
       }
@@ -175,23 +193,38 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
       console.log('[PreGenerationLanding] Creating checkout session...', {
         email: email.trim(),
         hasQuizData: !!quizData,
+        quizDataKeys: quizData ? Object.keys(quizData) : [],
+        hasAnswers: !!quizData?.answers,
+        answerCount: quizData?.answers ? Object.keys(quizData.answers).length : 0,
         timestamp: new Date().toISOString(),
       });
 
-      const result = await createCheckoutSession({
-        email: email.trim(),
-        name: name?.trim() || null,
-        birthDate: birthDate || null,
-        quizData,
-        currency: 'USD',
-        country: 'US',
-      });
+      let result;
+      try {
+        result = await createCheckoutSession({
+          email: email.trim(),
+          name: name?.trim() || null,
+          birthDate: birthDate || null,
+          quizData,
+          currency: 'USD',
+          country: 'US',
+        });
+      } catch (checkoutError) {
+        console.error('[PreGenerationLanding] Checkout session creation error:', {
+          error: checkoutError.message,
+          errorName: checkoutError.name,
+          errorStack: checkoutError.stack,
+          timestamp: new Date().toISOString(),
+        });
+        throw checkoutError;
+      }
 
       console.log('[PreGenerationLanding] Checkout session response:', {
         hasResult: !!result,
         hasUrl: !!result?.url,
         urlLength: result?.url?.length,
         sessionId: result?.sessionId,
+        urlPreview: result?.url ? result.url.substring(0, 80) + '...' : null,
         timestamp: new Date().toISOString(),
       });
 

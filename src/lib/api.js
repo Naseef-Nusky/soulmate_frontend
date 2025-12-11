@@ -410,6 +410,15 @@ export async function createCheckoutSession(payload, retries = 2) {
     /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
   );
   
+  console.log('[API] Creating checkout session:', {
+    url,
+    hasEmail: !!payload?.email,
+    hasQuizData: !!payload?.quizData,
+    isMobile,
+    attempt: 0,
+    timestamp: new Date().toISOString(),
+  });
+  
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       // Add timeout for mobile devices (they often have slower connections)
@@ -417,8 +426,19 @@ export async function createCheckoutSession(payload, retries = 2) {
       const timeoutMs = isMobile ? 45000 : 30000; // 45s for mobile, 30s for web
       const timeoutId = setTimeout(() => {
         controller.abort();
-        console.error('[API] Checkout session request timeout after', timeoutMs, 'ms');
+        console.error('[API] ❌ Checkout session request timeout after', timeoutMs, 'ms', {
+          url,
+          attempt,
+          isMobile,
+        });
       }, timeoutMs);
+      
+      console.log('[API] Sending checkout request:', {
+        url,
+        attempt: attempt + 1,
+        timeoutMs,
+        payloadSize: JSON.stringify(payload).length,
+      });
       
       const res = await fetch(url, {
         method: 'POST',
@@ -432,15 +452,38 @@ export async function createCheckoutSession(payload, retries = 2) {
       
       clearTimeout(timeoutId);
       
+      console.log('[API] Checkout response received:', {
+        status: res.status,
+        statusText: res.statusText,
+        ok: res.ok,
+        headers: Object.fromEntries(res.headers.entries()),
+        attempt: attempt + 1,
+      });
+      
       if (!res.ok) {
-        const error = await res.json().catch(() => ({ error: 'Unable to start checkout' }));
+        let errorData;
+        try {
+          errorData = await res.json();
+        } catch (parseError) {
+          console.error('[API] Failed to parse error response:', parseError);
+          errorData = { error: `Server error (${res.status}): ${res.statusText}` };
+        }
+        
+        console.error('[API] ❌ Checkout request failed:', {
+          status: res.status,
+          statusText: res.statusText,
+          error: errorData,
+          url,
+          attempt: attempt + 1,
+        });
+        
         // Don't retry on client errors (4xx)
         if (res.status >= 400 && res.status < 500) {
-          throw new Error(error.error || 'Unable to start checkout');
+          throw new Error(errorData.error || errorData.message || 'Unable to start checkout');
         }
         // Retry on server errors (5xx) or network issues
         if (attempt === retries) {
-          throw new Error(error.error || 'Unable to start checkout. Please try again.');
+          throw new Error(errorData.error || errorData.message || 'Unable to start checkout. Please try again.');
         }
         // Wait before retrying
         const delay = Math.min(1000 * Math.pow(2, attempt), 5000);
@@ -453,6 +496,12 @@ export async function createCheckoutSession(payload, retries = 2) {
       
       // Validate response
       if (!result || !result.url) {
+        console.error('[API] Invalid checkout session response:', {
+          hasResult: !!result,
+          hasUrl: !!result?.url,
+          resultKeys: result ? Object.keys(result) : [],
+          result,
+        });
         throw new Error('Invalid response from server. Please try again.');
       }
       
@@ -464,19 +513,34 @@ export async function createCheckoutSession(payload, retries = 2) {
       
       return result;
     } catch (error) {
+      console.error('[API] ❌ Checkout session error:', {
+        errorName: error.name,
+        errorMessage: error.message,
+        errorStack: error.stack,
+        url,
+        attempt: attempt + 1,
+        isLastAttempt: attempt === retries,
+        isMobile,
+        timestamp: new Date().toISOString(),
+      });
+      
       // If it's the last attempt or a non-retryable error, throw
       if (attempt === retries) {
         // Improve error messages for mobile users
         if (error.name === 'AbortError' || error.message?.includes('timeout')) {
           throw new Error('Connection timeout. Please check your internet connection and try again.');
         }
-        if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
+        if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError') || error.message?.includes('Network request failed')) {
           throw new Error('Network error. Please check your internet connection and try again.');
         }
-        if (error.message?.includes('CORS') || error.message?.includes('CORS')) {
+        if (error.message?.includes('CORS') || error.message?.includes('blocked')) {
           throw new Error('Connection blocked. Please try again or contact support.');
         }
-        throw error;
+        // Preserve original error message if it's informative
+        if (error.message && !error.message.includes('Unable to start checkout')) {
+          throw error;
+        }
+        throw new Error(error.message || 'Unable to start checkout. Please try again.');
       }
       
       // Wait before retrying (exponential backoff)
@@ -485,6 +549,9 @@ export async function createCheckoutSession(payload, retries = 2) {
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
+  
+  // This should never be reached, but TypeScript/ESLint might complain
+  throw new Error('Failed to create checkout session after all retries');
 }
 
 
