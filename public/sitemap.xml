@@ -20,6 +20,14 @@
     <priority>0.9</priority>
   </url>
   
+  <!-- Quiz Page - High Priority -->
+  <url>
+    <loc>https://gurulink.app/quiz</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
   <!-- Registration Page - Medium Priority -->
   <url>
     <loc>https://gurulink.app/register</loc>

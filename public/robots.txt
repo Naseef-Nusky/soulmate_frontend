@@ -12,8 +12,10 @@ Disallow: /soulmate
 Disallow: /cancel-subscription
 Disallow: /cancellation-portal
 
-# Disallow interactive quiz flows (not content pages)
-Disallow: /quiz
+# Allow quiz page (public content page)
+Allow: /quiz
+
+# Disallow register/quiz redirect
 Disallow: /register/quiz
 
 # Allow public pages
