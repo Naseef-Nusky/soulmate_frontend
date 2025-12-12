@@ -16,6 +16,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F5F5F5' }}>
       <Header />
+      <main>
 
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-24">
@@ -25,8 +26,11 @@ export default function HomePage() {
             <div className="relative max-w-[280px] sm:max-w-sm md:max-w-md lg:max-w-full">
               <img 
                 src="/astrology_wheel.png" 
-                alt="Astrology wheel" 
+                alt="Astrology wheel representing zodiac signs and planetary positions" 
                 className="w-full h-auto"
+                width="600"
+                height="600"
+                fetchPriority="high"
               />
             </div>
           </div>
@@ -50,6 +54,7 @@ export default function HomePage() {
                 e.currentTarget.style.backgroundColor = '#1A2336';
                 e.currentTarget.style.color = '#F5F5F5';
               }}
+              aria-label="Get started with GuruLink"
             >
               Get Started
             </button>
@@ -63,8 +68,11 @@ export default function HomePage() {
           <div>
             <img 
               src="/astrologyFeatures.png" 
-              alt="Astrological insights" 
+              alt="Personalized astrology portrait and future partner sketch showing birth chart readings and relationship compatibility analysis" 
               className="w-full rounded-2xl shadow-xl"
+              loading="lazy"
+              width="800"
+              height="600"
             />
           </div>
           <div>
@@ -165,6 +173,7 @@ export default function HomePage() {
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
         }}
+        aria-label="Call to action section"
       >
         <div className="absolute inset-0" style={{ backgroundColor: 'rgba(26, 35, 54, 0.7)' }} />
         <div className="absolute inset-0 opacity-10">
@@ -185,6 +194,7 @@ export default function HomePage() {
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = '#D4A34B';
             }}
+            aria-label="Get started with GuruLink astrology service"
           >
             Get Started
           </button>
@@ -299,10 +309,10 @@ export default function HomePage() {
               ))}
             </Swiper>
             {/* Custom Navigation Buttons */}
-            <button className="swiper-button-prev-custom absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110 hidden sm:flex" style={{ backgroundColor: '#1A2336', color: '#D4A34B' }}>
+            <button className="swiper-button-prev-custom absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110 hidden sm:flex" style={{ backgroundColor: '#1A2336', color: '#D4A34B' }} aria-label="Previous testimonial">
               <ChevronLeft size={24} />
             </button>
-            <button className="swiper-button-next-custom absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110 hidden sm:flex" style={{ backgroundColor: '#1A2336', color: '#D4A34B' }}>
+            <button className="swiper-button-next-custom absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110 hidden sm:flex" style={{ backgroundColor: '#1A2336', color: '#D4A34B' }} aria-label="Next testimonial">
               <ChevronRight size={24} />
             </button>
           </div>
@@ -344,6 +354,7 @@ export default function HomePage() {
                 e.currentTarget.style.backgroundColor = '#1A2336';
                 e.currentTarget.style.color = '#F5F5F5';
               }}
+              aria-label="View pricing plans"
             >
               See Pricing
             </button>
@@ -352,6 +363,7 @@ export default function HomePage() {
       </section>
 
       <FAQ />
+      </main>
       <Footer />
     </div>
   );

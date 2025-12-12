@@ -70,8 +70,8 @@ export default function SoulmatePage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/dashboard')}>
-              <img src="/logoicon.png" alt="GuruLink" className="h-8 w-8 object-contain" />
+            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/dashboard')} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && navigate('/dashboard')} aria-label="Go to dashboard">
+              <img src="/logoicon.png" alt="GuruLink logo" className="h-8 w-8 object-contain" width="32" height="32" />
               <div className="text-2xl font-black" style={{ color: '#1A2336' }}>
                 GuruLink<span style={{ color: '#D4A34B' }}>.app</span>
               </div>
@@ -80,6 +80,7 @@ export default function SoulmatePage() {
               onClick={() => navigate('/dashboard')}
               className="px-4 py-2 text-sm font-semibold rounded-lg transition-all"
               style={{ backgroundColor: 'rgba(212, 163, 75, 0.1)', color: '#1A2336' }}
+              aria-label="Return to dashboard"
             >
               Back to Dashboard
             </button>
@@ -87,15 +88,17 @@ export default function SoulmatePage() {
         </div>
 
         {/* Soulmate Sketch Display */}
+        <main>
         <div className="grid md:grid-cols-2 gap-8">
           {/* Left Side - Soulmate Sketch Image */}
           <div className="flex items-center justify-center">
             <div className="w-full rounded-xl border overflow-hidden shadow-lg" style={{ borderColor: 'rgba(212, 163, 75, 0.3)', backgroundColor: 'white' }}>
               <img 
                 src={sketch.imageUrl} 
-                alt="Soulmate sketch" 
+                alt="Your personalized astrology sketch and soulmate drawing showing your future partner portrait based on astrology love prediction" 
                 className="w-full h-auto object-contain"
                 style={{ backgroundColor: '#F9F9F9' }}
+                loading="lazy"
               />
             </div>
           </div>
@@ -118,6 +121,7 @@ export default function SoulmatePage() {
             </div>
           </div>
         </div>
+        </main>
       </div>
     </div>
   );

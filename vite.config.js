@@ -8,7 +8,21 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:4000'
     }
-  }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-swiper': ['swiper/react', 'swiper/modules'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
 });
 
 

@@ -14,7 +14,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F5F5F5' }}>
       <Header />
-
+      <main>
       {/* Main Content */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         {/* Title Section */}
@@ -70,6 +70,7 @@ export default function PricingPage() {
                 e.currentTarget.style.backgroundColor = '#1A2336';
                 e.currentTarget.style.color = '#F5F5F5';
               }}
+              aria-label="Get started with 7-day trial"
             >
               Get Started
             </button>
@@ -113,6 +114,7 @@ export default function PricingPage() {
 
       <HowItWorks />
       <FAQ />
+      </main>
       <Footer />
     </div>
   );

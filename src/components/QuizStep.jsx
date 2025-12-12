@@ -234,8 +234,11 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
             <div className="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-transparent to-transparent z-10" />
           <img
             src="/soulmatePortrait2.png"
-            alt="Soulmate introduction"
+            alt="Soulmate introduction showing personalized portrait preview"
             className="w-full h-48 sm:h-56 object-cover"
+            loading="lazy"
+            width="600"
+            height="400"
           />
           </div>
         </div>

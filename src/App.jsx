@@ -452,8 +452,10 @@ export default function QuizApp() {
           <div className="flex items-center gap-3">
             <img 
               src="/logoicon.png" 
-              alt="GuruLink" 
+              alt="GuruLink logo" 
               className="h-10 w-10 object-contain"
+              width="40"
+              height="40"
             />
             <div className="text-2xl font-black" style={{ color: '#1A2336' }} data-notranslate>
               GuruLink<span style={{ color: '#D4A34B' }}>.app</span>
@@ -490,7 +492,7 @@ export default function QuizApp() {
         </div>
 
         {/* Step Content */}
-        <div className="mt-8">
+        <main className="mt-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={STEPS[step].key}
@@ -513,7 +515,7 @@ export default function QuizApp() {
               />
             </motion.div>
           </AnimatePresence>
-        </div>
+        </main>
 
         {/* Continue Button Section */}
         {(() => {

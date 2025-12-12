@@ -21,7 +21,7 @@ export default function ResultView({ result, onRestart, email }) {
         <h3 className="text-xl sm:text-2xl font-bold mb-4" style={{ color: '#1A2336' }}>Hand‑Drawn Pencil Sketch</h3>
         {result.imageUrl ? (
           <div className="rounded-2xl overflow-hidden shadow-lg border" style={{ borderColor: '#E5E7EB' }}>
-            <img src={result.imageUrl} alt="Soulmate pencil sketch" className="w-full object-contain" />
+            <img src={result.imageUrl} alt="Personalized astrology sketch and soulmate drawing of your future partner portrait" className="w-full object-contain" loading="lazy" />
           </div>
         ) : (
           <p style={{ color: '#4B5563' }}>Image unavailable.</p>

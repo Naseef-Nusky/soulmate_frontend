@@ -473,11 +473,11 @@ export default function Login({ isRegister = false }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#F5F5F5' }}>
-      <div className="w-full max-w-md">
+      <main className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <img src="/logoicon.png" alt="GuruLink" className="h-10 w-10 object-contain" />
+            <img src="/logoicon.png" alt="GuruLink logo" className="h-10 w-10 object-contain" width="40" height="40" />
             <div className="text-3xl font-black" style={{ color: '#1A2336' }} data-notranslate>
               GuruLink<span style={{ color: '#D4A34B' }}>.app</span>
             </div>
@@ -664,7 +664,7 @@ export default function Login({ isRegister = false }) {
             ← Back
           </button>
         </div>
-      </div>
+      </main>
 
     </div>
   );

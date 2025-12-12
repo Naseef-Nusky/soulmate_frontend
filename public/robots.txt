@@ -1,0 +1,35 @@
+# robots.txt for GuruLink.app
+
+# Allow all search engines
+User-agent: *
+Allow: /
+
+# Disallow private/user-specific pages
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /settings
+Disallow: /soulmate
+Disallow: /cancel-subscription
+Disallow: /cancellation-portal
+
+# Disallow interactive quiz flows (not content pages)
+Disallow: /quiz
+Disallow: /register/quiz
+
+# Allow public pages
+Allow: /
+Allow: /pricing
+Allow: /login
+Allow: /register
+Allow: /terms
+Allow: /privacy
+Allow: /cookies
+Allow: /refund
+Allow: /support
+
+# Sitemap location
+Sitemap: https://gurulink.app/sitemap.xml
+
+# Crawl-delay (optional - remove if not needed)
+# Crawl-delay: 1
+
