@@ -378,7 +378,7 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
         {/* Hero Section */}
         <div className="rounded-lg shadow-lg p-8 mb-8 border" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center" style={{ color: '#1A2336' }}>
-            Get Full Access to GuruLink – Start Your 7-Day Trial
+            Get Full Access to GuruLink – Start Today
           </h1>
           
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mt-6">
@@ -451,11 +451,12 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
           {/* Right: Pricing */}
           <div ref={paymentSectionRef} className="rounded-lg shadow-lg p-6 border space-y-5" style={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' }}>
             <div className="rounded-lg border p-4 space-y-2" style={{ borderColor: '#E5E7EB', backgroundColor: '#FFF8F2' }}>
-              <p className="text-sm font-semibold" style={{ color: '#1A2336' }}>What you’ll receive today</p>
+              <p className="text-sm font-semibold" style={{ color: '#1A2336' }}>Experience Your GuruLink — 7-Day Preview</p>
               <ul className="list-disc pl-5 space-y-1 text-sm" style={{ color: '#4B5563' }}>
-                <li>Beautifully crafted soulmate sketch, drawn by real artists.</li>
-                <li>Unique personality traits & compatibility notes tailored to you.</li>
-                <li>Personalized astrological and spiritual insights made just for you.</li>
+                <li>Get an exclusive artist-illustrated portrait inspired by your destined connection</li>
+                <li>Uncover key personality qualities and emotional traits of your match</li>
+                <li>Receive custom insights guided by astrological patterns and spiritual signals</li>
+                <li>Enjoy a 7-day introductory offer for just $1.00. After the trial, membership renews at $29.99/month</li>
               </ul>
             </div>
 
@@ -533,18 +534,6 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
                         </p>
                       </div>
                     </div>
-
-                    <div className="text-center">
-                      <p className="text-sm mb-2" style={{ color: '#4B5563' }}>
-                        Start your 7-day trial for {pricing.trial.formatted}, then {pricing.monthly.formatted}/month
-                      </p>
-                      <p className="text-xs mb-1" style={{ color: '#666' }}>
-                        Prices shown in your local currency based on your region.
-                      </p>
-                      <p className="text-xs mb-4" style={{ color: '#666' }}>
-                        Cancel anytime. Your sketch will be ready instantly after payment.
-                      </p>
-                    </div>
                     
                     <button
                       onClick={handleStartCheckout}
@@ -557,7 +546,7 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
                           Redirecting to checkout...
                         </>
                       ) : (
-                        `Start 7-Day Trial - ${pricing.trial.formatted}`
+                        `Pay ${pricing.trial.formatted}`
                       )}
                     </button>
                   </>
