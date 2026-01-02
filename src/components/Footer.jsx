@@ -43,7 +43,7 @@ export default function Footer() {
               </a>
             </div>
             <p className="text-xs sm:text-sm" style={{ color: 'rgba(245, 245, 245, 0.6)' }}>
-              Copyright © 2024-2025 GuruLink™. All rights reserved.
+              Copyright © 2025-{new Date().getFullYear()} GuruLink™. All rights reserved.
             </p>
           </div>
           <div>
