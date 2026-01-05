@@ -210,9 +210,11 @@ export default function QuizApp() {
   useEffect(() => {
     // Skip tracking on initial mount (step 0) - only track when step actually changes
     if (step >= 0 && step < STEPS.length) {
-      const currentStepKey = STEPS[step]?.key;
-      // Track every step with 1-indexed step number (step 0 = intro, step 1 = socialProof, etc.)
-      trackQuizStep(step + 1, currentStepKey);
+      const currentStep = STEPS[step];
+      const currentStepKey = currentStep?.key;
+      const currentStepTitle = currentStep?.title;
+      // Track every step with 1-indexed step number, including full question/title
+      trackQuizStep(step + 1, currentStepKey, currentStepTitle);
     }
   }, [step]); // Track whenever step changes
 
