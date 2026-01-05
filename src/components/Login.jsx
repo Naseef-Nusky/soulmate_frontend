@@ -3,6 +3,7 @@ import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { emailLogin, verifyLoginToken, checkAccountExists, signup, createCheckoutSession } from '../lib/api.js';
 import { setUser } from '../lib/auth.js';
 import { applyTranslation } from '../lib/translation.js';
+import { trackRegisterView } from '../utils/ga.js';
 
 export default function Login({ isRegister = false }) {
   const navigate = useNavigate();

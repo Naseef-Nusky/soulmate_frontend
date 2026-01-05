@@ -30,7 +30,7 @@ export default function HomePage() {
                 className="w-full h-auto"
                 width="600"
                 height="600"
-                fetchPriority="high"
+                fetchpriority="high"
               />
             </div>
           </div>
