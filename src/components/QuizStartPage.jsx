@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import QuizApp from '../App.jsx';
+import { trackQuizStart } from '../utils/ga.js';
 
 const highlightCards = [
   {
@@ -106,14 +107,20 @@ export default function QuizStartPage() {
 
           <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
             <button
-              onClick={() => setHasStarted(true)}
+              onClick={() => {
+                trackQuizStart();
+                setHasStarted(true);
+              }}
               className="flex-1 rounded-2xl bg-gradient-to-r from-[#F5A524] via-[#FF6F61] to-[#B51EFF] px-6 py-4 text-lg font-semibold shadow-xl shadow-[#F5A524]/40 transition hover:scale-[1.01] focus:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
             >
               Start Quiz
             </button>
             {hasAutoSave && (
               <button
-                onClick={() => setHasStarted(true)}
+                onClick={() => {
+                  trackQuizStart();
+                  setHasStarted(true);
+                }}
                 className="flex-1 rounded-2xl border border-white/20 px-6 py-4 text-lg font-semibold text-white/80 transition hover:border-white/60"
               >
                 Resume Saved Progress

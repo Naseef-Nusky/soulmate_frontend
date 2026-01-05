@@ -79,6 +79,13 @@ export default function Login({ isRegister = false }) {
     }
   }, [searchParams, isRegister]);
 
+  // Track registration view when component mounts and is in register mode
+  useEffect(() => {
+    if (isRegister) {
+      trackRegisterView();
+    }
+  }, [isRegister]);
+
   // Re-apply translation when component mounts or language changes
   useEffect(() => {
     if (typeof window === 'undefined') return;

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Smile, CheckCircle } from 'lucide-react';
 import { changeLanguage, getCurrentLanguage } from '../lib/translation.js';
 import MonthDayYearPicker from './MonthDayYearPicker.jsx';
+import { trackQuizStart } from '../utils/ga.js';
 
 function CheckboxGroup({ options, values, onChange }) {
   function toggle(val) {
@@ -260,7 +261,14 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
 
         {/* CTA Button */}
         <div className="pt-2">
-          <button className="btn text-base px-6 py-3 font-black" onClick={() => onAutoNext && onAutoNext()}>
+          <button 
+            className="btn text-base px-6 py-3 font-black" 
+            onClick={() => {
+              // Track quiz start when user clicks to begin
+              trackQuizStart();
+              onAutoNext && onAutoNext();
+            }}
+          >
             Tap to begin your journey✨
           </button>
         </div>

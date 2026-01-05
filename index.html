@@ -37,7 +37,9 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-TMEX5N1XC4');
+      gtag('config', 'G-TMEX5N1XC4', {
+        send_page_view: false  // Disable auto page views - we'll track manually with events
+      });
     </script>
   </head>
   <body>

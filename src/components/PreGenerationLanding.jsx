@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { detectCurrency, getPricing, getCurrencyInfo, setCurrency } from '../utils/currency.js';
 import { createCheckoutSession, checkAccountExists } from '../lib/api.js';
 import Footer from './Footer';
+import { trackPurchaseStart } from '../utils/ga.js';
 
 export default function PreGenerationLanding({ onSubmit, email, name, birthDate, formData, loading = false }) {
   const navigate = useNavigate();
@@ -198,6 +199,9 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
         answerCount: quizData?.answers ? Object.keys(quizData.answers).length : 0,
         timestamp: new Date().toISOString(),
       });
+
+      // Track purchase start
+      trackPurchaseStart();
 
       let result;
       try {

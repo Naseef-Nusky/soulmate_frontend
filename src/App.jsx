@@ -8,6 +8,7 @@ import PreGenerationLanding from './components/PreGenerationLanding.jsx';
 import { submitQuiz, requestGeneration, getJobStatus, getResult, sendSketchReadyEmail, checkAccountExists } from './lib/api.js';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { getUser } from './lib/auth.js';
+import { trackQuizStep, trackQuizComplete } from './utils/ga.js';
 
 const STEPS = [
   { key: 'intro', title: 'Ready to see what your future soulmate could look like?' },
@@ -205,10 +206,28 @@ export default function QuizApp() {
     }
   }, [step, isFromSignup]);
 
-  const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
+  // Track ALL step changes - this catches steps changed via next(), onAutoNext, or any other method
+  useEffect(() => {
+    // Skip tracking on initial mount (step 0) - only track when step actually changes
+    if (step >= 0 && step < STEPS.length) {
+      const currentStepKey = STEPS[step]?.key;
+      // Track every step with 1-indexed step number (step 0 = intro, step 1 = socialProof, etc.)
+      trackQuizStep(step + 1, currentStepKey);
+    }
+  }, [step]); // Track whenever step changes
+
+  const next = () => {
+    const newStep = Math.min(step + 1, STEPS.length - 1);
+    setStep(newStep);
+    // Tracking is handled by useEffect above
+  };
+  
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
   async function onSubmit() {
+    // Track quiz completion
+    trackQuizComplete();
+    
     setLoading(true);
     setResult(null);
     setSubmittedEmail(form.email);
