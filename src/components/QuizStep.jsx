@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Smile, CheckCircle } from 'lucide-react';
 import { changeLanguage, getCurrentLanguage } from '../lib/translation.js';
+import MonthDayYearPicker from './MonthDayYearPicker.jsx';
 
 function CheckboxGroup({ options, values, onChange }) {
   function toggle(val) {
@@ -675,39 +676,95 @@ export default function QuizStep({ step, form, setForm, onAutoNext, isFromSignup
     const today = new Date();
     const maxBirthDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
     const minBirthDate = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate());
-    const maxBirthDateStr = maxBirthDate.toISOString().split('T')[0];
-    const minBirthDateStr = minBirthDate.toISOString().split('T')[0];
+    const startYear = minBirthDate.getFullYear();
+    const endYear = maxBirthDate.getFullYear();
+    
+    // Parse form.birthDate string manually to avoid timezone issues
+    // If form.birthDate exists, parse it as YYYY-MM-DD format
+    // Create date at noon local time to avoid any timezone edge cases
+    let selectedDate;
+    if (form.birthDate) {
+      const [year, month, day] = form.birthDate.split('-').map(Number);
+      // Create date at noon (12:00) local time to avoid timezone conversion issues
+      selectedDate = new Date(year, month - 1, day, 12, 0, 0);
+    } else {
+      selectedDate = new Date(today.getFullYear() - 25, 0, 1, 12, 0, 0);
+    }
+    
+    // Check if mobile device - cache result to avoid repeated checks
+    const isMobile = typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     return (
       <div className="space-y-4 text-center sm:text-left">
         <p className="text-sm sm:text-base" style={{ color: '#4B5563' }}>It helps us create your natal chart and identify key planetary positions.</p>
         <div>
           <label className="label text-sm sm:text-base">Birth date</label>
-          <input
-            type="date"
-            className="w-full px-4 py-3 rounded-xl border text-sm"
-            value={form.birthDate}
-            onChange={(e) => {
-              // Only allow editing if not from signup
-              if (!isFromSignup) {
-                const newValue = e.target.value;
-                setForm((prevForm) => {
-                  const updated = { ...prevForm, birthDate: newValue };
-                  return updated;
-                });
-              }
-            }}
-            disabled={isFromSignup}
-            readOnly={isFromSignup}
-            min={minBirthDateStr}
-            max={maxBirthDateStr}
-            style={{
-              backgroundColor: isFromSignup ? '#F3F4F6' : '#F8FAFC',
-              borderColor: isFromSignup ? '#D1D5DB' : '#E5E7EB',
-              color: isFromSignup ? '#6B7280' : '#1A2336',
-              cursor: isFromSignup ? 'not-allowed' : 'text',
-            }}
-          />
+          {isMobile ? (
+            // Mobile: Use scrolling wheel date picker
+            <div 
+              className="w-full rounded-xl border overflow-hidden"
+              style={{
+                backgroundColor: isFromSignup ? '#F3F4F6' : '#F8FAFC',
+                borderColor: isFromSignup ? '#D1D5DB' : '#E5E7EB',
+                pointerEvents: isFromSignup ? 'none' : 'auto',
+                opacity: isFromSignup ? 0.6 : 1,
+              }}
+            >
+              <MonthDayYearPicker
+                onDateChange={(date, dateStr) => {
+                  if (!isFromSignup && date && dateStr) {
+                    // Use the exact date string passed from picker (no extraction from Date object)
+                    // This ensures we always use the exact selected values without timezone conversion
+                    const exactDateStr = dateStr;
+                    
+                    // Update form state immediately for faster continue button response
+                    setForm((prevForm) => {
+                      // Only update if date actually changed to prevent unnecessary re-renders
+                      if (prevForm.birthDate !== exactDateStr) {
+                        return { ...prevForm, birthDate: exactDateStr };
+                      }
+                      return prevForm;
+                    });
+                  }
+                }}
+                itemHeight={40}
+                visibleRows={5}
+                startYear={startYear}
+                endYear={endYear}
+                defaultYear={selectedDate.getFullYear()}
+                defaultMonth={selectedDate.getMonth()}
+                defaultDay={selectedDate.getDate()}
+                disabled={isFromSignup}
+              />
+            </div>
+          ) : (
+            // Desktop: Use native date input
+            <input
+              type="date"
+              className="w-full px-4 py-3 rounded-xl border text-sm"
+              value={form.birthDate}
+              onChange={(e) => {
+                // Only allow editing if not from signup
+                if (!isFromSignup) {
+                  const newValue = e.target.value;
+                  setForm((prevForm) => {
+                    const updated = { ...prevForm, birthDate: newValue };
+                    return updated;
+                  });
+                }
+              }}
+              disabled={isFromSignup}
+              readOnly={isFromSignup}
+              min={minBirthDate.toISOString().split('T')[0]}
+              max={maxBirthDate.toISOString().split('T')[0]}
+              style={{
+                backgroundColor: isFromSignup ? '#F3F4F6' : '#F8FAFC',
+                borderColor: isFromSignup ? '#D1D5DB' : '#E5E7EB',
+                color: isFromSignup ? '#6B7280' : '#1A2336',
+                cursor: isFromSignup ? 'not-allowed' : 'text',
+              }}
+            />
+          )}
           {isFromSignup && (
             <p className="text-xs mt-1" style={{ color: '#6B7280' }}>
               Birth date from your signup cannot be changed

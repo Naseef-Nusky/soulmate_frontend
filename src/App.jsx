@@ -493,17 +493,21 @@ export default function QuizApp() {
 
         {/* Step Content */}
         <main className="mt-8">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={STEPS[step].key}
-              initial={{ opacity: 0, y: 20, scale: 0.97 }}
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.97 }}
-              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              exit={{ opacity: 0, y: -10, scale: 0.98 }}
+              transition={{ 
+                duration: STEPS[step].key === 'birth' ? 0.12 : 0.18, 
+                ease: [0.25, 0.1, 0.25, 1] 
+              }}
               className="rounded-3xl shadow-2xl border p-8 sm:p-10"
               style={{ 
                 backgroundColor: '#FFFFFF',
-                borderColor: '#E5E7EB'
+                borderColor: '#E5E7EB',
+                willChange: 'transform, opacity' // Optimize for animations
               }}
             >
               <QuizStep
