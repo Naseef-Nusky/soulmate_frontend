@@ -252,8 +252,8 @@ export default function Login({ isRegister = false }) {
                   name: pendingSignup.name || null,
                   birthDate: pendingSignup.birthDate || null,
                   quizData,
-                  currency: 'USD',
-                  country: 'US',
+                  currency: 'GBP',
+                  country: 'GB',
                 });
                 if (checkoutResult && checkoutResult.url) {
                   window.location.href = checkoutResult.url;

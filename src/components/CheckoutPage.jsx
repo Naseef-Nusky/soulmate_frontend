@@ -450,8 +450,8 @@ export default function CheckoutPage() {
           name: storedName?.trim() || null,
           birthDate: storedBirthDate || null,
           quizData,
-          currency: 'USD',
-          country: 'US',
+          currency: 'GBP',
+          country: 'GB',
         });
 
         if (!result || !result.subscriptionId || !result.clientSecret) {

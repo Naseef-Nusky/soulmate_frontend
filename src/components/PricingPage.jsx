@@ -108,7 +108,7 @@ export default function PricingPage() {
 
         {/* Disclaimer */}
         <p className="text-sm text-center" style={{ color: '#999' }}>
-          *Prices automatically adjust to your selected currency. Charges will be processed in {pricing.currency} based on current exchange estimates.
+          *All charges will be processed in {pricing.currency}.
         </p>
       </section>
 

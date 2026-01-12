@@ -40,7 +40,7 @@ export default function HomePage() {
               Ready to see what your future soulmate could look like?
             </h1>
             <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8" style={{ color: '#666' }}>
-              Get your personalized soulmate sketch for just $1 — plus 7 days of astrology insights & custom charts.
+              Get your personalized soulmate sketch for just £0.99 — plus 7 days of astrology insights & custom charts.
             </p>
             <button
               onClick={() => navigate('/register')}
@@ -333,7 +333,7 @@ export default function HomePage() {
               'Get detailed astrology insights made just for you',
               'Access personalized birth chart readings',
               'Enjoy daily horoscopes that inspire and guide you',
-              'After your 7-day trial ($1.), your subscription continues at $29.99/month.',
+              'After your 7-day trial (£0.99), your subscription continues at £14.99/month.',
             ].map((item, i) => (
               <li key={i} className="flex items-start gap-3">
                 <Check size={20} style={{ color: '#D4A34B', flexShrink: 0, marginTop: '2px' }} />

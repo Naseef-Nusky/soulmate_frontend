@@ -39,9 +39,9 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
   
 
 	const [openFaq, setOpenFaq] = useState(null);
-	const [currency] = useState('USD');
-  const [countryCode] = useState('US');
-	const pricing = getPricing('USD');
+	const [currency] = useState('GBP');
+  const [countryCode] = useState('GB');
+	const pricing = getPricing('GBP');
   const paymentSectionRef = useRef(null);
   const [paymentError, setPaymentError] = useState('');
   const [processingCheckout, setProcessingCheckout] = useState(false);
@@ -210,8 +210,8 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
           name: name?.trim() || null,
           birthDate: birthDate || null,
           quizData,
-          currency: 'USD',
-          country: 'US',
+          currency: 'GBP',
+          country: 'GB',
         });
       } catch (checkoutError) {
         console.error('[PreGenerationLanding] Checkout session creation error:', {
@@ -460,7 +460,7 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
                 <li>Get an exclusive artist-illustrated portrait inspired by your destined connection</li>
                 <li>Uncover key personality qualities and emotional traits of your match</li>
                 <li>Receive custom insights guided by astrological patterns and spiritual signals</li>
-                <li>Enjoy a 7-day introductory offer for just $1.00. After the trial, membership renews at $29.99/month</li>
+                <li>Enjoy a 7-day introductory offer for just £0.99. After the trial, membership renews at £14.99/month</li>
               </ul>
             </div>
 

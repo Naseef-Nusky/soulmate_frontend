@@ -1,50 +1,50 @@
-// Currency conversion rates (base: USD)
+// Currency conversion rates (base: GBP)
 // You can update these rates from an API or your backend
 const EXCHANGE_RATES = {
-  USD: 1.0,
-  EUR: 0.92,
-  GBP: 0.79,
-  INR: 83.0, // Indian Rupees
-  CAD: 1.36,
-  AUD: 1.52,
-  JPY: 149.0,
-  CNY: 7.24,
-  AED: 3.67,
-  SAR: 3.75,
-  SGD: 1.34,
-  MYR: 4.71,
-  THB: 35.8,
-  IDR: 15700,
-  PHP: 55.5,
-  VND: 24500,
-  KRW: 1320,
-  NZD: 1.66,
-  CHF: 0.88,
-  SEK: 10.7,
-  NOK: 10.8,
-  DKK: 6.87,
-  PLN: 4.0,
-  HUF: 360,
-  CZK: 22.5,
-  RON: 4.58,
-  BGN: 1.80,
-  HRK: 6.95,
-  TRY: 32.0,
-  ZAR: 18.5,
-  BRL: 4.95,
-  MXN: 17.0,
-  ARS: 350,
-  CLP: 920,
-  COP: 4100,
-  PEN: 3.70,
-  LKR: 305.0, // Sri Lankan Rupees
+  USD: 1.266,  // 1 / 0.79 (converted from USD base)
+  EUR: 1.165,  // 0.92 / 0.79
+  GBP: 1.0,
+  INR: 105.1,  // 83.0 / 0.79
+  CAD: 1.722,  // 1.36 / 0.79
+  AUD: 1.924,  // 1.52 / 0.79
+  JPY: 188.6,  // 149.0 / 0.79
+  CNY: 9.165,  // 7.24 / 0.79
+  AED: 4.646,  // 3.67 / 0.79
+  SAR: 4.747,  // 3.75 / 0.79
+  SGD: 1.696,  // 1.34 / 0.79
+  MYR: 5.962,  // 4.71 / 0.79
+  THB: 45.32,  // 35.8 / 0.79
+  IDR: 19873,  // 15700 / 0.79
+  PHP: 70.25,  // 55.5 / 0.79
+  VND: 31013,  // 24500 / 0.79
+  KRW: 1671,   // 1320 / 0.79
+  NZD: 2.101,  // 1.66 / 0.79
+  CHF: 1.114,  // 0.88 / 0.79
+  SEK: 13.54,  // 10.7 / 0.79
+  NOK: 13.67,  // 10.8 / 0.79
+  DKK: 8.696,  // 6.87 / 0.79
+  PLN: 5.063,  // 4.0 / 0.79
+  HUF: 455.7,  // 360 / 0.79
+  CZK: 28.48,  // 22.5 / 0.79
+  RON: 5.797,  // 4.58 / 0.79
+  BGN: 2.278,  // 1.80 / 0.79
+  HRK: 8.797,  // 6.95 / 0.79
+  TRY: 40.51,  // 32.0 / 0.79
+  ZAR: 23.42,  // 18.5 / 0.79
+  BRL: 6.266,  // 4.95 / 0.79
+  MXN: 21.52,  // 17.0 / 0.79
+  ARS: 443.0,  // 350 / 0.79
+  CLP: 1165,   // 920 / 0.79
+  COP: 5187,   // 4100 / 0.79
+  PEN: 4.684,  // 3.70 / 0.79
+  LKR: 386.1,  // 305.0 / 0.79
 };
 
-const BASE_CURRENCY = 'USD';
+const BASE_CURRENCY = 'GBP';
 
-// Base prices in USD (match Stripe products)
-const BASE_TRIAL_PRICE = 1.0;      // GuruLink 7-Day Trial
-const BASE_MONTHLY_PRICE = 29.99;  // GuruLink Monthly Plan
+// Base prices in GBP (match Stripe products)
+const BASE_TRIAL_PRICE = 0.99;      // GuruLink 7-Day Trial
+const BASE_MONTHLY_PRICE = 14.99;  // GuruLink Monthly Plan
 const BASE_TOTAL_PRICE = 15.0;     // Reference list price before discount
 
 // Currency symbols and formatting
@@ -88,48 +88,9 @@ const CURRENCY_INFO = {
   LKR: { symbol: 'Rs', code: 'LKR', name: 'Sri Lankan Rupee' },
 };
 
-// Detect currency from browser locale
+// Always return GBP - no location-based currency detection
 export function detectCurrency() {
-  if (typeof window === 'undefined') return 'USD';
-  
-  // Try to get from localStorage first
-  const saved = localStorage.getItem('gurulink_currency');
-  if (saved && CURRENCY_INFO[saved]) {
-    return saved;
-  }
-  
-  // Try to detect from browser locale
-  try {
-    const locale = navigator.language || navigator.userLanguage || 'en-US';
-    const parts = locale.split('-');
-    const country = parts[1]?.toUpperCase();
-    
-    // Map common country codes to currencies
-    const countryToCurrency = {
-      US: 'USD', GB: 'GBP', IE: 'EUR', FR: 'EUR', DE: 'EUR', IT: 'EUR',
-      ES: 'EUR', NL: 'EUR', BE: 'EUR', AT: 'EUR', PT: 'EUR', FI: 'EUR',
-      GR: 'EUR', IN: 'INR', CA: 'CAD', AU: 'AUD', NZ: 'NZD', JP: 'JPY',
-      CN: 'CNY', AE: 'AED', SA: 'SAR', SG: 'SGD', MY: 'MYR', TH: 'THB',
-      ID: 'IDR', PH: 'PHP', VN: 'VND', KR: 'KRW', CH: 'CHF', SE: 'SEK',
-      NO: 'NOK', DK: 'DKK', PL: 'PLN', HU: 'HUF', CZ: 'CZK', RO: 'RON',
-      BG: 'BGN', HR: 'HRK', TR: 'TRY', ZA: 'ZAR', BR: 'BRL', MX: 'MXN',
-      AR: 'ARS', CL: 'CLP', CO: 'COP', PE: 'PEN', LK: 'LKR',
-    };
-    
-    if (country && countryToCurrency[country]) {
-      return countryToCurrency[country];
-    }
-    
-    // Try Intl API for currency
-    const currency = new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' })
-      .formatToParts(0)
-      .find(part => part.type === 'currency')?.value;
-    
-    // Fallback to USD
-    return 'USD';
-  } catch {
-    return 'USD';
-  }
+  return 'GBP';
 }
 
 // Set currency preference
@@ -143,7 +104,7 @@ export function setCurrency(currencyCode) {
 
 // Get currency info
 export function getCurrencyInfo(currencyCode) {
-  return CURRENCY_INFO[currencyCode] || CURRENCY_INFO.USD;
+  return CURRENCY_INFO[currencyCode] || CURRENCY_INFO.GBP;
 }
 
 // Convert price from base currency (GBP) to target currency
@@ -181,25 +142,23 @@ export function formatPrice(amount, currencyCode) {
   }
 }
 
-// Get pricing for a currency
+// Get pricing - always returns GBP prices (no conversion)
 export function getPricing(currencyCode) {
-  const currency = currencyCode || detectCurrency();
-  const trialPrice = convertPrice(BASE_TRIAL_PRICE, currency);
-  const monthlyPrice = convertPrice(BASE_MONTHLY_PRICE, currency);
-  const totalPrice = convertPrice(BASE_TOTAL_PRICE, currency);
+  // Always use GBP regardless of input
+  const currency = 'GBP';
   
   return {
     trial: {
-      amount: trialPrice,
-      formatted: formatPrice(trialPrice, currency),
+      amount: BASE_TRIAL_PRICE,
+      formatted: formatPrice(BASE_TRIAL_PRICE, currency),
     },
     monthly: {
-      amount: monthlyPrice,
-      formatted: formatPrice(monthlyPrice, currency),
+      amount: BASE_MONTHLY_PRICE,
+      formatted: formatPrice(BASE_MONTHLY_PRICE, currency),
     },
     total: {
-      amount: totalPrice,
-      formatted: formatPrice(totalPrice, currency),
+      amount: BASE_TOTAL_PRICE,
+      formatted: formatPrice(BASE_TOTAL_PRICE, currency),
     },
     currency,
     symbol: getCurrencyInfo(currency).symbol,
