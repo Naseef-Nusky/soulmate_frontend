@@ -397,13 +397,21 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
                 <span className="text-sm font-semibold" style={{ color: '#4B5563' }}>5-Star Rated Experience</span>
               </div>
               <button 
-                onClick={handleScrollToPayment}
-                className="font-bold py-4 px-8 rounded-lg text-lg transition"
+                onClick={handleStartCheckout}
+                disabled={processingCheckout || loading}
+                className="font-bold py-4 px-8 rounded-lg text-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ backgroundColor: '#D4A34B', color: '#1A2336' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#c4933a')}
+                onMouseEnter={(e) => !processingCheckout && !loading && (e.currentTarget.style.backgroundColor = '#c4933a')}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#D4A34B')}
               >
-                {loading ? 'Please wait...' : 'Get My Soulmate Sketch'}
+                {processingCheckout ? (
+                  <>
+                    <span className="inline-block mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent align-middle" />
+                    Redirecting to checkout...
+                  </>
+                ) : (
+                  loading ? 'Please wait...' : 'Get My Soulmate Sketch'
+                )}
               </button>
             </div>
             <div className="flex-1 max-w-md">
@@ -648,13 +656,21 @@ export default function PreGenerationLanding({ onSubmit, email, name, birthDate,
               </div>
             </div>
             <button 
-              onClick={isPaymentSuccess ? handleGetSketchNow : handleScrollToPayment}
-              className="font-bold py-3 px-8 rounded-lg transition"
+              onClick={isPaymentSuccess ? handleGetSketchNow : handleStartCheckout}
+              disabled={(!isPaymentSuccess && (processingCheckout || loading)) || (isPaymentSuccess && loading)}
+              className="font-bold py-3 px-8 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ backgroundColor: '#D4A34B', color: '#1A2336' }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#c4933a')}
+              onMouseEnter={(e) => !processingCheckout && !loading && (e.currentTarget.style.backgroundColor = '#c4933a')}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#D4A34B')}
             >
-              {loading ? 'Please wait...' : (isPaymentSuccess ? 'Get Your Sketch Now' : 'Get My Soulmate Sketch')}
+              {!isPaymentSuccess && processingCheckout ? (
+                <>
+                  <span className="inline-block mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent align-middle" />
+                  Redirecting...
+                </>
+              ) : (
+                loading ? 'Please wait...' : (isPaymentSuccess ? 'Get Your Sketch Now' : 'Get My Soulmate Sketch')
+              )}
             </button>
           </div>
         </div>
